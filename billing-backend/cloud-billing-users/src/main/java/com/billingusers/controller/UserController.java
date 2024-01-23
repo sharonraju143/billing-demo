@@ -2,6 +2,7 @@ package com.billingusers.controller;
 
 import java.util.List;
 
+import com.billingusers.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.billingusers.dto.UserDto;
 import com.billingusers.entity.LoginRequest;
-import com.billingusers.exceptions.UsernameAlreadyExistsException;
 import com.billingusers.service.UserService;
 
 @RestController
@@ -34,42 +33,33 @@ public class UserController {
 	private AuthenticationManager authenticationManager;
 
 	@PostMapping("/register")
-	public ResponseEntity<?> createUser(@RequestBody UserDto user) {
-		try {
-			// Attempt to create a user
-			UserDto savedUser = userService.createUser(user);
+	public ResponseEntity<?> createUser(@RequestBody User user) {
+			User savedUser = userService.createUser(user);
 			return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
-		} catch (UsernameAlreadyExistsException e) {
-			// Username already exists - handle this exception
-			return new ResponseEntity<>("Username already exists", HttpStatus.CONFLICT);
-		} catch (Exception e) {
-			// Other unexpected exceptions
-			return new ResponseEntity<>("Failed to create user", HttpStatus.INTERNAL_SERVER_ERROR);
-		}
 	}
 
 	@GetMapping("/getallusers")
-	public ResponseEntity<List<UserDto>> getAllUsers() {
-		List<UserDto> users = userService.getAllUsers();
+	public ResponseEntity<List<User>> getAllUsers() {
+		List<User> users = userService.getAllUsers();
 		return new ResponseEntity<>(users, HttpStatus.OK);
 	}
 
 	@GetMapping("/getuserbyid/{id}")
-	public ResponseEntity<UserDto> getUserById(@PathVariable("id") String userId) {
-		UserDto user = userService.getUserById(userId);
+	public ResponseEntity<User> getUserById(@PathVariable("id") String userId) {
+		User user = userService.getUserById(userId);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	@GetMapping("/getuserbyname/{username}")
-	public ResponseEntity<UserDto> getUserByUsername(@PathVariable("username") String userName) {
-		UserDto user = userService.getUserByUsername(userName);
+	public ResponseEntity<User> getUserByUsername(@PathVariable("username") String userName) {
+		User user = userService.getUserByUsername(userName);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	@PutMapping("/updateuser/{id}")
-	public ResponseEntity<UserDto> updateUser(@PathVariable("id") String userId, @RequestBody UserDto user) {
+	public ResponseEntity<User> updateUser(@PathVariable("id") String userId, @RequestBody User user) {
 		user.setId(userId);
-		UserDto updatedUser = userService.updateUser(user);
+		User updatedUser = userService.updateUser(user);
 		return new ResponseEntity<>(updatedUser, HttpStatus.OK);
 	}
 
