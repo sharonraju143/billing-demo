@@ -102,13 +102,13 @@ public class GcpController {
 			response.put("billingPeriod", billingPeriod);
 			response.put("top5Services", aggregateResults);
 
-			if (billingDetails.isEmpty()) {
-				Map<String, Object> emptyBillingDetailsResponse = new LinkedHashMap<>();
-				emptyBillingDetailsResponse.put("message", "No billing details available.");
-				return ResponseEntity.ok(emptyBillingDetailsResponse);
-			} else {
+//			if (billingDetails.isEmpty()) {
+//				Map<String, Object> emptyBillingDetailsResponse = new LinkedHashMap<>();
+//				emptyBillingDetailsResponse.put("message", "No billing details available.");
+//				return ResponseEntity.ok(emptyBillingDetailsResponse);
+//			} else {
 				return ResponseEntity.ok(response);
-			}
+//			}
 		} catch (IllegalArgumentException e) {
 			// Handle the exception, return an error response or log the error message
 			Map<String, Object> errorResponse = new LinkedHashMap<>();
