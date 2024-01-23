@@ -98,18 +98,6 @@ public class AzureServiceImpl implements AzureService {
 	public List<Azure> getBillingDetails(String resourceType, String startDate, String endDate, Integer months) {
 		List<Azure> billingDetails;
 
-//		if (resourceType != null && startDate != null && endDate != null) {
-//			billingDetails = getDataByResourseTypeAndDateRange(resourceType, startDate, endDate);
-//		} else if (resourceType != null && months != null) {
-//			billingDetails = getDataByResourseTypeAndMonths(resourceType, months);
-//		} else if (months != null && resourceType == null) {
-//			billingDetails = getAllDataByMonths(months);
-//		} else if (startDate != null && endDate != null) {
-//			billingDetails = getAllDataBydateRange(startDate, endDate);
-//		} else {
-//			throw new IllegalArgumentException(
-//					"Please provide ResourceType and dates or dates or duration to get the data");
-//		}
 
 		System.err.println("Service method started");
 		/* months == null || */
