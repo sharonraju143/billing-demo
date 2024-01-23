@@ -2,21 +2,25 @@ package com.billingusers.service;
 
 import java.util.List;
 
-import com.billingusers.dto.UserDto;
+import com.billingusers.entity.User;
 
 public interface UserService {
 
-	public UserDto createUser(UserDto user);
+	public User createUser(User user);
 
-	public UserDto getUserById(String userId);
+	public User getUserById(String userId);
 
-	public UserDto getUserByUsername(String userName);
+	public User getUserByEmail(String email);
 
-	public List<UserDto> getAllUsers();
+	public User getUserByUsername(String userName);
 
-	public UserDto updateUser(UserDto user);
+	public List<User> getAllUsers();
+
+	public User updateUser(User user);
 
 	public void deleteUser(String userId);
+
+	public boolean emailOrUserNameAlreadyExist(User user);
 	
 	public void validateToken(String token);
 	

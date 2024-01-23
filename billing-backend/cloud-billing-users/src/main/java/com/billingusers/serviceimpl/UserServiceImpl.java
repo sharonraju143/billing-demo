@@ -5,15 +5,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
+import com.billingusers.exceptions.EmailOrUserNameAlreadyExist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.billingusers.dto.UserDto;
 import com.billingusers.entity.User;
 import com.billingusers.exceptions.ResourceNotFoundException;
-import com.billingusers.exceptions.UsernameAlreadyExistsException;
 import com.billingusers.jwtservice.JwtService;
 import com.billingusers.repository.UserRepository;
 import com.billingusers.service.UserService;
@@ -30,65 +28,72 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private JwtService jwtService;
 	
-	@Autowired
-	private ModelMapper modelMapper;
+//	@Autowired
+//	private ModelMapper modelMapper;
+
+
 
 	@Override
-	public UserDto createUser(UserDto userDto) {
+	public User createUser(User user) {
 	    // Check if the username already exists in the database
-	    if (userRepository.existsByUserName(userDto.getUserName())) {
-	        throw new UsernameAlreadyExistsException("Username already exists");
-	    }
-
-	    // Proceed with user creation if the username doesn't exist
-	    User user = modelMapper.map(userDto, User.class);
+//	    if (userRepository.existsByUserName(user.getUserName())) {
+//	        throw new UsernameAlreadyExistsException("Username already exists");
+//	    }
+		if(emailOrUserNameAlreadyExist(user)) {
+			throw new EmailOrUserNameAlreadyExist();
+		}
 	    user.setPassword(passwordEncoder.encode(user.getPassword()));
 	    user.setId(UUID.randomUUID().toString());
 	    user.setActive(true);
 	    
 	    User savedUser = userRepository.save(user);
-	    return modelMapper.map(savedUser, UserDto.class);
+	    return savedUser;
 	}
 
 	@Override
-	public List<UserDto> getAllUsers() {
+	public List<User> getAllUsers() {
 		List<User> users = userRepository.findAll();
-		return users.stream().filter(User::isActive) // Filter only active users
-				.map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
+		return users.stream()
+				.filter(User::isActive) // Filter only active users
+				.collect(Collectors.toList());
+
 	}
 
 	@Override
-	public UserDto getUserById(String userId) {
+	public User getUserById(String userId) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new ResourceNotFoundException("Employee not exist by id " + userId));
-		UserDto dtoUser = modelMapper.map(user, UserDto.class);
-		return dtoUser;
+		return user;
 	}
 
 	@Override
-	public UserDto getUserByUsername(String userName) {
+	public User getUserByUsername(String userName) {
 		Optional<User> optionalUser = userRepository.findByUserName(userName);
-		User user = optionalUser.orElseThrow(() -> new ResourceNotFoundException("User not found by " + userName));
-		UserDto dtoUser = modelMapper.map(user, UserDto.class);
-		return dtoUser;
+		User user = optionalUser.orElseThrow(() -> new ResourceNotFoundException("User not found by username " + userName));
+		return user;
 	}
 
 	@Override
-	public UserDto updateUser(UserDto user) {
+	public User getUserByEmail(String email) {
+		User optionalUser = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found with email " + email));
+		return optionalUser;
+	}
+
+	@Override
+	public User updateUser(User user) {
 		User existingUser = userRepository.findById(user.getId())
 				.orElseThrow(() -> new ResourceNotFoundException("Employee not exist by id " + user.getId()));
 		existingUser.setFirstName(user.getFirstName());
 		existingUser.setLastName(user.getLastName());
 		existingUser.setEmail(user.getEmail());
 		User updatedUser = userRepository.save(existingUser);
-		return modelMapper.map(updatedUser, UserDto.class);
+		return updatedUser;
 	}
 
 	@Override
 	public void deleteUser(String userId) {
-		UserDto userDto = this.getUserById(userId);
-		userDto.setActive(false);
-		User user = modelMapper.map(userDto, User.class);
+		User user = this.getUserById(userId);
+		user.setActive(false);
 		userRepository.save(user);
 	}
 
@@ -99,5 +104,11 @@ public class UserServiceImpl implements UserService {
     public void validateToken(String token) {
         jwtService.validateToken(token);
     }
+
+	@Override
+	public boolean emailOrUserNameAlreadyExist(User user) {
+		return userRepository.findByEmail(user.getEmail()).isPresent() ||
+				userRepository.findByUserName(user.getUserName()).isPresent();
+	}
 
 }
