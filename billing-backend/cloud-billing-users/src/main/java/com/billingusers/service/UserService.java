@@ -26,4 +26,7 @@ public interface UserService {
 	
 	public String generateToken(String username);
 
+	public String forgotPassword(String email);
+
+	public String setpassword(String email, String newPassword);
 }

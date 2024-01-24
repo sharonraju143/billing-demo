@@ -6,6 +6,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.billingusers.exceptions.EmailOrUserNameAlreadyExist;
+import com.billingusers.util.EmailUtil;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,12 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private JwtService jwtService;
-	
+
+	@Autowired
+	private EmailUtil emailUtil;
+
+//	@Autowired
+//	private EmailUtil emailUtil;
 //	@Autowired
 //	private ModelMapper modelMapper;
 
@@ -101,7 +108,28 @@ public class UserServiceImpl implements UserService {
         return jwtService.generateToken(username);
     }
 
-    public void validateToken(String token) {
+	@Override
+	public String forgotPassword(String email) {
+		User user = userRepository.findByEmail(email).orElseThrow(
+				() -> new RuntimeException("User not found with this email: "+email));
+		try {
+			emailUtil.sendSetPasswordEmail(email);
+		}catch (MessagingException e){
+			throw new RuntimeException("Unable to send set password email please try again");
+		}
+		return "please check your email to set new password to your account";
+	}
+
+	@Override
+	public String setpassword(String email, String newPassword) {
+		User user = userRepository.findByEmail(email).orElseThrow(
+				() -> new RuntimeException("User not found with this email: "+email));
+		user.setPassword(passwordEncoder.encode(newPassword));
+		userRepository.save(user);
+		return "New password set successfully now Login with new password";
+	}
+
+	public void validateToken(String token) {
         jwtService.validateToken(token);
     }
 

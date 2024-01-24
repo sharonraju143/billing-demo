@@ -81,7 +81,7 @@ public class AwsController {
 	@GetMapping("/billing-details")
 	public ResponseEntity<Map<String, Object>> getBillingDetails(
 			@RequestParam(value = "service"/* , required = false */) String service,
-			@RequestParam /* (required = false) */ String startDate, @RequestParam(required = false) String endDate,
+			@RequestParam /* (required = false) */ String startDate, @RequestParam String endDate,
 			@RequestParam(defaultValue = "0"/* required = false */) Integer months) {
 
 		if (service == null || service.isEmpty() && startDate == null || startDate.isEmpty() && endDate == null || endDate.isEmpty() && months <= 0) {
