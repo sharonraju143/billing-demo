@@ -7,9 +7,12 @@ import { Cell, Legend, Pie, Tooltip, PieChart, ResponsiveContainer } from 'recha
 
 const CustomPieChart = ({ data, height, outerRadius, innerRadius, color, findData, total }) => {
     const COLORS = ['#048DAD', '#10B981', '#FEA37C', '#FE6476', 'rgb(72 192 194)', '#8dc2f7', 'rgb(128, 128, 128)'];
+    // console.log("CustomPieChartdata", data)
     const RADIAN = Math.PI / 180;
     // const { currentColor } = useColor();
     const totalNum = data && data?.reduce((acc, entry) => acc + entry.value, 0);
+
+    const getCastType = (data && data?.length > 0 && data[0]?.costType) ? data[0]?.costType : 'Dollar'
     // const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, }) => {
     //     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     //     const x = cx + radius * Math.cos(-midAngle * RADIAN);
@@ -52,7 +55,7 @@ const CustomPieChart = ({ data, height, outerRadius, innerRadius, color, findDat
                 {/* <line x1={x} y1={y} x2={lineX} y2={lineY} stroke="black" strokeWidth={1} /> */}
                 {/* Total text */}
                 <text x={cx} y={cy} textAnchor="middle" fontSize={13} fontWeight={900}>
-                    ${total ? total.toLocaleString('en-IN') : totalNum.toLocaleString('en-IN')}
+                    {getCastType === 'INR' ? '₹' : '$'}{total ? total.toLocaleString('en-IN') : totalNum.toLocaleString('en-IN')}
                 </text>
             </>
         );
@@ -77,10 +80,10 @@ const CustomPieChart = ({ data, height, outerRadius, innerRadius, color, findDat
         const { payload } = props;
         console.log("payload", payload)
         return (
-            <ul className='ps-1 m-0 pt-1' style={{ width: '100%' }}>
+            <ul className='ps-1 m-0 pt-1 d-flex flex-column align-items-center' style={{ width: '100%' }}>
                 {
                     payload.map((entry, index) => (
-                        <li key={`item-${index}`} style={{ fontSize: '14px', color: entry.color, width: '100%', listStyleType: 'none' }} className='d-flex align-items-center'><span className='recharts-legend-item-title' title={entry?.payload?.name}>{entry?.payload?.name}</span><span className='fw-bold ms-1'>{` = $${entry?.payload?.value}`}</span></li>
+                        <li key={`item-${index}`} style={{ fontSize: '14px', color: entry.color, width: '100%', listStyleType: 'none' }} className='d-flex align-items-center justify-content-center'><span className='recharts-legend-item-title' title={entry?.payload?.name}>{entry?.payload?.name}</span><span className='fw-bold ms-1'>{` = ${entry?.payload?.costType === 'INR' ? '₹' : '$'}${entry?.payload?.value}`}</span></li>
                     ))
                 }
             </ul>

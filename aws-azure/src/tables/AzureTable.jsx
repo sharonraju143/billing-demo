@@ -53,7 +53,7 @@ export default function AzureTable({ data, months, ResourceType, fromDate, toDat
     },
     {
       field: "CostUSD",
-      headerName: "Cost in USD",
+      headerName: "Cost In USD",
       // width: 160,
       minWidth: 150,
       valueGetter: (params) => {
@@ -64,7 +64,7 @@ export default function AzureTable({ data, months, ResourceType, fromDate, toDat
     },
     {
       field: "Cost",
-      headerName: "Cost",
+      headerName: "Cost In INR",
       // width: 160,
       minWidth: 150,
       valueGetter: (params) => {

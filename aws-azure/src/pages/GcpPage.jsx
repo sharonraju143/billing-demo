@@ -103,6 +103,8 @@ export const GcpPage = () => {
       // name: `${serviceDescription} - $${totalCost}`,
       name: `${serviceDescription}`,
       value: totalCost && +totalCost?.toFixed(0),
+      costType: 'Dollar'
+
     };
   });
 
@@ -121,6 +123,7 @@ export const GcpPage = () => {
       <Typography
         variant="h5"
         sx={{ marginBottom: 3, textAlign: "center", marginTop: 3 }}
+        className="fw-bold"
       >
         GCP Billing-Details
       </Typography>

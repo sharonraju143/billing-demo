@@ -92,6 +92,8 @@ export const AzurePage = () => {
       // name: `${resourceType} - $${totalCost}`,
       name: `${resourceType}`,
       value: totalCost,
+      costType: 'INR'
+
     };
   });
 
@@ -108,6 +110,7 @@ export const AzurePage = () => {
             sx={{ ...contentStyle }}> */}
       <Typography
         variant="h5"
+        className="fw-bold"
         sx={{ marginBottom: 3, textAlign: "center", marginTop: 3 }}
       >
         Azure Billing-Details
@@ -156,14 +159,14 @@ export const AzurePage = () => {
         calling={calling}
       >
         <div style={{ width: '100%' }}>
-          <p className="p-0 m-0">Service</p>
+          <p className="p-0 m-0">Resource</p>
           <AzureSelector
             ResourseType={ResourseType}
             handleServiceChange={handleServiceChange}
           />
         </div>
       </BillingInformationCard>
-      <BillingDetailsChartsAndTable data={data} monthdata={monthData} topFiveCustomers={topFiveCustomers} >
+      <BillingDetailsChartsAndTable data={data} monthdata={monthData} topFiveCustomers={topFiveCustomers} costType='INR'>
         <AzureTable data={data && data?.billingDetails} />
       </BillingDetailsChartsAndTable>
       {/* 

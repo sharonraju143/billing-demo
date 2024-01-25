@@ -154,7 +154,7 @@ export default function Sidenav() {
               >
                 {/* <InboxIcon /> */}
                 {/* <img src={awslogo} alt="awslogo.jpg" style={{ width: '24px', height: '24px', objectFit: 'cover' }} /> */}
-                <i className="fa-brands fa-aws" style={{ color: '#fff' }}></i>
+                <i className="fa-brands fa-aws" id="aws-icon-id" style={{ color: '#fff' }}></i>
               </ListItemIcon>
               <ListItem sx={{ opacity: open ? 1 : 0, fontSize: 14 }}>
                 AWS

@@ -39,7 +39,7 @@ export default function AwsTable({ data, months, service, fromDate, toDate }) {
     },
     {
       field: "service",
-      headerName: "ServiceName",
+      headerName: "Service Name",
       width: 400,
     },
     {

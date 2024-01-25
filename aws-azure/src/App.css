@@ -16,11 +16,12 @@
   /* font-size: 13px !important; */
   display: inline-block;
   /* min-width: 50%; */
-  width: 70%;
+  width: 50%;
   overflow: hidden !important;
   white-space: nowrap !important;
   text-overflow: ellipsis !important;
 }
+
 
 .billing-period {
   width: 96%;
@@ -64,6 +65,16 @@
     overflow-y: scroll;
     height: 100%;
     padding-right: 15%;
+  }
+
+  .recharts-legend-item-title {
+    /* font-size: 13px !important; */
+    display: inline-block;
+    /* min-width: 50%; */
+    width: 30%;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
   }
 
 }

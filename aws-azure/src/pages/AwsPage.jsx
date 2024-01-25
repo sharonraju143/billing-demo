@@ -94,6 +94,8 @@ export const AwsPage = () => {
       // name: `${service} - $${totalCost}`,
       name: `${service}`,
       value: totalCost,
+      costType: 'Dollar'
+
     };
   });
 
@@ -112,6 +114,7 @@ export const AwsPage = () => {
       <Typography
         variant="h5"
         sx={{ marginBottom: 3, textAlign: "center", marginTop: 3 }}
+        className="fw-bold"
       >
         AWS Billing-Details
       </Typography>
