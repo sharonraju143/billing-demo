@@ -39,7 +39,8 @@ const ServiceSelector = ({ service, handleServiceChange }) => {
 
   const newPropsCss = {
     backgroundColor: "#FFFF",
-    width: "340px",
+    // width: "340px",
+    width: "90%",
     textAlign: "center",
     ":hover": {
       backgroundColor: "#FFFF",
@@ -58,17 +59,23 @@ const ServiceSelector = ({ service, handleServiceChange }) => {
       <FormControl sx={{ ...newPropsCss }} fullWidth>
         <Select
           fullWidth
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          className='demo-simple-select'
           sx={{ ...newPropsCss, height: "2.4em" }}
-          labelId="service-label"
           value={service}
           // value={defaultValue}
           onChange={handleServiceChange}
           onFocus={handleFocus}
-        
+          displayEmpty
+          inputProps={{ 'aria-label': 'Without label' }}
+          MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
         >
           {/* <MenuItem value="" defaultValue={true} disabled>Select Service</MenuItem> */}
-          <MenuItem value={null}>Select Service</MenuItem>
-          {serviceOptions.map((option, index) => (
+          <MenuItem value="" disabled>
+            Select Service
+          </MenuItem>
+          {serviceOptions && serviceOptions?.map((option, index) => (
             <MenuItem key={index} value={option} sx={{ ...newPropsCss }}>
               {option}
             </MenuItem>

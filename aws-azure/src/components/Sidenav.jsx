@@ -11,16 +11,18 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
+// import ListItemText from "@mui/material/ListItemText";
+// import InboxIcon from "@mui/icons-material/MoveToInbox";
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "../appStore";
 import HomeIcon from '@mui/icons-material/Home';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import azureiicon from "../azureiicon.jpg";
-import gcplogo from "../gcplogo.png";
-import atlassian from "../atlassianlogo.jpg";
-import awslogo from "../awslogo.jpg"
+// import GitHubIcon from '@mui/icons-material/GitHub';
+// import azureiicon from "../azureiicon.jpg";
+// import gcplogo from "../gcplogo.png";
+// import atlassian from "../atlassianlogo.jpg";
+// import awslogo from "../awslogo.jpg"
+import AzureIcon from "../assets/Azure-Logo-Transparent.png"
+import GCPIcon from "../assets/kisspng-cloud-computing-google-cloud-platform-cloud-storag-google-cloud-logo-png-image-free-download-searchpn-5d01a5ae78d303.9725254015603890384949.png"
 
 
 const drawerWidth = 240;
@@ -108,18 +110,20 @@ export default function Sidenav() {
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
               }}
+              className={`ms-${open ? 'auto' : 4}`}
+
             >
               <ListItemIcon
                 sx={{
                   minWidth: 0,
                   mr: open ? 3 : "auto",
                   justifyContent: "center",
-                  color:"white"
+                  color: "white"
                 }}
               >
                 <HomeIcon />
               </ListItemIcon>
-              <ListItem sx={{ opacity: open ? 1 : 0, fontSize: 14,  }}>
+              <ListItem sx={{ opacity: open ? 1 : 0, fontSize: 14, }}>
                 Home
               </ListItem>
             </ListItemButton>
@@ -138,6 +142,8 @@ export default function Sidenav() {
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
               }}
+              className={`ms-${open ? 'auto' : 4}`}
+
             >
               <ListItemIcon
                 sx={{
@@ -147,7 +153,8 @@ export default function Sidenav() {
                 }}
               >
                 {/* <InboxIcon /> */}
-                <img src={awslogo} alt="awslogo.jpg" style={{ width: '24px', height: '24px' }} />
+                {/* <img src={awslogo} alt="awslogo.jpg" style={{ width: '24px', height: '24px', objectFit: 'cover' }} /> */}
+                <i className="fa-brands fa-aws" style={{ color: '#fff' }}></i>
               </ListItemIcon>
               <ListItem sx={{ opacity: open ? 1 : 0, fontSize: 14 }}>
                 AWS
@@ -168,6 +175,8 @@ export default function Sidenav() {
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
               }}
+              className={`ms-${open ? 'auto' : 4}`}
+
             >
               <ListItemIcon
                 sx={{
@@ -177,15 +186,15 @@ export default function Sidenav() {
                 }}
               >
                 {/* <InboxIcon /> */}
-                <img src={azureiicon} alt="azureiicon.jpg" style={{ width: '24px', height: '24px' }} />
+                <img src={AzureIcon} alt="azureiicon.jpg" style={{ width: '24px', height: '24px', objectFit: 'cover' }} />
               </ListItemIcon>
               <ListItem sx={{ opacity: open ? 1 : 0, fontSize: 14 }}>
-              Azure
+                Azure
               </ListItem>
             </ListItemButton>
           </ListItem>
 
-          <ListItem
+          {/* <ListItem
             disablePadding
             sx={{ display: "block" }}
             onClick={() => {
@@ -213,9 +222,9 @@ export default function Sidenav() {
               Git
               </ListItem>
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
 
-          <ListItem
+          {/* <ListItem
             disablePadding
             sx={{ display: "block" }}
             onClick={() => {
@@ -236,14 +245,13 @@ export default function Sidenav() {
                   justifyContent: "center",
                 }}
               >
-                {/* <InboxIcon /> */}
                 <img src={atlassian} alt="atlassian.jpg" style={{ width: '24px', height: '24px' }} />
               </ListItemIcon>
               <ListItem sx={{ opacity: open ? 1 : 0, fontSize: 14 }}>
               Atlassian
               </ListItem>
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
 
           <ListItem
             disablePadding
@@ -258,6 +266,7 @@ export default function Sidenav() {
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
               }}
+              className={`ms-${open ? 'auto' : 4}`}
             >
               <ListItemIcon
                 sx={{
@@ -267,10 +276,10 @@ export default function Sidenav() {
                 }}
               >
                 {/* <InboxIcon /> */}
-                <img src={gcplogo} alt="gcplogo.jpg" style={{ width: '24px', height: '24px' }} />
+                <img src={GCPIcon} alt="gcplogo.jpg" style={{ width: '24px', height: '24px', objectFit: 'cover' }} />
               </ListItemIcon>
               <ListItem sx={{ opacity: open ? 1 : 0, fontSize: 14 }}>
-              GCP
+                GCP
               </ListItem>
             </ListItemButton>
           </ListItem>

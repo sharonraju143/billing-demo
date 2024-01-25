@@ -40,7 +40,9 @@ const AzureSelector = ({ resourseType, handleServiceChange }) => {
 
   const newPropsCss = {
     backgroundColor: "#FFFF",
-    width: "340px",
+    // width: "340px",
+    width: "90%",
+
     textAlign: "center",
     "&:hover": {
       backgroundColor: "#FFFF",
@@ -61,12 +63,15 @@ const AzureSelector = ({ resourseType, handleServiceChange }) => {
         value={resourseType || ""}
         onChange={handleServiceChange}
         onFocus={handleFocus}
+        displayEmpty
+        inputProps={{ 'aria-label': 'Without label' }}
+        MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
       >
         <MenuItem value="">Select Resourse</MenuItem>
-        {serviceOptions.map((option, index) => (
+        {serviceOptions?.map((option, index) => (
           <MenuItem key={index} value={option} sx={{ ...newPropsCss }}>
-          {option}
-        </MenuItem>
+            {option}
+          </MenuItem>
         ))}
       </Select>
     </FormControl>

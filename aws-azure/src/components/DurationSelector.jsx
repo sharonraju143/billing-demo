@@ -12,16 +12,23 @@ import {
   Button,
   Box,
   Typography,
-  TextField,
+  TextField
 } from '@mui/material';
+import InputAdornment from '@mui/material/InputAdornment';
+import ClearIcon from '@mui/icons-material/Clear';
+import dayjs from 'dayjs';
 
-const  DurationSelector = ({ months, handleMonthChange,setDateRange,setCalling,calling }) =>{
+
+const DurationSelector = ({ months, handleMonthChange, setDateRange, setCalling, calling }) => {
   const [customDate, setCustomDate] = useState(false);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  
-
+  const [onClearBtn, setOnClearBtn] = useState(false);
+  const [dateErrors, setDateErrors] = useState({
+    fromDateError: '',
+    toDateError: ''
+  })
 
   const monthsData = [
     {
@@ -51,35 +58,8 @@ const  DurationSelector = ({ months, handleMonthChange,setDateRange,setCalling,c
     },
   ];
 
-  // const handleMonthSelection = (selectedMonth) => {
-
-  //   if (selectedMonth === 0) {
-  //     setOpenModal(true);
-  //     handleMonthChange(selectedMonth);
-  //     setCustomDate(true);
-  //   } else {
-  //     handleMonthChange(selectedMonth);
-  //     setCustomDate(false);
-  //     setFromDate(null)
-  //     setToDate(null)
-  //     setDateRange({startDate:null,endDate:null})
-  //   }
-  // };
-  // const handleMonthSelection = (selectedMonth) => {
-  //   if (selectedMonth === 0 || customDate == false) {
-  //     setOpenModal(true);
-  //     handleMonthChange(selectedMonth);
-  //     setCustomDate(true);
-  //   } else {
-  //     handleMonthChange(selectedMonth);
-  //     setCustomDate(false);
-  //     setFromDate(null);
-  //     setToDate(null);
-  //     setDateRange({ startDate: null, endDate: null });
-  //   }
-  // };
   const handleMonthSelection = (selectedMonth) => {
-    if (selectedMonth === 0 ) {
+    if (selectedMonth === 0) {
       setOpenModal(true);
       handleMonthChange(selectedMonth);
       setCustomDate(true);
@@ -94,116 +74,204 @@ const  DurationSelector = ({ months, handleMonthChange,setDateRange,setCalling,c
   };
 
   const handleFromDateChange = (date) => {
-    const newDate = date?.format('YYYY-MM-DD')
-    setFromDate(newDate);
+    // const newDate = date?.format('YYYY-MM-DD');
+    setFromDate(date);
+    setDateErrors({ ...dateErrors, fromDateError: '', })
   };
 
   const handleToDateChange = (date) => {
-    const newDate = date?.format('YYYY-MM-DD')
-    setToDate(newDate);
-  
-  };
-  const handleApply = ()=>{
-    handleCustomDateSelection();
-  }
+    // const newDate = date?.format('YYYY-MM-DD');
+    setToDate(date);
+    setDateErrors({ ...dateErrors, toDateError: '', })
 
- 
-  // const handleCustomDateSelection = () => {
-  //   setDateRange({ startDate: fromDate, endDate: toDate });
-  //   setCustomDate(false);
-  //   setOpenModal(false);
-  //   setCalling(!calling);
-  // };
-  const handleCustomDateSelection = () => {
-    setDateRange({ startDate: fromDate, endDate: toDate });
-    setCustomDate(false);
-    setOpenModal(false);
-    setCalling(!calling);
   };
+
+  const handleCustomDateSelection = () => {
+    if (fromDate && toDate) {
+      setDateRange({ startDate: fromDate?.format('YYYY-MM-DD'), endDate: toDate?.format('YYYY-MM-DD') });
+      setCustomDate(false);
+      setOpenModal(false);
+      setCalling(!calling);
+      setDateErrors({ fromDateError: '', toDateError: '' })
+    } else {
+      if (!fromDate && !toDate) {
+        setDateErrors({ fromDateError: 'Please select from date', toDateError: 'Please select to date' })
+      } else {
+        if (!fromDate && toDate) {
+          setDateErrors({ fromDateError: 'Please select from date', toDateError: '' })
+        } else {
+          setDateErrors({ toDateError: 'Please select to date', fromDateError: '' })
+        }
+      }
+
+    };
+  }
+  const handleClearMonthValue = () => {
+    handleMonthChange(3);
+    setCustomDate(false);
+    setFromDate(null);
+    setToDate(null);
+    setDateRange({ startDate: null, endDate: null });
+    setOpenModal(false); // Close modal for predefined date ranges
+
+  };
+
+  const newPropsCss = {
+    backgroundColor: "#FFFF",
+    // width: "340px",
+    width: "90%",
+    textAlign: "center",
+    ":hover": {
+      backgroundColor: "#FFFF",
+      color: "black",
+    },
+    "&.Mui-selected": {
+      backgroundColor: "#FFFF !important",
+      color: "black",
+    },
+  };
+
 
   return (
     <React.Fragment>
-      <div className="marginx">
-        <FormControl>
-          <Select
-           
-            labelId="duration-label"
-            value={months}
-            onChange={(event) => handleMonthSelection(event.target.value)}
-            sx={{
-              height: '2.4em',
-              backgroundColor: '#FFFF',
-              width: 200,
-              textAlign: 'center',
+      {/* <div className="marginx" style={{ width: '100%' }}> */}
+      <FormControl sx={{ ...newPropsCss }} fullWidth>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          className='demo-simple-select'
+          value={months}
+          fullWidth
+          onChange={(event) => handleMonthSelection(event.target.value)}
+          sx={{
+            ...newPropsCss,
+            height: '2.4em',
+            backgroundColor: '#FFFF',
+            // width: 200,
+            textAlign: 'center',
+          }}
+          endAdornment={
+            <InputAdornment position="end" sx={{
+              '&:hover': {
+                cursor: 'pointer',
+              }
             }}
-          >
-            {monthsData?.map((item) => (
-              <MenuItem
-                key={item?.id}
-                value={item?.month}
-                sx={{
+              onClick={() => handleClearMonthValue()}
+            >
+              {(onClearBtn && months !== 3) && <ClearIcon sx={{
+                marginRight: '12px', fontSize: '19px', '&:hover': {
+                  cursor: 'pointer',
+                  backgroundColor: '#F0F0F0',
+                  borderRadius: '100%',
+                  padding: '4px',
+                  fontSize: '24px',
+
+                }
+              }} />}
+            </InputAdornment>
+          }
+          onMouseOver={() => setOnClearBtn(true)}
+          onMouseLeave={() => setOnClearBtn(false)}
+          onMouseOut={() => setOnClearBtn(false)}
+        >
+          {monthsData.map((item) => (
+            <MenuItem
+              key={item.id}
+              value={item.month}
+              sx={{
+                backgroundColor: '#FFFF',
+                ':hover': {
                   backgroundColor: '#FFFF',
-                  ':hover': {
-                    backgroundColor: '#FFFF',
-                    color: 'black',
-                  },
-                  '&.Mui-selected': {
-                    backgroundColor: '#FFFF !important',
-                    color: 'black',
-                  },
-                }}
-              >
-                {item?.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Modal open={openModal} onClose={() => setOpenModal(false)}>
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              bgcolor: 'white',
-              p: 4,
-              zIndex: 9999,
-            }}
-          >
-            <Typography variant="h6" gutterBottom>
-              Select Custom Dates
-            </Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={['DatePicker']}>
-                <DatePicker
-                  label="From Date"
-                  value={fromDate}
-                  onChange={handleFromDateChange}
-                  format="YYYY-MM-DD"
-                  renderInput={(params) => <TextField {...params} />}
-                  // Other props and styling for the DatePicker component
-                  // Add required props for date selection
-                />
-                <DatePicker
-                  label="To Date"
-                  value={toDate}
-                  format="YYYY-MM-DD"
-                  onChange={handleToDateChange}
-                  renderInput={(params) => <TextField {...params} />}
-                  // Other props and styling for the DatePicker component
-                  // Add required props for date selection
-                />
-                <Button onClick={handleCustomDateSelection}>Submit</Button>
-              </DemoContainer>
-            </LocalizationProvider>
-          </Box>
-        </Modal>
-      </div>
+                  color: 'black',
+                },
+                '&.Mui-selected': {
+                  backgroundColor: '#FFFF !important',
+                  color: 'black',
+                },
+              }}
+            >
+              {item.name}
+            </MenuItem>
+          ))}
+
+        </Select>
+      </FormControl>
+      <Modal open={openModal && customDate} onClose={() => {
+        setOpenModal(false)
+        handleMonthChange(3);
+        setCustomDate(false);
+        setFromDate(null);
+        setToDate(null);
+        setDateRange({ startDate: null, endDate: null });
+        setOpenModal(false);
+      }} >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            bgcolor: 'white',
+            p: 4,
+            zIndex: 9999,
+            borderRadius: '10px'
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Select Custom Dates
+          </Typography>
+          <LocalizationProvider dateAdapter={AdapterDayjs} >
+            <DemoContainer components={['DatePicker']} >
+              <div className='d-flex align-items-center py-3'>
+                <div className='p-3 position-relative'>
+                  <DatePicker
+                    label="From Date"
+                    value={fromDate}
+                    onChange={handleFromDateChange}
+                    format="YYYY-MM-DD"
+                    renderInput={(params) => (
+                      <>
+                        <TextField {...params} />
+                      </>
+                    )}
+                  />
+                  {dateErrors.fromDateError && (
+                    <Typography color="error" sx={{ fontSize: '12px' }} className='m-1 position-absolute'>
+                      {dateErrors.fromDateError}
+                    </Typography>
+                  )}
+                </div>
+                <div className='p-3 position-relative'>
+                  <DatePicker
+                    label="To Date"
+                    value={toDate}
+                    format="YYYY-MM-DD"
+                    onChange={handleToDateChange}
+                    renderInput={(params) => (
+                      <>
+                        <TextField {...params} />
+                      </>
+                    )}
+                    minDate={fromDate !== null ? dayjs(fromDate) : ""}
+                    disabled={fromDate === null}
+                  />
+                  {dateErrors.toDateError && (
+                    <Typography color="error" sx={{ fontSize: '12px' }} className='m-1 position-absolute'>
+                      {dateErrors.toDateError}
+                    </Typography>
+                  )}
+                </div>
+                <Button onClick={handleCustomDateSelection} sx={{ maxHeight: '40px' }}>Submit</Button>
+              </div>
+            </DemoContainer>
+          </LocalizationProvider>
+        </Box>
+      </Modal>
+      {/* </div> */}
     </React.Fragment>
   );
-}
+};
+
 export default DurationSelector;
-
-
 
 

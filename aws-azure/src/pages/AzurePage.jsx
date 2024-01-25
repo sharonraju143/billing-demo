@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { Card, Grid } from "@mui/material";
+// import { Card, Grid } from "@mui/material";
 import { azureService } from "../services/Services";
-import DurationSelector from "../components/DurationSelector";
-import Sidenav from "../components/Sidenav";
-import Navbar from "../components/Navbar";
-import { Box } from "@mui/material";
+// import DurationSelector from "../components/DurationSelector";
+// import Sidenav from "../components/Sidenav";
+// import Navbar from "../components/Navbar";
+// import { Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import AzureSelector from "../components/Azure/AzureSelector";
 import AzureTable from "../tables/AzureTable";
-import CustomBarChart from "../components/CustomBarChart";
-import CustomPieChart from "../components/CustomPieChart";
+// import CustomBarChart from "../components/CustomBarChart";
+// import CustomPieChart from "../components/CustomPieChart";
+import BillingInformationCard from "../common/BillingInformationCard";
+import BillingDetailsChartsAndTable from "../common/BillingDetailsChartsAndTable";
 
 export const AzurePage = () => {
   const [ResourseType, setResourseType] = useState("");
-  const [sidenavOpen, setSidenavOpen] = useState(false);
+  // const [sidenavOpen, setSidenavOpen] = useState(false);
   const [dateRange, setDateRange] = useState({
     startDate: null,
     endDate: null,
   });
-  const [months, setMonths] = useState(1);
+  const [months, setMonths] = useState(3);
   const [display, setDisplay] = useState(false);
   const [data, setData] = useState([]);
   const [calling, setCalling] = useState(true);
@@ -39,9 +41,9 @@ export const AzurePage = () => {
     setCalling(!calling);
   };
 
-  const toggleSidenav = () => {
-    setSidenavOpen(!sidenavOpen);
-  };
+  // const toggleSidenav = () => {
+  //   setSidenavOpen(!sidenavOpen);
+  // };
 
   const forAzureGet = async () => {
     azureService(ResourseType, dateRange?.startDate, dateRange?.endDate, months)
@@ -54,20 +56,20 @@ export const AzurePage = () => {
       });
   };
 
-  const bodyStyle = {
-    backgroundColor: "#f0f0f0",
-    minHeight: "100vh",
-    padding: "20px",
-    overflowX: "hidden",
-  };
+  // const bodyStyle = {
+  //   backgroundColor: "#f0f0f0",
+  //   minHeight: "100vh",
+  //   padding: "20px",
+  //   overflowX: "hidden",
+  // };
 
-  const contentStyle = {
-    transition: "margin-left 0.5s",
-    marginLeft: sidenavOpen ? 250 : 0,
-    width: "100%",
-    // flexGrow: 1,
-  };
+  // const contentStyle = {
+  //   transition: "margin-left 0.5s",
+  //   marginLeft: sidenavOpen ? 250 : 0,
+  //   width: "100%",
+  //   overflowX: 'hidden'
 
+  // };
   useEffect(() => {
     setDisplay(true);
   }, [display]);
@@ -79,34 +81,38 @@ export const AzurePage = () => {
 
   const monthData = Array.isArray(data?.monthlyTotalAmounts)
     ? data.monthlyTotalAmounts.map((item) => ({
-        name: Object.keys(item)[0],
-        amount: Object.values(item)[0]?.toFixed(2),
-      }))
+      name: Object.keys(item)[0],
+      amount: Object.values(item)[0]?.toFixed(2),
+    }))
     : [];
 
   const topFiveCustomers = data?.top5Services?.map((item) => {
     const { resourceType, totalCost } = item;
     return {
-      name: resourceType,
+      // name: `${resourceType} - $${totalCost}`,
+      name: `${resourceType}`,
       value: totalCost,
     };
   });
 
   return (
-    <div style={bodyStyle}>
+    <>
+      {/* <div style={bodyStyle}>
       <React.Fragment>
         <Navbar toggleSidenav={toggleSidenav} />
         <Box height={50} />
         <Box sx={{ display: "flex" }}>
           <Sidenav open={sidenavOpen} onClose={toggleSidenav} />
-          <Box component="main" sx={{ ...contentStyle }}>
-            <Typography
-              variant="h5"
-              sx={{ marginBottom: 3, textAlign: "center" }}
-            >
-              Azure Billing-Details
-            </Typography>
-            <Card sx={{ px: 2, py: 4, m: 2 }}>
+          <Box
+            component="main"
+            sx={{ ...contentStyle }}> */}
+      <Typography
+        variant="h5"
+        sx={{ marginBottom: 3, textAlign: "center", marginTop: 3 }}
+      >
+        Azure Billing-Details
+      </Typography>
+      {/* <Card sx={{ px: 2, py: 4, m: 2 }}>
               <Box
                 component="div"
                 sx={{
@@ -142,14 +148,30 @@ export const AzurePage = () => {
                   </Grid>
                 </Grid>
               </Box>
-            </Card>
-
+            </Card> */}
+      <BillingInformationCard handleMonthChange={handleMonthChange}
+        months={months}
+        setDateRange={setDateRange}
+        setCalling={setCalling}
+        calling={calling}
+      >
+        <div style={{ width: '100%' }}>
+          <p className="p-0 m-0">Service</p>
+          <AzureSelector
+            ResourseType={ResourseType}
+            handleServiceChange={handleServiceChange}
+          />
+        </div>
+      </BillingInformationCard>
+      <BillingDetailsChartsAndTable data={data} monthdata={monthData} topFiveCustomers={topFiveCustomers} >
+        <AzureTable data={data && data?.billingDetails} />
+      </BillingDetailsChartsAndTable>
+      {/* 
             <Grid
               container
               spacing={3}
               style={{ marginLeft: "-10px", width: "100%" }}
             >
-              {/* Barchart */}
               <Grid item xs={11.2} md={6} lg={8}>
                 <div className="card p-3">
                   <div className="fw-bold h5">Billing Summary</div>
@@ -162,7 +184,6 @@ export const AzurePage = () => {
                 </div>
               </Grid>
 
-              {/* Total amount */}
               <Grid
                 item
                 xs={11.2}
@@ -225,11 +246,12 @@ export const AzurePage = () => {
                   </Grid>
                 </Grid>
               </Box>
-            </Card>
-          </Box>
+            </Card> */}
+      {/* </Box>
         </Box>
       </React.Fragment>
-    </div>
+    </div> */}
+    </>
   );
 };
 
