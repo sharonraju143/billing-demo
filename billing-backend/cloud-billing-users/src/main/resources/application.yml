@@ -1,18 +1,60 @@
+#spring:
+#  data:
+#    mongodb:
+#      host: 172.20.100.7
+#      port: 27017
+#      database: billing_reports
+#
+#  application:
+#    name: USERS-SERVICE
+#
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone : http://localhost:8761/eureka/
+#
+#    mail:
+#      host: smtp.gmail.com
+#      port: 587
+#      username: mamathakothakota.motivity@gmail.com
+#      password: ychy qyxv yxuw crth
+#      properties:
+#        mail:
+#          smtp:
+#            auth: true
+#            starttls:
+#              enable: true
+#
+#server:
+#  port: 9898
+
+
 spring:
-  data: 
+  data:
     mongodb:
       host: 172.20.100.7
       port: 27017
       database: billing_reports
-      
+
   application:
     name: USERS-SERVICE
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: mamathakothakota.motivity@gmail.com
+    password: ychy qyxv yxuw crth
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 eureka:
   client:
     service-url:
-      defaultZone : http://localhost:8761/eureka/
-
+      defaultZone: http://localhost:8761/eureka/
 
 server:
   port: 9898

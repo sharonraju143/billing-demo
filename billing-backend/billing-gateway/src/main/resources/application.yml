@@ -37,7 +37,7 @@ spring:
            - Path=/auth/**
 
  application:
-   name: BILLING-GATEWAY
+   name: BILLING-GATEWAY`
 
 eureka:
   client:
