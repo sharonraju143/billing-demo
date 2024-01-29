@@ -7,15 +7,18 @@ import { Cell, Legend, Pie, Tooltip, PieChart, ResponsiveContainer } from 'recha
 
 const CustomPieChart = ({ data, height, outerRadius, innerRadius, color, findData, total }) => {
     const COLORS = ['#048DAD', '#10B981', '#FEA37C', '#FE6476', 'rgb(72 192 194)', '#8dc2f7', 'rgb(128, 128, 128)'];
+    // console.log("CustomPieChartdata", data)
     const RADIAN = Math.PI / 180;
     // const { currentColor } = useColor();
-   const totalNum = data && data?.reduce((acc, entry) => acc + entry.value, 0);
+    const totalNum = data && data?.reduce((acc, entry) => acc + entry.value, 0);
+
+    const getCastType = (data && data?.length > 0 && data[0]?.costType) ? data[0]?.costType : 'Dollar'
     // const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index, }) => {
     //     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     //     const x = cx + radius * Math.cos(-midAngle * RADIAN);
     //     const y = cy + radius * Math.sin(-midAngle * RADIAN);
     //     const formattedValue = data[index]?.value > 0 && data[index]?.value?.toLocaleString('en-IN');
-       
+
     //     return (
     //         <>
     //             <text x={x} y={y} fill="white" textAnchor={x > cx ? 'middle' : 'middle'} dominantBaseline="central">
@@ -31,71 +34,87 @@ const CustomPieChart = ({ data, height, outerRadius, innerRadius, color, findDat
     const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
         const RADIAN = Math.PI / 180;
         const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-        
+
         // Calculate the position outside the pie chart
-        const x = cx + (radius + 40) * Math.cos(-midAngle * RADIAN);
-        const y = cy + (radius + 40) * Math.sin(-midAngle * RADIAN);
-    
-        const formattedValue = data[index]?.value > 0 && data[index]?.value?.toLocaleString('en-IN');
-    
+        // const x = cx + (radius + 40) * Math.cos(-midAngle * RADIAN);
+        // const y = cy + (radius + 40) * Math.sin(-midAngle * RADIAN);
+
+        // const formattedValue = data[index]?.value > 0 && data[index]?.value?.toLocaleString('en-IN');
+
         // Arrow line positions
-        const lineX = cx + (outerRadius ) * Math.cos(-midAngle * RADIAN);
-        const lineY = cy + (outerRadius  ) * Math.sin(-midAngle * RADIAN);
-    
+        // const lineX = cx + (outerRadius) * Math.cos(-midAngle * RADIAN);
+        // const lineY = cy + (outerRadius) * Math.sin(-midAngle * RADIAN);
+
         return (
             <>
                 {/* Label text */}
-                <text x={x} y={y} fill="black" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+                {/* <text x={x} y={y} fill="black" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
                     {formattedValue}
-                </text>
+                </text> */}
                 {/* Arrow lines */}
-                <line x1={x} y1={y} x2={lineX} y2={lineY} stroke="black" strokeWidth={1} />
+                {/* <line x1={x} y1={y} x2={lineX} y2={lineY} stroke="black" strokeWidth={1} /> */}
                 {/* Total text */}
-                <text x={cx} y={cy} textAnchor="middle" fontSize={16} fontWeight={900}>
-                    {total ? total.toLocaleString('en-IN') : totalNum.toLocaleString('en-IN')}
+                <text x={cx} y={cy} textAnchor="middle" fontSize={13} fontWeight={900}>
+                    {getCastType === 'INR' ? '₹' : '$'}{total ? total.toLocaleString('en-IN') : totalNum.toLocaleString('en-IN')}
                 </text>
             </>
         );
     };
-    
 
-   
-    
 
- 
+
+
+
+
     const customTooltip = (
         <Tooltip
             contentStyle={{
                 padding: 4,
                 fontSize: 12,
             }}
-            formatter={(value, name) => [value?.toLocaleString('en-IN'), name]}
+            formatter={(value, name) => [name]}
         />
     );
 
-  
-    const updatedData =data?.filter((item) => item.value > 1);
+    const renderLegend = (props) => {
+        const { payload } = props;
+        console.log("payload", payload)
+        return (
+            <ul className='ps-1 m-0 pt-1 d-flex flex-column align-items-center' style={{ width: '100%' }}>
+                {
+                    payload.map((entry, index) => (
+                        <li key={`item-${index}`} style={{ fontSize: '14px', color: entry.color, width: '100%', listStyleType: 'none' }} className='d-flex align-items-center justify-content-between'><span className='recharts-legend-item-title' title={entry?.payload?.name}>{entry?.payload?.name}</span><span className='fw-bold ms-1'>{` = ${entry?.payload?.costType === 'INR' ? '₹' : '$'}${entry?.payload?.value}`}</span></li>
+                    ))
+                }
+            </ul>
+        );
+    }
 
+
+
+    const updatedData = data?.filter((item) => item.value > 1);
+    // console.log("data", data)
 
     return (
         <>
             {data ?
                 <ResponsiveContainer width="100%" height={height}>
-                    {data?.length == 0 ?
+                    {data?.length === 0 ?
                         <div className='d-flex justify-content-center align-items-center' >No Data Avalible</div>
                         :
                         <PieChart>
                             <Pie
-                            
+
                                 data={data && updatedData}
                                 cx="50%"
                                 cy="50%"
                                 labelLine={false}
                                 label={renderCustomizedLabel}
-                                innerRadius={innerRadius ? innerRadius : 40}
+                                innerRadius={innerRadius ? innerRadius : 50}
                                 outerRadius={outerRadius ? outerRadius : 90}
                                 fill="#8884d8"
                                 dataKey="value"
+                                paddingAngle={2}
                             >
                                 {data?.map((entry, index) => (
                                     <Cell
@@ -104,7 +123,8 @@ const CustomPieChart = ({ data, height, outerRadius, innerRadius, color, findDat
                                     />
                                 ))}
                             </Pie>
-                            {data && <Legend iconType="circle" />}
+                            {/* {data && <Legend iconType="circle" />} */}
+                            {data && <Legend iconType="circle" content={renderLegend} />}
                             {customTooltip}
                         </PieChart>
                     }
@@ -113,7 +133,7 @@ const CustomPieChart = ({ data, height, outerRadius, innerRadius, color, findDat
                     <div className=''>Loading....</div>
                 </ResponsiveContainer>
                 // <Skeleton variant="circular" height={height} width={height} sx={{ mx: "auto" }} />
-                }
+            }
         </>
     )
 }

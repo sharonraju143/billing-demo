@@ -39,7 +39,7 @@ export default function AwsTable({ data, months, service, fromDate, toDate }) {
     },
     {
       field: "service",
-      headerName: "ServiceName",
+      headerName: "Service Name",
       width: 400,
     },
     {
@@ -55,23 +55,23 @@ export default function AwsTable({ data, months, service, fromDate, toDate }) {
       <div style={{ flex: 1, height: "100%", width: "100% !important" }}>
         {rows.length > 0 ? (
           <DataGrid
-          rows={rows}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 10 },
-            },
-          }}
-          pageSizeOptions={[10,25,50]}
-          disableSelectionOnClick
-           slots={{ toolbar: GridToolbar }}
-          experimentalFeatures={{ ariaV7: true }}
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 10 },
+              },
+            }}
+            pageSizeOptions={[10, 25, 50]}
+            disableSelectionOnClick
+            slots={{ toolbar: GridToolbar }}
+            experimentalFeatures={{ ariaV7: true }}
           // sx={{
           //   "&.MuiDataGrid-withBorderColor":{
           //     backgroundColor:"gray"
           //   }
           // }}
-        />
+          />
         ) : (
           <div style={{ textAlign: "center", padding: "20px" }}>
             No data available

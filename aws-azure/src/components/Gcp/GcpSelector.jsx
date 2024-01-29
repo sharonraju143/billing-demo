@@ -44,7 +44,9 @@ const GcpSelector = ({ serviceDescription, handleServiceChange }) => {
   };
   const newPropsCss = {
     backgroundColor: "#FFFF",
-    width: "340px",
+    // width: "340px",
+    width: "90%",
+
     textAlign: "center",
     ":hover": {
       backgroundColor: "#FFFF",
@@ -56,30 +58,33 @@ const GcpSelector = ({ serviceDescription, handleServiceChange }) => {
     },
   };
 
-  console.log("servjbsdbdsjbdjbeDescription",serviceDescription)
+  console.log("servjbsdbdsjbdjbeDescription", serviceDescription)
 
 
   return (
     <React.Fragment>
-    <FormControl sx={{ ...newPropsCss }} fullWidth>
-      <Select
-        fullWidth
-        sx={{ ...newPropsCss, height: "2.4em" }}
-        labelId="serviceDescription-label"
-        value={serviceDescription || ""}
-        onChange={handleServiceChange}
-        onFocus={handleFocus}
-      >
-      
-      <MenuItem value={null}>Select service</MenuItem>
-        {serviceOptions.map((option, index) => (
-          <MenuItem key={index} value={option} sx={{ ...newPropsCss }}>
-            {option}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-  </React.Fragment>
+      <FormControl sx={{ ...newPropsCss }} fullWidth>
+        <Select
+          fullWidth
+          sx={{ ...newPropsCss, height: "2.4em" }}
+          labelId="serviceDescription-label"
+          value={serviceDescription || ""}
+          onChange={handleServiceChange}
+          onFocus={handleFocus}
+          displayEmpty
+          inputProps={{ 'aria-label': 'Without label' }}
+          MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
+        >
+
+          <MenuItem value={''}>Select service</MenuItem>
+          {serviceOptions.map((option, index) => (
+            <MenuItem key={index} value={option} sx={{ ...newPropsCss }}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </React.Fragment>
   );
 };
 

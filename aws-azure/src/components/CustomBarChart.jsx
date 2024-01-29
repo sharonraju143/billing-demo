@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Legend, Bar, LabelList, Tooltip } from 'recharts';
 
-import { height, width } from '@mui/system';
+// import { height, width } from '@mui/system';
 
 const CustomBarChart = ({ width, height, data, barLineSize, colors, xfontSize, domain, findData }) => {
-   
+
 
 
 
@@ -20,15 +20,15 @@ const CustomBarChart = ({ width, height, data, barLineSize, colors, xfontSize, d
     };
 
     // const formatPercent = (value) => (dataKeys?.length > 1 ? `${value * 100}%` : ` ${value}`);
-    const customTooltip = (
-        <Tooltip
-            contentStyle={{
-                padding: 4,
-                fontSize: "12px",
-            }}
-            formatter={(value, name) => [value.toLocaleString('en-IN'), name,]}
-        />
-    );
+    // const customTooltip = (
+    //     <Tooltip
+    //         contentStyle={{
+    //             padding: 4,
+    //             fontSize: "12px",
+    //         }}
+    //         formatter={(value, name) => [value.toLocaleString('en-IN'), name,]}
+    //     />
+    // );
 
     const CustomTooltip = ({ active, payload, label }) => {
         if (!active || !payload || !payload.length) {
@@ -74,7 +74,7 @@ const CustomBarChart = ({ width, height, data, barLineSize, colors, xfontSize, d
                                     >
                                         <CartesianGrid horizontal={true} vertical={false} />
                                         <XAxis dataKey="name" axisLine={false} tick={{ fontSize: 11, }} />
-                                        <YAxis axisLine={false} tick={{ fontSize: 11,  }} tickFormatter={formatPercent} />
+                                        <YAxis axisLine={false} tick={{ fontSize: 11, }} tickFormatter={formatPercent} />
                                         <Tooltip content={<CustomTooltip />} />
                                         {dataKeys && dataKeys?.length > 1 && <Legend iconType="circle" formatter={(value) => formatLegend(value)} />}
 
@@ -83,13 +83,14 @@ const CustomBarChart = ({ width, height, data, barLineSize, colors, xfontSize, d
                                                 {/* <LabelList dataKey={dataKey} fill="#ffffff" fontSize={13} /> */}
                                             </Bar>
                                         ))}
+
                                     </BarChart>
                             }
                         </ResponsiveContainer >
                     </>
-                    : <ResponsiveContainer width="100%"  height={height}> <div className=''>loading...</div></ResponsiveContainer>
-                    //  <CardSkeleton height={height} width={width} />
-                     }
+                    : <ResponsiveContainer width="100%" height={height}> <div className=''>No Data available...</div></ResponsiveContainer>
+                //  <CardSkeleton height={height} width={width} />
+            }
         </>
     );
 };

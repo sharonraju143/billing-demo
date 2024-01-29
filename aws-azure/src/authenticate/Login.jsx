@@ -80,10 +80,10 @@ const Login = () => {
       <ThemeProvider theme={theme}>
         <Box
           component="main"
-          className={styles.centeredContainer}
+          className={`${styles.centeredContainer}`}
           sx={{ padding: "2rem" }}
         >
-          <Box component={"div"} className={styles.container}>
+          <Box component={"div"} className= {`${styles.container} shadow`}>
             <Box component={"p"} className={styles.login}>
               Log in
             </Box>
@@ -92,7 +92,7 @@ const Login = () => {
             </Box>
 
             <Box component={"div"} className={styles.space}>
-              <InputLabel>ENTER USERNAME</InputLabel>
+              <InputLabel>Enter Username</InputLabel>
               <InputComponent
                 name="userName"
                 type="string"
@@ -105,7 +105,7 @@ const Login = () => {
             </Box>
 
             <Box component={"div"} className={styles.space}>
-              <InputLabel>PASSWORD</InputLabel>
+              <InputLabel>Password</InputLabel>
               <InputComponent
                 name="password"
                 type={showPassword ? "text" : "password"}
@@ -125,10 +125,10 @@ const Login = () => {
                 alignItems: "center",
               }}
             >
-              <FormControlLabel
+              {/* <FormControlLabel
                 control={<Checkbox />}
                 label="Remember me for 30 days"
-              />
+              /> */}
               <Typography component={"span"} className={styles.accounttxt}>
                 Forgot password?
               </Typography>
@@ -140,7 +140,7 @@ const Login = () => {
 
             <Box component={"p"} className={styles.minchild}>
               Are you new user?
-              <Link to={"/signup"} className={styles.accounttxt}>
+              <Link to={"/signup"} className={styles.accounttxt} >
                 Sign Up
               </Link>
             </Box>
