@@ -160,7 +160,7 @@ public class AzureController {
 	@GetMapping("details")
 	public ResponseEntity<Map<String, Object>> getBillingDetails(
 			@RequestParam(value = "ResourseType"/* , required = false */) String resourceType,
-			@RequestParam /* (required = false) */ String startDate, @RequestParam(required = false) String endDate,
+			@RequestParam /* (required = false) */ String startDate, @RequestParam String endDate,
 			@RequestParam(defaultValue = "0"/* required = false */) Integer months) {
 
 		if (resourceType == null || resourceType.isEmpty() && startDate == null || startDate.isEmpty() && endDate == null || endDate.isEmpty() && months <= 0) {
