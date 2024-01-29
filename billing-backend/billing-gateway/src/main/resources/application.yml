@@ -23,7 +23,28 @@ spring:
            - Path=/azure/**
          filters:
            - AuthenticationFilter
+
+       - id: azure-subscription-two-service
+         uri: lb://AZURE-SERVICE
+         predicates:
+           - Path=/AzureSubscriptionTwo/**
+         filters:
+           - AuthenticationFilter
            
+       - id: azure-subscription-three-service
+         uri: lb://AZURE-SERVICE
+         predicates:
+           - Path=/AzureSubscriptionThree/**
+         filters:
+           - AuthenticationFilter
+
+       - id: azure-subscription-four-service
+         uri: lb://AZURE-SERVICE
+         predicates:
+           - Path=/AzureSubscriptionFour/**
+         filters:
+           - AuthenticationFilter
+       
        - id: aws-service
          uri: lb://AWS-SERVICE
          predicates:
