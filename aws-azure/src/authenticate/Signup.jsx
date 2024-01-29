@@ -65,7 +65,7 @@ const Signup = () => {
 
   return (
     <div>
-            <Box component="main" className={styles.centeredContainersign}>
+      <Box component="main" className={styles.centeredContainersign}>
         <Box component={"div"} className={styles.container}>
           <Box component={"p"} className={styles.login}>
             Sign Up
@@ -75,7 +75,7 @@ const Signup = () => {
           </Box>
 
           <Box component={"div"} className={styles.space}>
-            <InputLabel>ENTER FIRSTNAME</InputLabel>
+            <InputLabel>Enter First Name</InputLabel>
             <InputComponent
               name="firstName"
               type="string"
@@ -88,7 +88,7 @@ const Signup = () => {
           </Box>
 
           <Box component={"div"} className={styles.space}>
-            <InputLabel>ENTER LASTNAME</InputLabel>
+            <InputLabel>Enter Last Name</InputLabel>
             <InputComponent
               name="lastName"
               type="string"
@@ -101,7 +101,7 @@ const Signup = () => {
           </Box>
 
           <Box component={"div"} className={styles.space}>
-            <InputLabel>ENTER USERNAME</InputLabel>
+            <InputLabel>Enter Username</InputLabel>
             <InputComponent
               name="userName"
               type="string"
@@ -114,7 +114,7 @@ const Signup = () => {
           </Box>
 
           <Box component={"div"} className={styles.space}>
-            <InputLabel>ENTER EMAIL</InputLabel>
+            <InputLabel>Enter Email</InputLabel>
             <InputComponent
               name="email"
               type="string"
@@ -127,7 +127,7 @@ const Signup = () => {
           </Box>
 
           <Box component={"div"} className={styles.space}>
-            <InputLabel>PASSWORD</InputLabel>
+            <InputLabel>Password</InputLabel>
             <InputComponent
               name="password"
               type={showPassword ? "text" : "password"}

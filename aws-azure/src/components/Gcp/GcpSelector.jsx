@@ -58,7 +58,7 @@ const GcpSelector = ({ serviceDescription, handleServiceChange }) => {
     },
   };
 
-  console.log("servjbsdbdsjbdjbeDescription", serviceDescription)
+  // console.log("servjbsdbdsjbdjbeDescription", serviceDescription)
 
 
   return (

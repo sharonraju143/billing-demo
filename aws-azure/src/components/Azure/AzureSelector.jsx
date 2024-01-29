@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FormControl, Select, MenuItem } from "@mui/material";
 import axios from "axios";
 
-const AzureSelector = ({ resourseType, handleServiceChange }) => {
+const AzureSelector = ({ resourseType, handleServiceChange, azureSubscriptionValue }) => {
   const [serviceOptions, setServiceOptions] = useState([]);
   const [clicked, setClicked] = useState(false);
 
@@ -18,7 +18,7 @@ const AzureSelector = ({ resourseType, handleServiceChange }) => {
             },
           };
 
-          const response = await axios.get("http://localhost:8080/azure/distinctresourceType", config);
+          const response = await axios.get(`http://localhost:8080/${azureSubscriptionValue}/distinctresourceType`, config);
           setServiceOptions(response.data);
           setClicked(true);
         } else {
