@@ -284,6 +284,11 @@ export default function Sidenav() {
             </ListItemButton>
           </ListItem>
         </List>
+        <Divider />
+
+        <div className="d-flex justify-content-center align-items-center mt-auto mb-4" style={{ width: '100%' }}>
+          <img src='https://motivitylabs.com/wp-content/uploads/elementor/thumbs/logo-q5v9dhv02ypee8mlk6bo0d9kvq2fjsb4hbtj714cj0.png' alt="motivitylabs" style={{ width: '60%', height: 'auto', objectFit: 'cover' }} className={`me-${open ? 5 : 0}`} />
+        </div>
       </Drawer>
     </Box>
   );

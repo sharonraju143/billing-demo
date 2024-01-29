@@ -97,7 +97,7 @@ export const Home = () => {
             <div className="fw-bold h5 mb-2">Billing Summary For This Month</div>
             {(data.awsData && data.azureData && data.gcpData) ? <BarsDataset
               data={data}
-              height={404}
+              height={403}
               barLineSize={60}
             /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '340px' }}>No Data Available</div>}
           </div>
