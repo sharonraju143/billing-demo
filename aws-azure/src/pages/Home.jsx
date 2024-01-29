@@ -99,7 +99,7 @@ export const Home = () => {
               data={data}
               height={403}
               barLineSize={60}
-            /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '340px' }}>No Data Available</div>}
+            /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '403px' }}>No Data Available</div>}
           </div>
         </Grid>
 
@@ -116,7 +116,7 @@ export const Home = () => {
               {data?.awsData?.top5Services && data?.awsData?.top5Services?.length > 0 ? <CustomPieChart
                 data={data?.awsData?.top5Services && topAWSFiveCustomers}
                 height={404}
-              /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '340px' }}>No Data Available</div>}
+              /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '404px' }}>No Data Available</div>}
             </div>
           </div>
 
@@ -134,7 +134,7 @@ export const Home = () => {
               {data?.azureData?.top5Services && data?.azureData?.top5Services?.length > 0 ? <CustomPieChart
                 data={data?.azureData?.top5Services && topAzureFiveCustomers}
                 height={320}
-              /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '260px' }}>No Data Available</div>}
+              /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '320px' }}>No Data Available</div>}
             </div>
           </div>
 
@@ -152,7 +152,7 @@ export const Home = () => {
               {data?.gcpData?.top5Services && data?.gcpData?.top5Services?.length > 0 ? <CustomPieChart
                 data={data?.gcpData?.top5Services && topGCPFiveCustomers}
                 height={320}
-              /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '260px' }}>No Data Available</div>}
+              /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '320px' }}>No Data Available</div>}
             </div>
           </div>
 

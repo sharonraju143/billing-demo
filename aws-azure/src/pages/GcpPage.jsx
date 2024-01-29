@@ -25,14 +25,14 @@ export const GcpPage = () => {
   const [display, setDisplay] = useState(false);
   const [data, setData] = useState([]);
   const [calling, setCalling] = useState(true);
-  console.log("data", data);
+  // console.log("data", data);
 
   useEffect(() => {
     forGcpGet();
   }, [calling]);
 
   const handleMonthChange = (selectedMonth) => {
-    console.log("selectedMonthsss", selectedMonth);
+    // console.log("selectedMonthsss", selectedMonth);
     setMonths(selectedMonth);
     setDisplay(true);
     //setIsDateDisabled(event.target.value !== "0");

@@ -12,13 +12,28 @@ const getAuthHeaders = () => {
 
 export const UserSignUpService = async (data) => {
   try {
-    const response = await axios.post(`${BASE_URL}/auth/registerr`, data);
+    console.log(data, 'register');
+    const response = await axios.post(`${BASE_URL}/auth/register`, data);
     return response.data;
+    //  console.log(data, 'register');
   } catch (error) {
     console.error("User Sign Up Error:", error);
     throw error;
   }
 };
+
+export const UserForgotPasswordService = async (data) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/auth/forgot-password`, data);
+    // return response.data;
+    console.log(data, 'Forgot Password', response);
+  } catch (error) {
+    console.error("Forgot Password Error:", error);
+    throw error;
+  }
+};
+
+
 
 export const UserLoginService = async (data) => {
   try {
@@ -84,9 +99,9 @@ export const gcpService = async (serviceDescription, startDate, endDate, months)
 };
 
 
-export const azureService = async (ResourseType, startDate, endDate, months) => {
+export const azureService = async (ResourseType, startDate, endDate, months, azureSubscriptionValue = 'azure') => {
   try {
-    const endpoint = '/azure/details';
+    const endpoint = `/${azureSubscriptionValue}/details`;
     const queryParams = new URLSearchParams();
 
     queryParams.append('ResourseType', ResourseType || '');

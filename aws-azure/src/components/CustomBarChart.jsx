@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Legend, Bar, LabelList, Tooltip } from 'recharts';
+import React from 'react';
+import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Legend, Bar, Tooltip } from 'recharts';
 
 // import { height, width } from '@mui/system';
 
@@ -31,6 +31,7 @@ const CustomBarChart = ({ width, height, data, barLineSize, colors, xfontSize, d
     // );
 
     const CustomTooltip = ({ active, payload, label }) => {
+        console.log("active, payload, label", payload)
         if (!active || !payload || !payload.length) {
             return null;
         }
@@ -59,7 +60,7 @@ const CustomBarChart = ({ width, height, data, barLineSize, colors, xfontSize, d
                     <>
                         <ResponsiveContainer width="100%" height={height}>
                             {
-                                findData == true ? <div className='d-flex justify-content-center align-items-center'>No Data available </div> :
+                                findData === true ? <div className='d-flex justify-content-center align-items-center'>No Data available </div> :
                                     <BarChart
                                         width={width}
                                         height={height}

@@ -8,7 +8,7 @@ import { Cell, Legend, Pie, Tooltip, PieChart, ResponsiveContainer } from 'recha
 const CustomPieChart = ({ data, height, outerRadius, innerRadius, color, findData, total }) => {
     const COLORS = ['#048DAD', '#10B981', '#FEA37C', '#FE6476', 'rgb(72 192 194)', '#8dc2f7', 'rgb(128, 128, 128)'];
     // console.log("CustomPieChartdata", data)
-    const RADIAN = Math.PI / 180;
+    // const RADIAN = Math.PI / 180;
     // const { currentColor } = useColor();
     const totalNum = data && data?.reduce((acc, entry) => acc + entry.value, 0);
 
@@ -32,8 +32,8 @@ const CustomPieChart = ({ data, height, outerRadius, innerRadius, color, findDat
     // };
 
     const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
-        const RADIAN = Math.PI / 180;
-        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+        // const RADIAN = Math.PI / 180;
+        // const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
 
         // Calculate the position outside the pie chart
         // const x = cx + (radius + 40) * Math.cos(-midAngle * RADIAN);
@@ -78,7 +78,7 @@ const CustomPieChart = ({ data, height, outerRadius, innerRadius, color, findDat
 
     const renderLegend = (props) => {
         const { payload } = props;
-        console.log("payload", payload)
+        // console.log("payload", payload)
         return (
             <ul className='ps-1 m-0 pt-1 d-flex flex-column align-items-center' style={{ width: '100%' }}>
                 {

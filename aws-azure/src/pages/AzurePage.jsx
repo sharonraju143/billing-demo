@@ -24,10 +24,11 @@ export const AzurePage = () => {
   const [display, setDisplay] = useState(false);
   const [data, setData] = useState([]);
   const [calling, setCalling] = useState(true);
-  console.log("dateRange", dateRange);
+  const [azureSubscriptionValue, setAzureSubscriptionValue] = useState('azure');
+  // console.log("dateRange", dateRange);
   useEffect(() => {
     forAzureGet();
-  }, [calling]);
+  }, [calling, azureSubscriptionValue]);
 
   const handleMonthChange = (selectedMonth) => {
     console.log("selectedMjjhhdshfkhonth", selectedMonth);
@@ -40,13 +41,13 @@ export const AzurePage = () => {
     setResourseType(event.target.value);
     setCalling(!calling);
   };
-
+  console.log("azureSubscriptionValue", azureSubscriptionValue)
   // const toggleSidenav = () => {
   //   setSidenavOpen(!sidenavOpen);
   // };
 
   const forAzureGet = async () => {
-    azureService(ResourseType, dateRange?.startDate, dateRange?.endDate, months)
+    azureService(ResourseType, dateRange?.startDate, dateRange?.endDate, months, azureSubscriptionValue)
       .then((res) => {
         console.log(res);
         setData(res);
@@ -96,6 +97,11 @@ export const AzurePage = () => {
 
     };
   });
+
+  const handleSubscriptionChange = (event) => {
+    setAzureSubscriptionValue(event.target.value);
+    // setCalling(!calling);
+  }
 
   return (
     <>
@@ -157,12 +163,16 @@ export const AzurePage = () => {
         setDateRange={setDateRange}
         setCalling={setCalling}
         calling={calling}
+        azureSubscriptions={true}
+        azureSubscriptionValue={azureSubscriptionValue}
+        handleSubscriptionChange={handleSubscriptionChange}
       >
         <div style={{ width: '100%' }}>
           <p className="p-0 m-0">Resource</p>
           <AzureSelector
             ResourseType={ResourseType}
             handleServiceChange={handleServiceChange}
+            azureSubscriptionValue={azureSubscriptionValue}
           />
         </div>
       </BillingInformationCard>
