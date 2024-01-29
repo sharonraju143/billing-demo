@@ -83,7 +83,7 @@ const CustomPieChart = ({ data, height, outerRadius, innerRadius, color, findDat
             <ul className='ps-1 m-0 pt-1 d-flex flex-column align-items-center' style={{ width: '100%' }}>
                 {
                     payload.map((entry, index) => (
-                        <li key={`item-${index}`} style={{ fontSize: '14px', color: entry.color, width: '100%', listStyleType: 'none' }} className='d-flex align-items-center justify-content-center'><span className='recharts-legend-item-title' title={entry?.payload?.name}>{entry?.payload?.name}</span><span className='fw-bold ms-1'>{` = ${entry?.payload?.costType === 'INR' ? '₹' : '$'}${entry?.payload?.value}`}</span></li>
+                        <li key={`item-${index}`} style={{ fontSize: '14px', color: entry.color, width: '100%', listStyleType: 'none' }} className='d-flex align-items-center justify-content-between'><span className='recharts-legend-item-title' title={entry?.payload?.name}>{entry?.payload?.name}</span><span className='fw-bold ms-1'>{` = ${entry?.payload?.costType === 'INR' ? '₹' : '$'}${entry?.payload?.value}`}</span></li>
                     ))
                 }
             </ul>
