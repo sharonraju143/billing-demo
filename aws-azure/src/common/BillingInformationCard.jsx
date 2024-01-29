@@ -12,17 +12,17 @@ const azureSubscriptionTypes = [
     {
         id: 2,
         name: "Azure Subscription 2",
-        value: "azure-subscription-two",
+        value: "AzureSubscriptionTwo",
     },
     {
         id: 3,
         name: "Azure Subscription 3",
-        value: "azure-subscription-three",
+        value: "AzureSubscriptionThree",
     },
     {
         id: 4,
         name: "Azure Subscription 4",
-        value: "azure-subscription-four",
+        value: "AzureSubscriptionFour",
     }
 ]
 

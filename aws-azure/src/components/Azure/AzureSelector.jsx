@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FormControl, Select, MenuItem } from "@mui/material";
 import axios from "axios";
 
-const AzureSelector = ({ resourseType, handleServiceChange, azureSubscriptionValue }) => {
+const AzureSelector = ({ ResourseType, handleServiceChange, azureSubscriptionValue }) => {
   const [serviceOptions, setServiceOptions] = useState([]);
   const [clicked, setClicked] = useState(false);
 
@@ -30,7 +30,7 @@ const AzureSelector = ({ resourseType, handleServiceChange, azureSubscriptionVal
     };
 
     fetchServiceOptions();
-  }, [clicked]);
+  }, [clicked, azureSubscriptionValue]);
 
   const handleFocus = () => {
     if (!clicked) {
@@ -60,7 +60,7 @@ const AzureSelector = ({ resourseType, handleServiceChange, azureSubscriptionVal
         fullWidth
         sx={{ ...newPropsCss, height: "2.4em" }}
         labelId="service-label"
-        value={resourseType || ""}
+        value={ResourseType || ""}
         onChange={handleServiceChange}
         onFocus={handleFocus}
         displayEmpty
