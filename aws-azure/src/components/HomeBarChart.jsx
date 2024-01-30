@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Grid } from '@mui/material';
 import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-export default function BarsDataset({ data, height, width, barLineSize }) {
+export default function BarsDataset({ data, height, width, barLineSize, costType }) {
   if (!data) return null;
 
   const extractData = (data, key) => {
@@ -21,6 +21,29 @@ export default function BarsDataset({ data, height, width, barLineSize }) {
       name: extractData1(data.awsData, Object.keys(data.awsData.monthlyTotalAmounts[0])[0]),
     },
   ];
+
+
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    console.log("active, payload, label", payload, label)
+    if (!active || !payload || !payload.length) {
+      return null;
+    }
+    if (active) {
+      return (
+        <div className="custom-tooltip" style={{ backgroundColor: "white", fontSize: "12px", padding: "10px", borderRadius: '6px' }}>
+          <div className='fw-semibold text-center mb-2'>{`${label ? label : ""}`}</div>
+          {payload.map(entry => (
+            <div key={entry?.name} style={{ color: entry?.color, }}>
+              {`${(entry?.name)}: ${entry?.name === 'Azure' ? '₹' : "$"}${entry?.value.toLocaleString('en-IN')}`}
+            </div>
+          ))}
+
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <>
@@ -44,7 +67,8 @@ export default function BarsDataset({ data, height, width, barLineSize }) {
           <YAxis axisLine={false}
             //  axisLine={{ stroke: 'black' }}
             tick={{ fontSize: 11 }} />
-          <Tooltip />
+          {/* <Tooltip /> */}
+          <Tooltip content={<CustomTooltip />} />
           <Legend />
           <Bar dataKey="AWS" fill="#10B981" barSize={barLineSize}
           // activeBar={<Rectangle fill="pink" stroke="blue" />} 

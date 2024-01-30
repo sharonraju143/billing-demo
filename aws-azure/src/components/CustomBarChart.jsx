@@ -3,7 +3,7 @@ import { ResponsiveContainer, BarChart, CartesianGrid, XAxis, YAxis, Legend, Bar
 
 // import { height, width } from '@mui/system';
 
-const CustomBarChart = ({ width, height, data, barLineSize, colors, xfontSize, domain, findData }) => {
+const CustomBarChart = ({ width, height, data, barLineSize, colors, xfontSize, domain, findData, costType }) => {
 
 
 
@@ -38,11 +38,11 @@ const CustomBarChart = ({ width, height, data, barLineSize, colors, xfontSize, d
         if (active) {
             const totalValue = payload?.reduce((sum, entry) => sum + entry?.value, 0);
             return (
-                <div className="custom-tooltip" style={{ backgroundColor: "white", fontSize: "12px", padding: "4px" }}>
+                <div className="custom-tooltip" style={{ backgroundColor: "white", fontSize: "12px", padding: "8px", borderRadius: '6px' }}>
                     <div>{`${label ? label : ""}`}</div>
                     {payload.map(entry => (
                         <div key={entry?.name} style={{ color: entry?.color, }}>
-                            {`${formatLegend(entry.name)}: ${entry.value.toLocaleString('en-IN')}`}
+                            {`${formatLegend(entry.name)}: ${costType === 'INR' ? '₹' : "$"}${entry.value.toLocaleString('en-IN')}`}
                         </div>
                     ))}
                     {dataKeys?.length > 1 && <div>Total: {totalValue?.toLocaleString('en-IN')}</div>}
