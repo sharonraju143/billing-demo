@@ -20,6 +20,7 @@ const BillingDetailsChartsAndTable = (props) => {
                         {data?.monthlyTotalAmounts && data?.monthlyTotalAmounts?.length > 0 ? <CustomBarChart
                             data={data?.monthlyTotalAmounts && monthdata}
                             height={404}
+                            costType={costType}
                             barLineSize={60}
                             colors={["#10B981", "#FE6476", "#FEA37C", "#048DAD"]}
                         /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '340px' }}>No Data Available</div>}
