@@ -14,8 +14,10 @@ public interface AwsRepository extends MongoRepository<Aws,String> {
     // get the data by using months
     List<Aws> findByStartDateBetween(Object startDate, Object currentDate);
 
-    List<Aws> findByServiceAndStartDateGreaterThanEqualAndEndDateLessThanEqual(String startDate,
-                                                                               String endDate, String date);
+    List<Aws> findByServiceAndStartDateGreaterThanEqualAndEndDateLessThanEqual(String startDate, String endDate, String date);
+
+//    @Query("{'startDate': {'$gte': ?0, '$lte': ?1}, 'endDate': {'$gte': ?0, '$lte': ?1}}")
+//    List<Aws> findByServiceAndStartDateBetween(String startDate, String endDate, String date);
 
     // List<String> findByService();
 

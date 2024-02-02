@@ -38,7 +38,7 @@ public class AwsServiceImpl implements AwsService {
 
     @Override
     public List<Aws> getAllDataByDateRange(String startDate, String endDate) {
-        return awsRepository.findByServiceAndStartDateGreaterThanEqualAndEndDateLessThanEqual(startDate,endDate, endDate);
+        return awsRepository.findByStartDateBetween(startDate, endDate);
 
     }
 
@@ -120,7 +120,12 @@ public class AwsServiceImpl implements AwsService {
 
     @Override
     public List<Aws> getBillingDetailsForDuration(String service, int months) {
-        return awsRepository.findByServiceAndStartDateGreaterThanEqual(service, months);
+//        return awsRepository.findByServiceAndStartDateGreaterThanEqual(service, months);
+        LocalDate currentDate = LocalDate.now();
+        LocalDate startDate = currentDate.minusMonths(months);
+        String startDateString = startDate.toString();
+        String endDateString = currentDate.toString();
+        return awsRepository.findByServiceAndStartDateGreaterThanEqualAndEndDateLessThanEqual(service,startDateString,endDateString);
     }
 
     @Override
