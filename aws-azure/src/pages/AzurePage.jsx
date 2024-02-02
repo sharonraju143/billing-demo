@@ -24,11 +24,11 @@ export const AzurePage = () => {
   const [display, setDisplay] = useState(false);
   const [data, setData] = useState([]);
   const [calling, setCalling] = useState(true);
-  const [azureSubscriptionValue, setAzureSubscriptionValue] = useState('azure');
+  const [azureSubscriptionValue, setAzureSubscriptionValue] = useState('');
   // console.log("dateRange", dateRange);
   useEffect(() => {
     forAzureGet();
-  }, [calling, azureSubscriptionValue]);
+  }, [calling]);
 
   const handleMonthChange = (selectedMonth) => {
     console.log("selectedMjjhhdshfkhonth", selectedMonth);
@@ -100,7 +100,8 @@ export const AzurePage = () => {
 
   const handleSubscriptionChange = (event) => {
     setAzureSubscriptionValue(event.target.value);
-    // setCalling(!calling);
+    setResourseType('');
+    setCalling(!calling);
   }
 
   return (
@@ -166,6 +167,7 @@ export const AzurePage = () => {
         azureSubscriptions={true}
         azureSubscriptionValue={azureSubscriptionValue}
         handleSubscriptionChange={handleSubscriptionChange}
+        setAzureSubscriptionValue={setAzureSubscriptionValue}
       >
         <div style={{ width: '100%' }}>
           <p className="p-0 m-0">Resource</p>

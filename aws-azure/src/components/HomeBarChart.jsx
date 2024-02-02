@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Grid } from '@mui/material';
-import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+// import { Grid } from '@mui/material';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function BarsDataset({ data, height, width, barLineSize, costType }) {
   if (!data) return null;
@@ -15,17 +15,17 @@ export default function BarsDataset({ data, height, width, barLineSize, costType
 
   const dataset = [
     {
-      AWS: extractData(data.awsData, Object.keys(data.awsData.monthlyTotalAmounts[0])[0]),
-      Azure: extractData(data.azureData, Object.keys(data.azureData.monthlyTotalAmounts[0])[0]),
-      GCP: extractData(data.gcpData, Object.keys(data.gcpData.monthlyTotalAmounts[0])[0]),
-      name: extractData1(data.awsData, Object.keys(data.awsData.monthlyTotalAmounts[0])[0]),
+      AWS: (data?.awsData && data?.awsData?.monthlyTotalAmounts?.length > 0) ? extractData(data.awsData, Object.keys(data.awsData.monthlyTotalAmounts[0])[0]) : '',
+      Azure: (data?.azureData && data?.azureData?.monthlyTotalAmounts?.length > 0) ? extractData(data.azureData, Object.keys(data.azureData.monthlyTotalAmounts[0])[0]) : '',
+      GCP: (data?.gcpData && data?.gcpData?.monthlyTotalAmounts?.length > 0) ? extractData(data.gcpData, Object.keys(data.gcpData.monthlyTotalAmounts[0])[0]) : '',
+      name: (data?.awsData && data?.awsData?.monthlyTotalAmounts?.length > 0) ? extractData1(data.awsData, Object.keys(data.awsData.monthlyTotalAmounts[0])[0]) : '',
     },
   ];
 
 
 
   const CustomTooltip = ({ active, payload, label }) => {
-    console.log("active, payload, label", payload, label)
+    // console.log("active, payload, label", payload, label)
     if (!active || !payload || !payload.length) {
       return null;
     }
