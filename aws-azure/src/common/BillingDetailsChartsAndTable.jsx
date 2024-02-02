@@ -23,7 +23,7 @@ const BillingDetailsChartsAndTable = (props) => {
                             costType={costType}
                             barLineSize={60}
                             colors={["#10B981", "#FE6476", "#FEA37C", "#048DAD"]}
-                        /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '340px' }}>No Data Available</div>}
+                        /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '404px' }}>No Data Available</div>}
                     </div>
                 </Grid>
 
@@ -58,7 +58,7 @@ const BillingDetailsChartsAndTable = (props) => {
                                     {data?.totalAmount && data?.totalAmount?.toFixed(2)}
                                 </span>
                             </span>
-                        </div> : <div className="h6 d-flex flex-column align-items-center justify-content-center p-3" >No Data Available</div>}
+                        </div> : <div className="h6 d-flex flex-column align-items-center justify-content-center" >No Data Available</div>}
                     </div>
 
                     <div className="card p-3 mt-2">
@@ -67,7 +67,7 @@ const BillingDetailsChartsAndTable = (props) => {
                             {data?.top5Services && data?.top5Services?.length > 0 ? <CustomPieChart
                                 data={data?.top5Services && topFiveCustomers}
                                 height={300}
-                            /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '200px' }}>No Data Available</div>}
+                            /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '300px' }}>No Data Available</div>}
                         </div>
                     </div>
                 </Grid>

@@ -11,15 +11,15 @@ const AzureSelector = ({ ResourseType, handleServiceChange, azureSubscriptionVal
       try {
         const token = localStorage.getItem("token");
 
-        if (token && !clicked) {
+        if (token) {
           const config = {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           };
 
-          const response = await axios.get(`http://localhost:8080/${azureSubscriptionValue}/distinctresourceType`, config);
-          setServiceOptions(response.data);
+          const response = await axios.get(`http://localhost:8080/azure/resourcetype/subscription?subscriptionName=${azureSubscriptionValue}`, config);
+          setServiceOptions(response?.data);
           setClicked(true);
         } else {
           console.error("Token not found in localStorage or options already fetched");

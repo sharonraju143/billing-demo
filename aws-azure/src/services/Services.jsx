@@ -99,12 +99,13 @@ export const gcpService = async (serviceDescription, startDate, endDate, months)
 };
 
 
-export const azureService = async (ResourseType, startDate, endDate, months, azureSubscriptionValue = 'azure') => {
+export const azureService = async (ResourseType, startDate, endDate, months, azureSubscriptionValue = '') => {
   try {
-    const endpoint = `/${azureSubscriptionValue}/details`;
+    const endpoint = `/azure/details`;
     const queryParams = new URLSearchParams();
 
     queryParams.append('ResourseType', ResourseType || '');
+    queryParams.append('subscriptionName', azureSubscriptionValue || '');
     queryParams.append('startDate', startDate || '');
     queryParams.append('endDate', endDate || '');
     queryParams.append('months', months || '');

@@ -31,7 +31,7 @@ const CustomBarChart = ({ width, height, data, barLineSize, colors, xfontSize, d
     // );
 
     const CustomTooltip = ({ active, payload, label }) => {
-        console.log("active, payload, label", payload)
+        // console.log("active, payload, label", payload)
         if (!active || !payload || !payload.length) {
             return null;
         }

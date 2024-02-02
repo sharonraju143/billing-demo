@@ -95,7 +95,7 @@ export const Home = () => {
 
           <div className="card p-3">
             <div className="fw-bold h5 mb-2">Billing Summary For This Month</div>
-            {(data.awsData && data.azureData && data.gcpData) ? <BarsDataset
+            {(data?.awsData?.monthlyTotalAmounts?.length > 0 || data?.azureData?.monthlyTotalAmounts?.length > 0 || data?.gcpData?.monthlyTotalAmounts?.length > 0) ? <BarsDataset
               data={data}
               height={403}
               barLineSize={60}
@@ -115,8 +115,8 @@ export const Home = () => {
               <div className="h5 fw-bold" style={{ fontSize: '17px' }}>Top 5 AWS Consumers</div>
               {data?.awsData?.top5Services && data?.awsData?.top5Services?.length > 0 ? <CustomPieChart
                 data={data?.awsData?.top5Services && topAWSFiveCustomers}
-                height={404}
-              /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '404px' }}>No Data Available</div>}
+                height={403}
+              /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '403px' }}>No Data Available</div>}
             </div>
           </div>
 
@@ -134,7 +134,7 @@ export const Home = () => {
               {data?.azureData?.top5Services && data?.azureData?.top5Services?.length > 0 ? <CustomPieChart
                 data={data?.azureData?.top5Services && topAzureFiveCustomers}
                 height={320}
-              /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '320px' }}>No Data Available</div>}
+              /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '312px' }}>No Data Available</div>}
             </div>
           </div>
 
@@ -152,7 +152,7 @@ export const Home = () => {
               {data?.gcpData?.top5Services && data?.gcpData?.top5Services?.length > 0 ? <CustomPieChart
                 data={data?.gcpData?.top5Services && topGCPFiveCustomers}
                 height={320}
-              /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '320px' }}>No Data Available</div>}
+              /> : <div className="h6 d-flex flex-column align-items-center justify-content-center" style={{ height: '312px' }}>No Data Available</div>}
             </div>
           </div>
 
