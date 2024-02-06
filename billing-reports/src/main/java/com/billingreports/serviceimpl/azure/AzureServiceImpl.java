@@ -69,24 +69,35 @@ public class AzureServiceImpl implements AzureService {
 
     @Override
     public List<Azure> getAllDataBydateRange(String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
+//        LocalDate start = LocalDate.parse(startDate);
+//        LocalDate end = LocalDate.parse(endDate);
+//
+//        String strStrartDate = start.toString();
+//        String strEndDate = end.toString();
 
-        return azureRepository.findByusageDateBetween(start, end);
+        return azureRepository.findByusageDateBetween(startDate, endDate);
     }
 
     @Override
     public List<Azure> getAllDataByMonths(int months) {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
-        return azureRepository.findByusageDateBetween(startDate, endDate);
+
+        String strStartDate = startDate.toString();
+        String strEndDate = endDate.toString();
+
+        return azureRepository.findByusageDateBetween(strStartDate, strEndDate);
     }
 
     @Override
     public List<Azure> getDataByResourseTypeAndDateRange(String resourseType, String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
-        return azureRepository.findByResourceTypeAndUsageDateBetween(resourseType, start, end);
+//        LocalDate start = LocalDate.parse(startDate);
+//        LocalDate end = LocalDate.parse(endDate);
+
+//        String strStartDate = start.toString();
+//        String strEndDate = end.toString();
+
+        return azureRepository.findByResourceTypeAndUsageDateBetween(resourseType, startDate, endDate);
     }
 
     @Override
@@ -94,13 +105,19 @@ public class AzureServiceImpl implements AzureService {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
 
-        return azureRepository.findByResourceTypeAndUsageDateBetween(resourseType, startDate, endDate);
+        String strStartDate = startDate.toString();
+        String strEndDate = endDate.toString();
+
+        return azureRepository.findByResourceTypeAndUsageDateBetween(resourseType, strStartDate, strEndDate);
     }
     @Override
     public List<Azure> getDataByResourseTypeAndSubscriptionNameAndDateRange(String resourseType, String subscriptionName, String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
-        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateBetween(resourseType, subscriptionName, start, end);
+//        LocalDate start = LocalDate.parse(startDate);
+//        LocalDate end = LocalDate.parse(endDate);
+//
+//        String strStartDate = start.toString();
+//        String strEndDate = end.toString();
+        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateBetween(resourseType, subscriptionName, startDate, endDate);
     }
 
     @Override
@@ -108,7 +125,10 @@ public class AzureServiceImpl implements AzureService {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
 
-        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateBetween(resourseType, subscriptionName, startDate, endDate);
+        String strStartDate = startDate.toString();
+        String strEndDate = endDate.toString();
+
+        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateBetween(resourseType, subscriptionName, strStartDate, strEndDate);
     }
 
     @Override
@@ -116,14 +136,17 @@ public class AzureServiceImpl implements AzureService {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
 
-        return azureRepository.findBySubscriptionNameAndUsageDateBetween(subscriptionName, startDate, endDate);
+        String strStartDate = startDate.toString();
+        String strEndDate = endDate.toString();
+
+        return azureRepository.findBySubscriptionNameAndUsageDateBetween(subscriptionName, strStartDate, strEndDate);
     }
 
     @Override
     public List<Azure> getDataBySubscriptionNameAndRange(String subscriptionName, String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
-        return azureRepository.findBySubscriptionNameAndUsageDateBetween(subscriptionName, start, end);
+//        LocalDate start = LocalDate.parse(startDate);
+//        LocalDate end = LocalDate.parse(endDate);
+        return azureRepository.findBySubscriptionNameAndUsageDateBetween(subscriptionName, startDate, endDate);
     }
 
     @Override
@@ -174,11 +197,18 @@ public class AzureServiceImpl implements AzureService {
         );
 
         for (Azure azure: billingDetails) {
-            Date usageDate = azure.getUsageDate();
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(usageDate);
-            int year = calendar.get(Calendar.YEAR);
-            int monthNumber = calendar.get(Calendar.MONTH) + 1; // Adding 1 to match the map keys
+//            String usageDate = azure.getUsageDate();
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.setTime(usageDate);
+//            int year = calendar.get(Calendar.YEAR);
+//            int monthNumber = calendar.get(Calendar.MONTH) + 1; // Adding 1 to match the map keys
+//            String monthName = monthNames.get(monthNumber);
+            String usageDate = azure.getUsageDate(); // Assuming this gives a date string in format "yyyy-MM-dd"
+
+            // Parse the usage date to extract year and month
+            String[] dateParts = usageDate.split("-");
+            int year = Integer.parseInt(dateParts[0]);
+            int monthNumber = Integer.parseInt(dateParts[1]);
             String monthName = monthNames.get(monthNumber);
 
             double cost = azure.getCost();

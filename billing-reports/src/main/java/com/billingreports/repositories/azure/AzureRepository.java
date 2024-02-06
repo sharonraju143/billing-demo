@@ -6,13 +6,12 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @EnableMongoRepositories
 public interface AzureRepository extends MongoRepository<Azure,String> {
     // getting the data months and dates
-    List<Azure> findByusageDateBetween(LocalDate startDate, LocalDate endDate);
+    List<Azure> findByusageDateBetween(String startDate, String endDate);
 
     @Query(value = "{'ResourceType' : {$exists : true}}", fields = "{'ResourceType' : 1, '_id':0}")
     List<String> findDistinctResourceTypeBy();
@@ -21,11 +20,11 @@ public interface AzureRepository extends MongoRepository<Azure,String> {
     List<String> findDistinctResourceTypeBySubscriptionName(String subscriptionName);
 
     // to get the data based on the serviceDesp and date range
-    List<Azure> findByResourceTypeAndUsageDateBetween(String resourseType, LocalDate startDate, LocalDate endDate);
+    List<Azure> findByResourceTypeAndUsageDateBetween(String resourseType, String startDate, String endDate);
 
-    List<Azure> findBySubscriptionNameAndUsageDateBetween(String subscriptionName, LocalDate startDate, LocalDate endDate);
-    List<Azure> findByResourceTypeAndSubscriptionNameAndUsageDateBetween(String resourceType, String subscriptionName, LocalDate startDate, LocalDate endDate);
+    List<Azure> findBySubscriptionNameAndUsageDateBetween(String subscriptionName, String startDate, String endDate);
+    List<Azure> findByResourceTypeAndSubscriptionNameAndUsageDateBetween(String resourceType, String subscriptionName, String startDate, String endDate);
 
     // to get the data based on the serviceDesc and months
-    List<Azure> findByResourceTypeAndUsageDateGreaterThan(String resourseType, LocalDate startDate);
+    List<Azure> findByResourceTypeAndUsageDateGreaterThan(String resourseType, String startDate);
 }

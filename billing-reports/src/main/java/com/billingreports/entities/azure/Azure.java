@@ -23,18 +23,18 @@ public class Azure {
     @Field("ResourceType")
     private String resourceType;
 
-    @Field("CostUSD")
-    private double costUSD;
+//    @Field("CostUSD")
+//    private double costUSD;
 
     @Field("Cost")
     @JsonSerialize(using = CustomDoubleSerializer.class)
     private double cost;
 
-    @Field("Currency")
-    private String currency;
+//    @Field("Currency")
+//    private String currency;
 
     @Field("UsageDate")
-    private Date usageDate;
+    private String usageDate;
 
     @Field("SubscriptionID")
     private String subscriptionId;

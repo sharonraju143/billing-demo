@@ -51,17 +51,17 @@ export default function AzureTable({ data, months, ResourceType, fromDate, toDat
       minWidth: 250,
       flex: 1
     },
-    {
-      field: "CostUSD",
-      headerName: "Cost In USD",
-      // width: 160,
-      minWidth: 150,
-      valueGetter: (params) => {
-        const costUSD = Number(params.row.CostUSD);
-        return costUSD.toFixed(4); // This will format the cost to four decimal places
-      },
-      flex: 1
-    },
+    // {
+    //   field: "CostUSD",
+    //   headerName: "Cost In USD",
+    //   // width: 160,
+    //   minWidth: 150,
+    //   valueGetter: (params) => {
+    //     const costUSD = Number(params.row.CostUSD);
+    //     return costUSD.toFixed(4); // This will format the cost to four decimal places
+    //   },
+    //   flex: 1
+    // },
     {
       field: "Cost",
       headerName: "Cost In INR",
