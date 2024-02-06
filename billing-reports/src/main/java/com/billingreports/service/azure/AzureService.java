@@ -47,9 +47,9 @@ public interface AzureService {
 
     public List<Map<String, Object>> generateBillingPeriod(String startDate, String endDate, Integer months);
 
-    public List<Azure> getBillingDetailsUsingRangeAndDate(String startDate, String endDate, Integer months);
+//    public List<Azure> getBillingDetailsUsingRangeAndDate(String startDate, String endDate, Integer months);
 
-    public List<AzureAggregateResult> getServiceTopFiveTotalCosts(String startDate, String endDate, Integer months);
+    public List<AzureAggregateResult> getServiceTopFiveTotalCosts(List<Azure> billingDetails);
 
     public List<String> getDistinctResourceTypeBySubscriptionName(String subscriptionName);
 

@@ -101,7 +101,7 @@ public class AzureController {
             Double totalAmount = billingDetails.stream().mapToDouble(Azure::getCost).sum();
             List<Map<String, Object>> billingPeriod = azureService.generateBillingPeriod(startDate, endDate, months);
 
-            List<AzureAggregateResult> aggregateResults = azureService.getServiceTopFiveTotalCosts(startDate, endDate, months);
+            List<AzureAggregateResult> aggregateResults = azureService.getServiceTopFiveTotalCosts(billingDetails);
             // Create a response map
             Map<String, Object> response = new LinkedHashMap<>();
             response.put("billingDetails", billingDetails);

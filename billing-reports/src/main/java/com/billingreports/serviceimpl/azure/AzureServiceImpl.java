@@ -69,19 +69,25 @@ public class AzureServiceImpl implements AzureService {
 
     @Override
     public List<Azure> getAllDataBydateRange(String startDate, String endDate) {
-//        LocalDate start = LocalDate.parse(startDate);
-//        LocalDate end = LocalDate.parse(endDate);
-//
-//        String strStrartDate = start.toString();
-//        String strEndDate = end.toString();
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
 
-        return azureRepository.findByusageDateBetween(startDate, endDate);
+        end = end.plusDays(1);
+        start = start.minusDays(1);
+
+        String strStartDate = start.toString();
+        String strEndDate = end.toString();
+
+        return azureRepository.findByusageDateBetween(strStartDate, strEndDate);
     }
 
     @Override
     public List<Azure> getAllDataByMonths(int months) {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
+
+        endDate = endDate.plusDays(1);
+        startDate = startDate.minusDays(1);
 
         String strStartDate = startDate.toString();
         String strEndDate = endDate.toString();
@@ -91,19 +97,25 @@ public class AzureServiceImpl implements AzureService {
 
     @Override
     public List<Azure> getDataByResourseTypeAndDateRange(String resourseType, String startDate, String endDate) {
-//        LocalDate start = LocalDate.parse(startDate);
-//        LocalDate end = LocalDate.parse(endDate);
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
 
-//        String strStartDate = start.toString();
-//        String strEndDate = end.toString();
+        end = end.plusDays(1);
+        start = start.minusDays(1);
 
-        return azureRepository.findByResourceTypeAndUsageDateBetween(resourseType, startDate, endDate);
+        String strStartDate = start.toString();
+        String strEndDate = end.toString();
+
+        return azureRepository.findByResourceTypeAndUsageDateBetween(resourseType, strStartDate, strEndDate);
     }
 
     @Override
     public List<Azure> getDataByResourseTypeAndMonths(String resourseType, int months) {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
+
+        endDate = endDate.plusDays(1);
+        startDate = startDate.minusDays(1);
 
         String strStartDate = startDate.toString();
         String strEndDate = endDate.toString();
@@ -112,18 +124,24 @@ public class AzureServiceImpl implements AzureService {
     }
     @Override
     public List<Azure> getDataByResourseTypeAndSubscriptionNameAndDateRange(String resourseType, String subscriptionName, String startDate, String endDate) {
-//        LocalDate start = LocalDate.parse(startDate);
-//        LocalDate end = LocalDate.parse(endDate);
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
 //
-//        String strStartDate = start.toString();
-//        String strEndDate = end.toString();
-        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateBetween(resourseType, subscriptionName, startDate, endDate);
+        end = end.plusDays(1);
+        start = start.minusDays(1);
+
+        String strStartDate = start.toString();
+        String strEndDate = end.toString();
+        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateBetween(resourseType, subscriptionName, strStartDate, strEndDate);
     }
 
     @Override
     public List<Azure> getDataByResourseTypeAndSubscriptionNameAndDuration(String resourseType, String subscriptionName, Integer months) {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
+
+        endDate = endDate.plusDays(1);
+        startDate = startDate.minusDays(1);
 
         String strStartDate = startDate.toString();
         String strEndDate = endDate.toString();
@@ -136,6 +154,9 @@ public class AzureServiceImpl implements AzureService {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
 
+        endDate = endDate.plusDays(1);
+        startDate = startDate.minusDays(1);
+
         String strStartDate = startDate.toString();
         String strEndDate = endDate.toString();
 
@@ -144,9 +165,16 @@ public class AzureServiceImpl implements AzureService {
 
     @Override
     public List<Azure> getDataBySubscriptionNameAndRange(String subscriptionName, String startDate, String endDate) {
-//        LocalDate start = LocalDate.parse(startDate);
-//        LocalDate end = LocalDate.parse(endDate);
-        return azureRepository.findBySubscriptionNameAndUsageDateBetween(subscriptionName, startDate, endDate);
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+
+        start = start.minusDays(1);
+        end = end.plusDays(1);
+
+        String strStartDate = start.toString();
+        String strEndDate = end.toString();
+
+        return azureRepository.findBySubscriptionNameAndUsageDateBetween(subscriptionName, strStartDate, strEndDate);
     }
 
     @Override
@@ -287,34 +315,34 @@ public class AzureServiceImpl implements AzureService {
 
 
 
+//    @Override
+//    public List<Azure> getBillingDetailsUsingRangeAndDate(String startDate, String endDate, Integer months) {
+//        List<Azure> billingDetails;
+//
+//        if (startDate != null && endDate != null && months == 0) {
+//
+//            billingDetails = getAllDataBydateRange(startDate, endDate) ;
+//        }
+//        else if (Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
+//
+//            System.out.println("Data Using Months");
+//            System.out.println("Service call for months before call " + months);
+//            billingDetails = getAllDataByMonths(months);
+//            System.out.println("Service call for months " + months);
+//
+//        }
+//
+//        else {
+//            throw new IllegalArgumentException("Please provide valid months or duration for top 5 services");
+//        }
+//
+//        return billingDetails;
+//    }
+
+
     @Override
-    public List<Azure> getBillingDetailsUsingRangeAndDate(String startDate, String endDate, Integer months) {
-        List<Azure> billingDetails;
-
-        if (startDate != null && endDate != null && months == 0) {
-
-            billingDetails = getAllDataBydateRange(startDate, endDate) ;
-        }
-        else if (Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
-
-            System.out.println("Data Using Months");
-            System.out.println("Service call for months before call " + months);
-            billingDetails = getAllDataByMonths(months);
-            System.out.println("Service call for months " + months);
-
-        }
-
-        else {
-            throw new IllegalArgumentException("Please provide valid months or duration for top 5 services");
-        }
-
-        return billingDetails;
-    }
-
-
-    @Override
-    public List<AzureAggregateResult> getServiceTopFiveTotalCosts(String startDate, String endDate, Integer months) {
-        List<Azure> billingDetails = getBillingDetailsUsingRangeAndDate(startDate, endDate, months);
+    public List<AzureAggregateResult> getServiceTopFiveTotalCosts(List<Azure> billingDetails) {
+//        List<Azure> billingDetails = getBillingDetailsUsingRangeAndDate(startDate, endDate, months);
 
         Map<String, Double> serviceTotalCostMap = billingDetails.stream()
                 .collect(Collectors.groupingBy(Azure::getResourceType, Collectors.summingDouble(Azure::getCost)));
