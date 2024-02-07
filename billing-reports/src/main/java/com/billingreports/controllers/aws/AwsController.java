@@ -41,11 +41,11 @@ public class AwsController {
         return new ResponseEntity<List<Aws>>(awsData, HttpStatus.OK);
     }
 
-    @PostMapping("/save")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-    public ResponseEntity<Aws> save(@RequestBody Aws aws) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(awsService.save(aws));
-    }
+//    @PostMapping("/save")
+//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
+//    public ResponseEntity<Aws> save(@RequestBody Aws aws) {
+//        return ResponseEntity.status(HttpStatus.CREATED).body(awsService.save(aws));
+//    }
 
     @GetMapping("/service/startdate/enddate")
     @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
@@ -97,16 +97,13 @@ public class AwsController {
             // Replace the following placeholders with your actual service calls
             List<Aws> billingDetails = awsService.getBillingDetails(service, startDate, endDate, months);
 
-            System.out.println("Service : " + service);
-            System.out.println("Start Date : " + startDate);
-            System.out.println("End Date : " + endDate);
-            System.out.println("Months : " + months);
             List<Map<String, Double>> monthlyTotalAmounts = awsService.calculateMonthlyTotalBills(billingDetails);
 
-            Double totalAmount = awsService.getTotalAmount(service, startDate, endDate, months);
+            Double totalAmount = billingDetails.stream().mapToDouble(Aws::getAmount).sum();
+
             List<Map<String, Object>> billingPeriod = awsService.generateBillingPeriod(startDate, endDate, months);
 
-            List<AwsAggregateResult> aggregateResults = awsService.getServiceTopFiveTotalCosts(startDate, endDate, months);
+            List<AwsAggregateResult> aggregateResults = awsService.getServiceTopFiveTotalCosts(billingDetails);
             // Create a response map
             Map<String, Object> response = new LinkedHashMap<>();
             response.put("billingDetails", billingDetails);
@@ -115,19 +112,8 @@ public class AwsController {
             response.put("billingPeriod", billingPeriod);
             response.put("top5Services", aggregateResults);
 
-//	            // Fetch top 10 services if no specific service is selected
-//	            if (service == null || service.isEmpty()) {
-//	                List<Map<String, Object>> top10Services = awsService.getTop10Services(billingDetails);
-//	                response.put("top10Services", top10Services);
-//	            }
-
-//			if (billingDetails.isEmpty()) {
-//				Map<String, Object> emptyBillingDetailsResponse = new LinkedHashMap<>();
-//				emptyBillingDetailsResponse.put("message", "No billing details available.");
-//				return ResponseEntity.ok(emptyBillingDetailsResponse);
-//			} else {
             return ResponseEntity.ok(response);
-//			}
+
         } catch (IllegalArgumentException e) {
             // Handle the exception, return an error response or log the error message
             Map<String, Object> errorResponse = new LinkedHashMap<>();

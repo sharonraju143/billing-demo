@@ -59,14 +59,14 @@ public class GcpServiceImpl implements GcpService {
     public List<Gcp> getAllDataBydateRange(String startDate, String endDate) {
 
         LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
+        LocalDate end = LocalDate.parse(endDate).plusDays(1);
 
         return gcpRepository.findByDateBetween(start, end);
     }
 
     @Override
     public List<Gcp> getAllDataByMonths(int months) {
-        LocalDate endDate = LocalDate.now();
+        LocalDate endDate = LocalDate.now().plusDays(1);
         LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1); // Include the current month data
 
         return gcpRepository.findByDateBetween(startDate, endDate);
@@ -79,14 +79,16 @@ public class GcpServiceImpl implements GcpService {
     public List<Gcp> getDataByServiceDescAndDateRange(String serviceDescription, String startDate, String endDate) {
 
         LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
+        LocalDate end = LocalDate.parse(endDate).plusDays(1);
+
         return gcpRepository.findByServiceDescriptionAndDateBetween(serviceDescription, start, end);
     }
 
     @Override
     public List<Gcp> getDataByServiceDescAndMonths(String serviceDesc, int months) {
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
+
+        LocalDate endDate = LocalDate.now().plusDays(1);
+        LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
 
         return gcpRepository.findByServiceDescriptionAndDateBetween(serviceDesc, startDate, endDate);
     }

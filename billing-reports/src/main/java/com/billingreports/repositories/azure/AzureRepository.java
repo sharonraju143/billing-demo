@@ -1,7 +1,6 @@
 package com.billingreports.repositories.azure;
 
 import com.billingreports.entities.azure.Azure;
-import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -26,5 +25,5 @@ public interface AzureRepository extends MongoRepository<Azure,String> {
     List<Azure> findByResourceTypeAndSubscriptionNameAndUsageDateBetween(String resourceType, String subscriptionName, String startDate, String endDate);
 
     // to get the data based on the serviceDesc and months
-    List<Azure> findByResourceTypeAndUsageDateGreaterThan(String resourseType, String startDate);
+//    List<Azure> findByResourceTypeAndUsageDateGreaterThan(String resourseType, String startDate);
 }

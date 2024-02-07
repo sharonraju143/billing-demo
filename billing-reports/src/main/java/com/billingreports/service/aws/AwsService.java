@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface AwsService {
-    public Aws save(Aws aws);
+//    public Aws save(Aws aws);
 
     public List<Aws> getBillingDetailsForDuration(int months);
 
@@ -20,7 +20,7 @@ public interface AwsService {
 //	public List<Map<String, Object>> getMonthlyTotalAmounts(String serviceName, String startDate, String endDate,
 //			Integer months);
 
-    public Double getTotalAmount(String serviceName, String startDate, String endDate, Integer months);
+//    public Double getTotalAmount(String serviceName, String startDate, String endDate, Integer months);
 
     public Long getCountOfData();
 
@@ -38,9 +38,9 @@ public interface AwsService {
 
     List<Map<String, Double>> calculateMonthlyTotalBills(List<Aws> billingDetails);
 
-    public List<Aws> getBillingDetailsUsingRangeAndDuration(String startDate, String endDate, Integer months);
+//    public List<Aws> getBillingDetailsUsingRangeAndDuration(String startDate, String endDate, Integer months);
 
-    public List<AwsAggregateResult> getServiceTopFiveTotalCosts(String startDate, String endDate, Integer months);
+    public List<AwsAggregateResult> getServiceTopFiveTotalCosts(List<Aws> billingDetails);
 
     //	public Map<String, String> getTop5HighCostServicesAsString(String startDate, String endDate, Integer months);
 

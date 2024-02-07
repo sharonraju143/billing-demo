@@ -22,23 +22,28 @@ public class AwsServiceImpl implements AwsService {
     @Autowired
     private AwsRepository awsRepository;
 
-    @Override
-    public Aws save(Aws aws) {
-        return awsRepository.save(aws);
-    }
+//    @Override
+//    public Aws save(Aws aws) {
+//        return awsRepository.save(aws);
+//    }
 
     @Override
     public List<Aws> getBillingDetailsForDuration(int months) {
-        LocalDate currentDate = LocalDate.now();
-        LocalDate startDate = currentDate.minusMonths(months);
-        String startDateString = startDate.toString();
-        String currentDateString = currentDate.toString();
-        return awsRepository.findByStartDateBetween(startDateString,currentDateString);
+       String strEndDate = LocalDate.now().plusDays(1).toString();
+       String strStartDate = LocalDate.now().minusMonths(months).minusDays(1).toString();
+
+       return awsRepository.findByStartDateBetween(strStartDate,strEndDate);
     }
 
     @Override
     public List<Aws> getAllDataByDateRange(String startDate, String endDate) {
-        return awsRepository.findByStartDateBetween(startDate, endDate);
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+
+        String strStartDate = start.minusDays(1).toString();
+        String strEndDate = end.plusDays(1).toString();
+
+        return awsRepository.findByStartDateBetween(strStartDate, strEndDate);
 
     }
 
@@ -73,35 +78,35 @@ public class AwsServiceImpl implements AwsService {
         return awsData;
     }
 
-    @Override
-    public Double getTotalAmount(String serviceName, String startDate, String endDate, Integer months) {
-        List<Aws> billingDetails;
-
-        if ((startDate != null && endDate != null) || months != null) {
-            if (serviceName != null && !serviceName.isEmpty()) {
-                // If a specific service is selected
-                if (startDate != null && endDate != null) {
-                    billingDetails = getDataByServiceAndDateRange(serviceName, startDate, endDate);
-                } else {
-                    billingDetails = getBillingDetailsForDuration(serviceName, months);
-                }
-            } else {
-                // If no specific service is selected
-                if (months != null) {
-                    billingDetails = getBillingDetailsForDuration(months); // Fetch data by duration
-                } else if (endDate != null) {
-                    billingDetails = getAllDataByDateRange(startDate, endDate); // Fetch data by date range
-                } else {
-                    return 0.0; // No parameters provided, return 0.0
-                }
-            }
-
-            Double totalAmount = billingDetails.stream().mapToDouble(Aws::getAmount).sum();
-            return totalAmount;
-        } else {
-            return 0.0; // Return 0 when no parameters are provided
-        }
-    }
+//    @Override
+//    public Double getTotalAmount(String serviceName, String startDate, String endDate, Integer months) {
+//        List<Aws> billingDetails;
+//
+//        if ((startDate != null && endDate != null) || months != null) {
+//            if (serviceName != null && !serviceName.isEmpty()) {
+//                // If a specific service is selected
+//                if (startDate != null && endDate != null) {
+//                    billingDetails = getDataByServiceAndDateRange(serviceName, startDate, endDate);
+//                } else {
+//                    billingDetails = getBillingDetailsForDuration(serviceName, months);
+//                }
+//            } else {
+//                // If no specific service is selected
+//                if (months != null) {
+//                    billingDetails = getBillingDetailsForDuration(months); // Fetch data by duration
+//                } else if (endDate != null) {
+//                    billingDetails = getAllDataByDateRange(startDate, endDate); // Fetch data by date range
+//                } else {
+//                    return 0.0; // No parameters provided, return 0.0
+//                }
+//            }
+//
+//            Double totalAmount = billingDetails.stream().mapToDouble(Aws::getAmount).sum();
+//            return totalAmount;
+//        } else {
+//            return 0.0; // Return 0 when no parameters are provided
+//        }
+//    }
 
     @Override
     public Long getCountOfData() {
@@ -110,7 +115,9 @@ public class AwsServiceImpl implements AwsService {
 
     @Override
     public List<Aws> getDataByServiceAndDateRange(String service, String startDate, String endDate) {
-        return awsRepository.findByServiceAndStartDateGreaterThanEqualAndEndDateLessThanEqual(service,startDate,endDate);
+        String start = LocalDate.parse(startDate).minusDays(1).toString();
+        String end = LocalDate.parse(endDate).plusDays(1).toString();
+        return awsRepository.findByServiceAndStartDateBetween(service,startDate,endDate);
     }
 
 //    @Override
@@ -120,12 +127,10 @@ public class AwsServiceImpl implements AwsService {
 
     @Override
     public List<Aws> getBillingDetailsForDuration(String service, int months) {
-//        return awsRepository.findByServiceAndStartDateGreaterThanEqual(service, months);
-        LocalDate currentDate = LocalDate.now();
-        LocalDate startDate = currentDate.minusMonths(months);
-        String startDateString = startDate.toString();
-        String endDateString = currentDate.toString();
-        return awsRepository.findByServiceAndStartDateGreaterThanEqualAndEndDateLessThanEqual(service,startDateString,endDateString);
+
+        String strEndDate = LocalDate.now().plusDays(1).toString();
+        String strStartDate = LocalDate.now().minusMonths(months).minusDays(1).toString();
+        return awsRepository.findByServiceAndStartDateBetween(service,strStartDate,strEndDate);
     }
 
     @Override
@@ -254,32 +259,7 @@ public class AwsServiceImpl implements AwsService {
     }
 
     @Override
-    public List<Aws> getBillingDetailsUsingRangeAndDuration(String startDate, String endDate, Integer months) {
-        List<Aws> billingDetails;
-
-        if (startDate != null && endDate != null && months == 0) {
-
-            billingDetails = getAllDataByDateRange(startDate, endDate);
-        }
-        else if (Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
-
-            System.out.println("Data Using Months");
-            System.out.println("Service call for months before call " + months);
-            billingDetails = getBillingDetailsForDuration(months);
-            System.out.println("Service call for months " + months);
-
-        }
-
-        else {
-            throw new IllegalArgumentException("Please provide valid months or duration for top 5 services");
-        }
-
-        return billingDetails;
-    }
-
-    @Override
-    public List<AwsAggregateResult> getServiceTopFiveTotalCosts(String startDate, String endDate, Integer months) {
-        List<Aws> billingDetails = getBillingDetailsUsingRangeAndDuration(startDate, endDate, months);
+    public List<AwsAggregateResult> getServiceTopFiveTotalCosts(List<Aws> billingDetails) {
 
         Map<String, Double> serviceTotalCostMap = billingDetails.stream()
                 .collect(Collectors.groupingBy(Aws::getService, Collectors.summingDouble(Aws::getAmount)));
