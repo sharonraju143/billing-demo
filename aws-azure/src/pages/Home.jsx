@@ -130,7 +130,7 @@ export const Home = () => {
         >
           <div className="card p-3">
             <div className="">
-              <div className="h5 fw-bold" style={{ fontSize: '17px' }}>Top 5 Azure Consumers</div>
+              <div className="h5 fw-bold" style={{ fontSize: '17px' }}>Top 5 Azure Consumers (Microsoft Azure Motivity)</div>
               {data?.azureData?.top5Services && data?.azureData?.top5Services?.length > 0 ? <CustomPieChart
                 data={data?.azureData?.top5Services && topAzureFiveCustomers}
                 height={320}

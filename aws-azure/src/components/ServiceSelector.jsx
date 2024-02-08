@@ -72,7 +72,9 @@ const ServiceSelector = ({ service, handleServiceChange }) => {
           MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
         >
           {/* <MenuItem value="" defaultValue={true} disabled>Select Service</MenuItem> */}
-          <MenuItem value="" disabled>
+          <MenuItem value=""
+          // disabled
+          >
             Select Service
           </MenuItem>
           {serviceOptions && serviceOptions?.map((option, index) => (
