@@ -90,10 +90,6 @@ public class GcpController {
             // Replace the following placeholders with your actual service calls
             List<Gcp> billingDetails = gcpService.getBillingDetails(serviceDescription, startDate, endDate, months);
 
-            System.out.println("Service : " + serviceDescription);
-            System.out.println("Start Date : " + startDate);
-            System.out.println("End Date : " + endDate);
-            System.out.println("Months : " + months);
             List<Map<String, Double>> monthlyTotalAmounts = gcpService.calculateMonthlyTotalBills(billingDetails);
 
             Double totalAmount = billingDetails.stream().mapToDouble(Gcp::getCost).sum();

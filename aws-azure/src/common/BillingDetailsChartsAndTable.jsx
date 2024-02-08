@@ -4,7 +4,7 @@ import CustomBarChart from '../components/CustomBarChart';
 // import AwsTable from '../tables/AwsTable';
 import CustomPieChart from '../components/CustomPieChart';
 const BillingDetailsChartsAndTable = (props) => {
-    const { data, monthdata, topFiveCustomers, costType = 'Dollar' } = props;
+    const { data, monthdata, topFiveCustomers, costType  } = props;
     return (
         <>
             <Grid
@@ -54,7 +54,7 @@ const BillingDetailsChartsAndTable = (props) => {
                                 }}
                             >
                                 <span className="px-1 fw-bold">
-                                    {costType === 'INR' ? '₹' : "$"}
+                                    {costType == 'INR' ? '₹' : "$"}
                                     {data?.totalAmount && data?.totalAmount?.toFixed(2)}
                                 </span>
                             </span>

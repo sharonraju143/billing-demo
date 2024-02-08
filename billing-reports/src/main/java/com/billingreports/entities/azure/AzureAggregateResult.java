@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class AzureAggregateResult {
     private String ResourceType;
     private double totalCost;
+    private String currency;
 }

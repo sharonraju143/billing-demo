@@ -1,5 +1,7 @@
 package com.billingreports.entities.gcp;
 
+import com.billingreports.serializer.CustomDoubleSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -30,6 +32,7 @@ public class Gcp {
     private String serviceDescription;
 
     @Field("Cost ($)")
+    @JsonSerialize(using = CustomDoubleSerializer.class)
     private double cost;
 
 }

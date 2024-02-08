@@ -105,12 +105,14 @@ export const azureService = async (ResourseType, startDate, endDate, months, azu
     const queryParams = new URLSearchParams();
 
     queryParams.append('ResourseType', ResourseType || '');
-    queryParams.append('subscriptionName', azureSubscriptionValue || '');
+    queryParams.append('subscriptionName', azureSubscriptionValue || "");
     queryParams.append('startDate', startDate || '');
     queryParams.append('endDate', endDate || '');
     queryParams.append('months', months || '');
 
     const queryString = queryParams.toString();
+    console.log("azureSubscriptiojkvjnjffjfjjfjfjnValue",azureSubscriptionValue)
+    console.log(queryString , "queryString")
 
     const response = await axios.get(`${BASE_URL}${endpoint}${queryString ? `?${queryString}` : ''}`, {
       headers: getAuthHeaders(),

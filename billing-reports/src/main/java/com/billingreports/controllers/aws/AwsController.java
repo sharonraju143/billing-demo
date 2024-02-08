@@ -37,15 +37,8 @@ public class AwsController {
     @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
     public ResponseEntity<List<Aws>> getAllServices() {
         List<Aws> awsData = awsService.getAllServices();
-        System.out.println(awsData);
         return new ResponseEntity<List<Aws>>(awsData, HttpStatus.OK);
     }
-
-//    @PostMapping("/save")
-//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-//    public ResponseEntity<Aws> save(@RequestBody Aws aws) {
-//        return ResponseEntity.status(HttpStatus.CREATED).body(awsService.save(aws));
-//    }
 
     @GetMapping("/service/startdate/enddate")
     @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
@@ -103,7 +96,7 @@ public class AwsController {
 
             List<Map<String, Object>> billingPeriod = awsService.generateBillingPeriod(startDate, endDate, months);
 
-            List<AwsAggregateResult> aggregateResults = awsService.getServiceTopFiveTotalCosts(billingDetails);
+            List<AwsAggregateResult> aggregateResults = awsService.getServiceTopFiveTotalCosts(startDate, endDate, months);
             // Create a response map
             Map<String, Object> response = new LinkedHashMap<>();
             response.put("billingDetails", billingDetails);

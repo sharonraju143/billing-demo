@@ -12,6 +12,7 @@ import AzureTable from "../tables/AzureTable";
 // import CustomPieChart from "../components/CustomPieChart";
 import BillingInformationCard from "../common/BillingInformationCard";
 import BillingDetailsChartsAndTable from "../common/BillingDetailsChartsAndTable";
+import { cleanDigitSectionValue } from "@mui/x-date-pickers/internals/hooks/useField/useField.utils";
 
 export const AzurePage = () => {
   const [ResourseType, setResourseType] = useState("");
@@ -24,7 +25,7 @@ export const AzurePage = () => {
   const [display, setDisplay] = useState(false);
   const [data, setData] = useState([]);
   const [calling, setCalling] = useState(true);
-  const [azureSubscriptionValue, setAzureSubscriptionValue] = useState('');
+  const [azureSubscriptionValue, setAzureSubscriptionValue] = useState('Microsoft Azure Motivity');
   // console.log("dateRange", dateRange);
   useEffect(() => {
     forAzureGet();
@@ -38,6 +39,7 @@ export const AzurePage = () => {
   };
 
   const handleServiceChange = (event) => {
+    console.log(event.target.value ,"event.target.value")
     setResourseType(event.target.value);
     setCalling(!calling);
   };
@@ -84,16 +86,17 @@ export const AzurePage = () => {
     ? data.monthlyTotalAmounts.map((item) => ({
       name: Object.keys(item)[0],
       amount: Object.values(item)[0]?.toFixed(2),
+      // costType:data?.currency
     }))
     : [];
 
-  const topFiveCustomers = data?.top5Services?.map((item) => {
-    const { resourceType, totalCost } = item;
+  const topFiveCustomers = data && data?.top5Services?.map((item) => {
+    const { resourceType, totalCost , currency } = item;
     return {
       // name: `${resourceType} - $${totalCost}`,
       name: `${resourceType}`,
       value: totalCost,
-      costType: 'INR'
+      costType: currency
 
     };
   });
@@ -178,7 +181,7 @@ export const AzurePage = () => {
           />
         </div>
       </BillingInformationCard>
-      <BillingDetailsChartsAndTable data={data} monthdata={monthData} topFiveCustomers={topFiveCustomers} costType='INR'>
+      <BillingDetailsChartsAndTable data={data} monthdata={monthData} topFiveCustomers={data && topFiveCustomers} costType={data?.currency}>
         <AzureTable data={data && data?.billingDetails} />
       </BillingDetailsChartsAndTable>
       {/* 

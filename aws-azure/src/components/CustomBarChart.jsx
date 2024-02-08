@@ -42,7 +42,7 @@ const CustomBarChart = ({ width, height, data, barLineSize, colors, xfontSize, d
                     <div>{`${label ? label : ""}`}</div>
                     {payload.map(entry => (
                         <div key={entry?.name} style={{ color: entry?.color, }}>
-                            {`${formatLegend(entry.name)}: ${costType === 'INR' ? '₹' : "$"}${entry.value.toLocaleString('en-IN')}`}
+                            {`${formatLegend(entry.name)}: ${costType == 'INR' ? '₹' : "$"}${entry.value.toLocaleString('en-IN')}`}
                         </div>
                     ))}
                     {dataKeys?.length > 1 && <div>Total: {totalValue?.toLocaleString('en-IN')}</div>}

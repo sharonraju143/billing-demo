@@ -16,21 +16,7 @@ public interface AwsRepository extends MongoRepository<Aws,String> {
 
     List<Aws> findByServiceAndStartDateBetween(String startDate, String endDate, String date);
 
-//    @Query("{'startDate': {'$gte': ?0, '$lte': ?1}, 'endDate': {'$gte': ?0, '$lte': ?1}}")
-//    List<Aws> findByServiceAndStartDateBetween(String startDate, String endDate, String date);
-
-    // List<String> findByService();
-
     @Query(value = "{'service' : {$exists : true}}", fields = "{'service' : 1, '_id':0}")
     List<String> findDistinctByService();
 
-//    List<Map<String, Object>> findTop10ServicesByAmount(String startDate, String endDate, Integer months);
-
-//    List<Aws> findByServiceAndStartDateGreaterThanEqual(String startDate);
-
-//    List<Aws> findByServiceAndStartDateGreaterThanEqual(String serviceName, Object startDate);
-
-//    List<Aws> findByStartDateGreaterThanEqual(Long months);
-
-//    List<Aws> findByStartDateGreaterThanEqualAndEndDateLessThanEqual(String startDate, String endDate);
 }

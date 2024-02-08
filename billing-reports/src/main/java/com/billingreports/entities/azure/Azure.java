@@ -30,8 +30,8 @@ public class Azure {
     @JsonSerialize(using = CustomDoubleSerializer.class)
     private double cost;
 
-//    @Field("Currency")
-//    private String currency;
+    @Field("Currency")
+    private String currency;
 
     @Field("UsageDate")
     private String usageDate;

@@ -9,40 +9,35 @@ import java.util.Map;
 public interface AwsService {
 //    public Aws save(Aws aws);
 
-    public List<Aws> getBillingDetailsForDuration(int months);
-
+    // Get Details Methods
     public List<Aws> getAllDataByDateRange(String startDate, String endDate);
 
-    public String[] getUniqueServicesAsArray();
-
-    public List<Aws> getAllServices();
-
-//	public List<Map<String, Object>> getMonthlyTotalAmounts(String serviceName, String startDate, String endDate,
-//			Integer months);
-
-//    public Double getTotalAmount(String serviceName, String startDate, String endDate, Integer months);
-
-    public Long getCountOfData();
-
-    public List<Aws> getDataByServiceAndDateRange(String service, String startDate, String endDate);
-
-    //public List<Aws> getBillingDetailsForDuration(String service, String startdate);
+    public List<Aws> getBillingDetailsForDuration(int months);
 
     public List<Aws> getBillingDetailsForDuration(String service, int months);
 
+    public List<Aws> getDataByServiceAndDateRange(String service, String startDate, String endDate);
+
+    //Get All Details
     public List<Aws> getBillingDetails(String serviceName, String startDate, String endDate, Integer months);
 
-//	public List<Map<String, Object>> getTop10Services(List<Aws> billingDetails);
+    // Get Unique Services Method
+    public String[] getUniqueServicesAsArray();
 
+    //Get All Services Method
+    public List<Aws> getAllServices();
+
+    //Get Count of Data
+    public Long getCountOfData();
+
+    // Get Billing Period Method
     public List<Map<String, Object>> generateBillingPeriod(String startDate, String endDate, Integer months);
 
+    // Get Monthly Total Bills
     List<Map<String, Double>> calculateMonthlyTotalBills(List<Aws> billingDetails);
 
-//    public List<Aws> getBillingDetailsUsingRangeAndDuration(String startDate, String endDate, Integer months);
+    // Get Top 5 Services
+    public List<AwsAggregateResult> getServiceTopFiveTotalCosts(String startDate, String endDate, Integer months);
 
-    public List<AwsAggregateResult> getServiceTopFiveTotalCosts(List<Aws> billingDetails);
-
-    //	public Map<String, String> getTop5HighCostServicesAsString(String startDate, String endDate, Integer months);
-
-    // public List<String> getDistinctService(String service);
+    public List<Aws> getBillingDetailsUsingRangeAndDuration(String startDate, String endDate, Integer months);
 }

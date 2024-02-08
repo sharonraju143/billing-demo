@@ -23,7 +23,4 @@ public interface AzureRepository extends MongoRepository<Azure,String> {
 
     List<Azure> findBySubscriptionNameAndUsageDateBetween(String subscriptionName, String startDate, String endDate);
     List<Azure> findByResourceTypeAndSubscriptionNameAndUsageDateBetween(String resourceType, String subscriptionName, String startDate, String endDate);
-
-    // to get the data based on the serviceDesc and months
-//    List<Azure> findByResourceTypeAndUsageDateGreaterThan(String resourseType, String startDate);
 }

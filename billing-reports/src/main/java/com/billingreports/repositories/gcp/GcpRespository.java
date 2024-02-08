@@ -20,10 +20,6 @@ public interface GcpRespository extends MongoRepository<Gcp, String> {
     // to get the data based on the serviceDesp and date range
     List<Gcp> findByServiceDescriptionAndDateBetween(String serviceDescription, LocalDate startDate, LocalDate endDate);
 
-    // to get the data based on the serviceDesc and months
-    List<Gcp> findByServiceDescriptionAndDateGreaterThan(String serviceDescription, LocalDate startDate);
-
-
 
 }
 

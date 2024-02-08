@@ -1,5 +1,7 @@
 package com.billingreports.entities.aws;
 
+import com.billingreports.serializer.CustomDoubleSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,6 +20,7 @@ public class Aws {
     @Field("Service")
     private String service;
     @Field("BlendedCost")
+    @JsonSerialize(using = CustomDoubleSerializer.class)
     private double amount;
 
     @Field("StartDate")

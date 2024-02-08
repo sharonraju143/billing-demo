@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,29 +93,27 @@ public class AzureController {
             // Replace the following placeholders with your actual service calls
             List<Azure> billingDetails = azureService.getBillingDetails(resourceType, subscriptionName, startDate, endDate, months);
 
-            System.out.println("Service : " + resourceType);
-            System.out.println("Start Date : " + startDate);
-            System.out.println("End Date : " + endDate);
-            System.out.println("Months : " + months);
             List<Map<String, Double>> monthlyTotalAmounts = azureService.calculateMonthlyTotalBills(billingDetails);
 
             Double totalAmount = billingDetails.stream().mapToDouble(Azure::getCost).sum();
+            String currency = billingDetails.stream().findFirst().map(Azure::getCurrency).orElse("Unknown");
+//
+//            AzureTotalAmountCurrency totalAmountCurrency = new AzureTotalAmountCurrency(totalAmount, currency);
+//            List<AzureTotalAmountCurrency> azureTotalAmountCurrencies = new ArrayList<>();
+//            azureTotalAmountCurrencies.add(totalAmountCurrency);
+
             List<Map<String, Object>> billingPeriod = azureService.generateBillingPeriod(startDate, endDate, months);
 
-            List<AzureAggregateResult> aggregateResults = azureService.getServiceTopFiveTotalCosts(billingDetails);
+            List<AzureAggregateResult> aggregateResults = azureService.getServiceTopFiveTotalCosts(subscriptionName, startDate, endDate, months);
             // Create a response map
             Map<String, Object> response = new LinkedHashMap<>();
+            response.put("currency", currency);
             response.put("billingDetails", billingDetails);
             response.put("monthlyTotalAmounts", monthlyTotalAmounts);
             response.put("totalAmount", totalAmount);
             response.put("billingPeriod", billingPeriod);
             response.put("top5Services", aggregateResults);
 
-//			if (billingDetails.isEmpty()) {
-//				Map<String, Object> emptyBillingDetailsResponse = new LinkedHashMap<>();
-//				emptyBillingDetailsResponse.put("message", "No billing details available.");
-//				return ResponseEntity.ok(emptyBillingDetailsResponse);
-//			} else {
             return ResponseEntity.ok(response);
 //			}
         } catch (IllegalArgumentException e) {

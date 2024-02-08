@@ -98,17 +98,13 @@ public class GcpServiceImpl implements GcpService {
     public List<Gcp> getBillingDetails(String serviceDescription, String startDate, String endDate, Integer months) {
         List<Gcp> billingDetails;
 
-        System.err.println("Service method started");
         /* months == null || */
         if (serviceDescription.isEmpty() && startDate != null && endDate != null && months == 0) {
 
             billingDetails = getAllDataBydateRange(startDate, endDate);
         } else /* months == null || */ if (serviceDescription.isEmpty() && Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
 
-            System.out.println("Data Using Months Started");
-            System.out.println("Service call for months before call " + months);
             billingDetails = getAllDataByMonths(months);
-            System.out.println("Servce call for months " + months);
 
         } else if (!serviceDescription.isEmpty() && startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty() && months == 0) {
 
@@ -116,7 +112,6 @@ public class GcpServiceImpl implements GcpService {
         } else if (!serviceDescription.isEmpty() && Objects.requireNonNull(startDate).isEmpty() && endDate.isEmpty() && months != null && months > 0) {
 
             billingDetails = getDataByServiceDescAndMonths(serviceDescription, months);
-            System.out.println("Service call resource type and months " + serviceDescription + " " + months);
 
         } else {
             throw new IllegalArgumentException("Please give the valid date or duration");
@@ -218,8 +213,6 @@ public class GcpServiceImpl implements GcpService {
         return billingPeriod;
     }
 
-
-
     @Override
     public List<Gcp> getBillingDetailsUsingRangeAndDate(String startDate, String endDate, Integer months) {
         List<Gcp> billingDetails;
@@ -230,11 +223,7 @@ public class GcpServiceImpl implements GcpService {
         }
         else if (Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
 
-            System.out.println("Data Using Months");
-            System.out.println("Service call for months before call " + months);
             billingDetails = getAllDataByMonths(months);
-            System.out.println("Service call for months " + months);
-
         }
 
         else {

@@ -36,38 +36,6 @@ public class AzureServiceImpl implements AzureService {
     }
 
     @Override
-    public List<String> getDistinctResourceType() {
-
-        List<String> serviceDescriptions = azureRepository.findDistinctResourceTypeBy();
-        return extractUniqueResourceType(serviceDescriptions);
-    }
-
-    private List<String> extractUniqueResourceType(List<String> resourceType) {
-        Set<String> uniqueServiceSet = new HashSet<>();
-        List<String> uniqueServiceList = new ArrayList<>();
-
-        for (String jsonStr : resourceType) {
-            String resourceType1 = extractResourceType(jsonStr);
-            if (resourceType1 != null) {
-                uniqueServiceSet.add(resourceType1);
-            }
-        }
-
-        uniqueServiceList.addAll(uniqueServiceSet);
-        return uniqueServiceList;
-    }
-
-    private String extractResourceType(String jsonStr) {
-
-        int startIndex = jsonStr.indexOf("ResourceType\": \"") + "ResourceType\": \"".length();
-        int endIndex = jsonStr.indexOf("\"", startIndex);
-        if (startIndex >= 0 && endIndex >= 0) {
-            return jsonStr.substring(startIndex, endIndex);
-        }
-        return null; // Return null if extraction fails
-    }
-
-    @Override
     public List<Azure> getAllDataBydateRange(String startDate, String endDate) {
         LocalDate start = LocalDate.parse(startDate);
         LocalDate end = LocalDate.parse(endDate);
@@ -182,7 +150,6 @@ public class AzureServiceImpl implements AzureService {
         List<Azure> billingDetails;
 
 
-        System.err.println("Service method started");
         /* months == null || */
         if (resourceType.isEmpty() && subscriptionName.isEmpty() && startDate != null && endDate != null && months == 0) {
 
@@ -225,12 +192,6 @@ public class AzureServiceImpl implements AzureService {
         );
 
         for (Azure azure: billingDetails) {
-//            String usageDate = azure.getUsageDate();
-//            Calendar calendar = Calendar.getInstance();
-//            calendar.setTime(usageDate);
-//            int year = calendar.get(Calendar.YEAR);
-//            int monthNumber = calendar.get(Calendar.MONTH) + 1; // Adding 1 to match the map keys
-//            String monthName = monthNames.get(monthNumber);
             String usageDate = azure.getUsageDate(); // Assuming this gives a date string in format "yyyy-MM-dd"
 
             // Parse the usage date to extract year and month
@@ -277,6 +238,74 @@ public class AzureServiceImpl implements AzureService {
         return monthlyTotalBillsList;
     }
 
+//    @Override
+//    public List<Map<String, String>> calculateMonthlyTotalBills(List<Azure> billingDetails) {
+//        Map<String, Double> monthlyTotalBillsMap = new LinkedHashMap<>();
+//        Map<Integer, String> monthNames = Map.ofEntries(
+//                Map.entry(1, "Jan"), Map.entry(2, "Feb"), Map.entry(3, "Mar"),
+//                Map.entry(4, "Apr"), Map.entry(5, "May"), Map.entry(6, "Jun"),
+//                Map.entry(7, "Jul"), Map.entry(8, "Aug"), Map.entry(9, "Sep"),
+//                Map.entry(10, "Oct"), Map.entry(11, "Nov"), Map.entry(12, "Dec")
+//        );
+//
+//
+//        String currencySymbol = "";
+//
+//        for (Azure azure : billingDetails) {
+//            String usageDate = azure.getUsageDate();
+//
+//            if ("INR".equalsIgnoreCase(azure.getCurrency())) {
+//                currencySymbol = "₹";
+//            } else if ("USD".equalsIgnoreCase(azure.getCurrency())) {
+//                currencySymbol = "$";
+//            }
+//
+//            // Parse the usage date to extract year and month
+//            String[] dateParts = usageDate.split("-");
+//            int year = Integer.parseInt(dateParts[0]);
+//            int monthNumber = Integer.parseInt(dateParts[1]);
+//            String monthName = monthNames.get(monthNumber);
+//
+//            double cost = azure.getCost();
+//            String monthYear = monthName + "-" + year;
+//
+//            // If the month key exists in the map, add the cost; otherwise, put a new entry
+//            monthlyTotalBillsMap.put(monthYear, monthlyTotalBillsMap.getOrDefault(monthYear, 0.0) + cost);
+//        }
+//
+//        // Sort the monthly total bills by year and month
+//        List<Map.Entry<String, Double>> sortedBills = new ArrayList<>(monthlyTotalBillsMap.entrySet());
+//        Collections.sort(sortedBills, (entry1, entry2) -> {
+//            String[] parts1 = entry1.getKey().split("-");
+//            String[] parts2 = entry2.getKey().split("-");
+//            int year1 = Integer.parseInt(parts1[1]);
+//            int year2 = Integer.parseInt(parts2[1]);
+//            int monthOrder1 = monthNames.entrySet().stream()
+//                    .filter(entry -> entry.getValue().equalsIgnoreCase(parts1[0]))
+//                    .map(Map.Entry::getKey)
+//                    .findFirst().orElse(-1);
+//            int monthOrder2 = monthNames.entrySet().stream()
+//                    .filter(entry -> entry.getValue().equalsIgnoreCase(parts2[0]))
+//                    .map(Map.Entry::getKey)
+//                    .findFirst().orElse(-1);
+//            if (year1 != year2) {
+//                return Integer.compare(year1, year2);
+//            }
+//            return Integer.compare(monthOrder1, monthOrder2);
+//        });
+//
+//        List<Map<String, String>> monthlyTotalBillsList = new ArrayList<>();
+//        for (Map.Entry<String, Double> entry : sortedBills) {
+//            Map<String, String> monthEntry = new LinkedHashMap<>();
+//            monthEntry.put("MonthYear", entry.getKey());
+//            monthEntry.put("TotalCost", currencySymbol + entry.getValue()); // Append currency symbol
+//            monthlyTotalBillsList.add(monthEntry);
+//        }
+//
+//        return monthlyTotalBillsList;
+//    }
+
+
     public List<Map<String, Object>> generateBillingPeriod(String startDate, String endDate, Integer months) {
         List<Map<String, Object>> billingPeriod = new ArrayList<>();
         Map<String, Object> periodData = new HashMap<>();
@@ -314,42 +343,80 @@ public class AzureServiceImpl implements AzureService {
 
 
 
-
 //    @Override
-//    public List<Azure> getBillingDetailsUsingRangeAndDate(String startDate, String endDate, Integer months) {
-//        List<Azure> billingDetails;
+//    public List<AzureAggregateResult> getServiceTopFiveTotalCosts(List<Azure> billingDetails) {
 //
-//        if (startDate != null && endDate != null && months == 0) {
+//        Map<String, Double> serviceTotalCostMap = billingDetails.stream()
+//                .collect(Collectors.groupingBy(Azure::getResourceType, Collectors.summingDouble(Azure::getCost)));
 //
-//            billingDetails = getAllDataBydateRange(startDate, endDate) ;
-//        }
-//        else if (Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
+//        List<AzureAggregateResult> top5Services = serviceTotalCostMap.entrySet().stream()
+//                .map(entry -> {
+//                    String resourceType = entry.getKey();
+//                    double totalCost = round(entry.getValue(), 2);
+//                    String currency = billingDetails.stream()
+//                            .filter(azure -> azure.getResourceType().equals(resourceType))
+//                            .findFirst()
+//                            .map(Azure::getCurrency)
+//                            .orElse(null); // Assuming getCurrency returns a String
 //
-//            System.out.println("Data Using Months");
-//            System.out.println("Service call for months before call " + months);
-//            billingDetails = getAllDataByMonths(months);
-//            System.out.println("Service call for months " + months);
+//                    return new AzureAggregateResult(resourceType, totalCost, currency);
+//                })
+//                .sorted((b1, b2) -> Double.compare(b2.getTotalCost(), b1.getTotalCost()))
+//                .limit(5)
+//                .collect(Collectors.toList());
 //
-//        }
-//
-//        else {
-//            throw new IllegalArgumentException("Please provide valid months or duration for top 5 services");
-//        }
-//
-//        return billingDetails;
+//        return top5Services;
 //    }
+
+    @Override
+    public List<Azure> getBillingDetailsUsingSubscriptionRangeAndDate(String subscriptionName, String startDate, String endDate, Integer months) {
+        List<Azure> billingDetails;
+
+        if (subscriptionName != null && startDate != null && endDate != null && months == 0) {
+
+            billingDetails = getDataBySubscriptionNameAndRange(subscriptionName, startDate, endDate);
+        }
+        else if (subscriptionName != null && Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
+
+            billingDetails = getDataBySubscriptionNameAndMonths(subscriptionName, months);
+
+        }
+
+        else {
+            throw new IllegalArgumentException("Please provide valid months or duration for top 5 services");
+        }
+
+        return billingDetails;
+    }
 
 
     @Override
-    public List<AzureAggregateResult> getServiceTopFiveTotalCosts(List<Azure> billingDetails) {
-//        List<Azure> billingDetails = getBillingDetailsUsingRangeAndDate(startDate, endDate, months);
+    public List<AzureAggregateResult> getServiceTopFiveTotalCosts(String subscriptionName, String startDate, String endDate, Integer months) {
+        List<Azure> billingDetails = getBillingDetailsUsingSubscriptionRangeAndDate(subscriptionName, startDate, endDate, months);
 
         Map<String, Double> serviceTotalCostMap = billingDetails.stream()
                 .collect(Collectors.groupingBy(Azure::getResourceType, Collectors.summingDouble(Azure::getCost)));
 
+//        List<AzureAggregateResult> top5Services = serviceTotalCostMap.entrySet().stream()
+//                .map(entry -> new AzureAggregateResult(entry.getKey(), round(entry.getValue(), 2)))
+//                .sorted((b1, b2) -> Double.compare(b2.getTotalCost(), b1.getTotalCost())) // Sort in descending order
+//                .limit(5)
+//                .collect(Collectors.toList());
+//
+//        return top5Services;
         List<AzureAggregateResult> top5Services = serviceTotalCostMap.entrySet().stream()
-                .map(entry -> new AzureAggregateResult(entry.getKey(), round(entry.getValue(), 2)))
-                .sorted((b1, b2) -> Double.compare(b2.getTotalCost(), b1.getTotalCost())) // Sort in descending order
+                .map(entry -> {
+                    String resourceType = entry.getKey();
+                    double totalCost = round(entry.getValue(), 2);
+                    String currency = billingDetails.stream()
+                            .filter(azure -> azure.getResourceType().equals(resourceType))
+                            .findFirst()
+                            .map(Azure::getCurrency)
+                            .orElse(null); // Assuming getCurrency returns a String
+
+                    return new AzureAggregateResult(resourceType, totalCost, currency);
+                })
+                .sorted((b1, b2) -> Double.compare(b2.getTotalCost(), b1.getTotalCost()))
                 .limit(5)
                 .collect(Collectors.toList());
 
@@ -393,7 +460,39 @@ public class AzureServiceImpl implements AzureService {
 
     @Override
     public List<String> getDistinctResourceTypeBySubscriptionName(String subscriptionName) {
-        List<String> serviceDescriptions = azureRepository.findDistinctResourceTypeBySubscriptionName(subscriptionName);
+        List<String> resourceTypeBySubscriptionName = azureRepository.findDistinctResourceTypeBySubscriptionName(subscriptionName);
+        return extractUniqueResourceType(resourceTypeBySubscriptionName);
+    }
+
+    @Override
+    public List<String> getDistinctResourceType() {
+
+        List<String> serviceDescriptions = azureRepository.findDistinctResourceTypeBy();
         return extractUniqueResourceType(serviceDescriptions);
+    }
+
+    private List<String> extractUniqueResourceType(List<String> resourceType) {
+        Set<String> uniqueServiceSet = new HashSet<>();
+        List<String> uniqueServiceList = new ArrayList<>();
+
+        for (String jsonStr : resourceType) {
+            String resourceType1 = extractResourceType(jsonStr);
+            if (resourceType1 != null) {
+                uniqueServiceSet.add(resourceType1);
+            }
+        }
+
+        uniqueServiceList.addAll(uniqueServiceSet);
+        return uniqueServiceList;
+    }
+
+    private String extractResourceType(String jsonStr) {
+
+        int startIndex = jsonStr.indexOf("ResourceType\": \"") + "ResourceType\": \"".length();
+        int endIndex = jsonStr.indexOf("\"", startIndex);
+        if (startIndex >= 0 && endIndex >= 0) {
+            return jsonStr.substring(startIndex, endIndex);
+        }
+        return null; // Return null if extraction fails
     }
 }
