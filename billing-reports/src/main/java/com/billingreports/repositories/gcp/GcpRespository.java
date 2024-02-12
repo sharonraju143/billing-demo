@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @EnableMongoRepositories
@@ -16,11 +17,11 @@ public interface GcpRespository extends MongoRepository<Gcp, String> {
 
     // to get all data between dates and months
     @Query("{ 'date': { $gte: ?0, $lte: ?1 } }")
-    List<Gcp> findByDateRange(LocalDate startDate, LocalDate endDate);
+    List<Gcp> findByDateRange(LocalDateTime startDate, LocalDateTime endDate);
 
     // to get the data based on the serviceDesp and date range
     @Query("{'ServiceDescription': ?0, 'date': { $gte: ?1, $lte: ?2 } }")
-    List<Gcp> findByServiceDescriptionAndDateRange(String serviceDescription, LocalDate startDate, LocalDate endDate);
+    List<Gcp> findByServiceDescriptionAndDateRange(String serviceDescription, LocalDateTime startDate, LocalDateTime endDate);
 
 
 }

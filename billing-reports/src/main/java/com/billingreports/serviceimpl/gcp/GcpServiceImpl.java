@@ -10,6 +10,8 @@ import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -60,17 +62,22 @@ public class GcpServiceImpl implements GcpService {
 
     @Override
     public List<Gcp> getAllDataBydateRange(String startDate, String endDate) {
-        LocalDate startLocalDate = parseLocalDate(startDate);
-        LocalDate endLocalDate = parseLocalDate(endDate).plusDays(1);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startLocalDate = LocalDate.parse(startDate, formatter).atStartOfDay();
+        LocalDateTime endLocalDate = LocalDate.parse(endDate, formatter).atTime(LocalTime.MAX);
 
         // Calculate the period between startLocalDate and endLocalDate
-        Period period = Period.between(startLocalDate, endLocalDate);
+        Period period = Period.between(startLocalDate.toLocalDate(), endLocalDate.toLocalDate());
 
         // Check if the period is more than one year
         if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
             System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
             throw new ValidDateRangeException("Select in range within 12 months");
         }
+
+        System.out.println("Start Date: " + startLocalDate);
+        System.out.println("End date: " + endLocalDate);
 
         System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
 
@@ -79,12 +86,16 @@ public class GcpServiceImpl implements GcpService {
 
     @Override
     public List<Gcp> getAllDataByMonths(int months) {
-        LocalDate endDate = LocalDate.now();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime endDate = LocalDate.now().atTime(LocalTime.MAX);
 //        LocalDate startDate = endDate.minusMonths(months);
 
-        LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
+//        LocalDateTime startLocalDate = LocalDate.parse(startDate, formatter).atStartOfDay();
 
-        endDate = endDate.plusDays(1);
+        LocalDateTime startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1).atStartOfDay();
+
+//        endDate = endDate.plusDays(1);
 
         System.out.println("Start Date: " + startDate);
         System.out.println("End date: " + endDate);
@@ -95,17 +106,21 @@ public class GcpServiceImpl implements GcpService {
     @Override
     public List<Gcp> getDataByServiceDescAndDateRange(String serviceDescription, String startDate, String endDate) {
 
-        LocalDate startLocalDate = parseLocalDate(startDate);
-        LocalDate endLocalDate = parseLocalDate(endDate).plusDays(1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startLocalDate = LocalDate.parse(startDate, formatter).atStartOfDay();
+        LocalDateTime endLocalDate = LocalDate.parse(endDate, formatter).atTime(LocalTime.MAX);
 
         // Calculate the period between startLocalDate and endLocalDate
-        Period period = Period.between(startLocalDate, endLocalDate);
+        Period period = Period.between(startLocalDate.toLocalDate(), endLocalDate.toLocalDate());
 
         // Check if the period is more than one year
         if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
             System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
             throw new ValidDateRangeException("Select in range within 12 months");
         }
+
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End date: " + endDate);
 
         System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
 
@@ -115,13 +130,15 @@ public class GcpServiceImpl implements GcpService {
     @Override
     public List<Gcp> getDataByServiceDescAndMonths(String serviceDesc, int months) {
 
-        LocalDate endDate = LocalDate.now();
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime endDate = LocalDate.now().atTime(LocalTime.MAX);
 //        LocalDate startDate = endDate.minusMonths(months);
 
-        LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
+//        LocalDateTime startLocalDate = LocalDate.parse(startDate, formatter).atStartOfDay();
 
-        endDate = endDate.plusDays(1);
+        LocalDateTime startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1).atStartOfDay();
+
+//        endDate = endDate.plusDays(1);
 
         System.out.println("Start Date: " + startDate);
         System.out.println("End date: " + endDate);
