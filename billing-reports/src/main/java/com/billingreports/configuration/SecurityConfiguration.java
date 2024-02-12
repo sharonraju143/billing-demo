@@ -48,7 +48,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/auth/register","/auth/token").permitAll()
+                    auth.requestMatchers("/auth/register","/auth/token", "/swagger-ui.html/**", "/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
                             .requestMatchers("/aws/**","/auth/**","/azure/**","/gcp/**").authenticated();
                 })
                 .sessionManagement(s->s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -74,13 +74,13 @@ const CustomBarChart = ({ width, height, data, barLineSize, colors, xfontSize, d
                                     // stackOffset={dataKeys?.length > 1 ? "expand" : "none"}
                                     >
                                         <CartesianGrid horizontal={true} vertical={false} />
-                                        <XAxis dataKey="name" axisLine={false} tick={{ fontSize: 11, }} />
+                                        <XAxis dataKey="name" axisLine={false} tick={{ fontSize:10, }} />
                                         <YAxis axisLine={false} tick={{ fontSize: 11, }} tickFormatter={formatPercent} />
                                         <Tooltip content={<CustomTooltip />} />
                                         {dataKeys && dataKeys?.length > 1 && <Legend iconType="circle" formatter={(value) => formatLegend(value)} />}
 
                                         {dataKeys?.map((dataKey, index) => (
-                                            <Bar key={dataKey} dataKey={dataKey} stackId="a" fill={colors[index] || '#10B981'} barSize={barLineSize}>
+                                            <Bar key={dataKey}   dataKey={dataKey} stackId="a" fill={colors[index] || '#10B981'} barSize={barLineSize}>
                                                 {/* <LabelList dataKey={dataKey} fill="#ffffff" fontSize={13} /> */}
                                             </Bar>
                                         ))}

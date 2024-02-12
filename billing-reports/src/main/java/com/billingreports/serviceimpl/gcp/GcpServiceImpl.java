@@ -2,12 +2,15 @@ package com.billingreports.serviceimpl.gcp;
 
 import com.billingreports.entities.gcp.Gcp;
 import com.billingreports.entities.gcp.GcpAggregateResult;
+import com.billingreports.exceptions.ValidDateRangeException;
 import com.billingreports.repositories.gcp.GcpRespository;
 import com.billingreports.service.gcp.GcpService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -57,40 +60,73 @@ public class GcpServiceImpl implements GcpService {
 
     @Override
     public List<Gcp> getAllDataBydateRange(String startDate, String endDate) {
+        LocalDate startLocalDate = parseLocalDate(startDate);
+        LocalDate endLocalDate = parseLocalDate(endDate).plusDays(1);
 
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate).plusDays(1);
+        // Calculate the period between startLocalDate and endLocalDate
+        Period period = Period.between(startLocalDate, endLocalDate);
 
-        return gcpRepository.findByDateBetween(start, end);
+        // Check if the period is more than one year
+        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+            throw new ValidDateRangeException("Select in range within 12 months");
+        }
+
+        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+
+        return gcpRepository.findByDateRange(startLocalDate, endLocalDate);
     }
 
     @Override
     public List<Gcp> getAllDataByMonths(int months) {
-        LocalDate endDate = LocalDate.now().plusDays(1);
-        LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1); // Include the current month data
+        LocalDate endDate = LocalDate.now();
+//        LocalDate startDate = endDate.minusMonths(months);
 
-        return gcpRepository.findByDateBetween(startDate, endDate);
+        LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
+
+        endDate = endDate.plusDays(1);
+
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End date: " + endDate);
+
+        return gcpRepository.findByDateRange(startDate, endDate);
     }
-
-
-
 
     @Override
     public List<Gcp> getDataByServiceDescAndDateRange(String serviceDescription, String startDate, String endDate) {
 
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate).plusDays(1);
+        LocalDate startLocalDate = parseLocalDate(startDate);
+        LocalDate endLocalDate = parseLocalDate(endDate).plusDays(1);
 
-        return gcpRepository.findByServiceDescriptionAndDateBetween(serviceDescription, start, end);
+        // Calculate the period between startLocalDate and endLocalDate
+        Period period = Period.between(startLocalDate, endLocalDate);
+
+        // Check if the period is more than one year
+        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+            throw new ValidDateRangeException("Select in range within 12 months");
+        }
+
+        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+
+        return gcpRepository.findByServiceDescriptionAndDateRange(serviceDescription, startLocalDate, endLocalDate);
     }
 
     @Override
     public List<Gcp> getDataByServiceDescAndMonths(String serviceDesc, int months) {
 
-        LocalDate endDate = LocalDate.now().plusDays(1);
-        LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
+        LocalDate endDate = LocalDate.now();
 
-        return gcpRepository.findByServiceDescriptionAndDateBetween(serviceDesc, startDate, endDate);
+//        LocalDate startDate = endDate.minusMonths(months);
+
+        LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
+
+        endDate = endDate.plusDays(1);
+
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End date: " + endDate);
+
+        return gcpRepository.findByServiceDescriptionAndDateRange(serviceDesc, startDate, endDate);
     }
 
 
@@ -114,7 +150,7 @@ public class GcpServiceImpl implements GcpService {
             billingDetails = getDataByServiceDescAndMonths(serviceDescription, months);
 
         } else {
-            throw new IllegalArgumentException("Please give the valid date or duration");
+            throw new ValidDateRangeException("Please give the valid date or duration");
         }
 
         // Return the response map or adjust the return value as needed
@@ -131,7 +167,7 @@ public class GcpServiceImpl implements GcpService {
                 Map.entry(10, "Oct"), Map.entry(11, "Nov"), Map.entry(12, "Dec")
         );
 
-        for (Gcp gcp: billingDetails) {
+        for (Gcp gcp : billingDetails) {
             Date usageDate = gcp.getDate();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(usageDate);
@@ -219,20 +255,16 @@ public class GcpServiceImpl implements GcpService {
 
         if (startDate != null && endDate != null && months == 0) {
 
-            billingDetails = getAllDataBydateRange(startDate, endDate) ;
-        }
-        else if (Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
+            billingDetails = getAllDataBydateRange(startDate, endDate);
+        } else if (Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
 
             billingDetails = getAllDataByMonths(months);
-        }
-
-        else {
-            throw new IllegalArgumentException("Please provide valid months or duration for top 5 services");
+        } else {
+            throw new ValidDateRangeException("Please select valid months or dates for top 5 services");
         }
         // Return the response map or adjust the return value as needed
         return billingDetails;
     }
-
 
     @Override
     public List<GcpAggregateResult> getServiceTopFiveTotalCosts(String startDate, String endDate, Integer months) {
@@ -257,6 +289,15 @@ public class GcpServiceImpl implements GcpService {
         value = value * factor;
         long tmp = Math.round(value);
         return (double) tmp / factor;
+    }
+
+    private LocalDate parseLocalDate(String dateStr) {
+        return LocalDate.parse(dateStr);
+    }
+
+    // Utility method to format LocalDate to String
+    private String formatDate(LocalDate date) {
+        return date.toString();
     }
 
 }

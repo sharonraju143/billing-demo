@@ -15,10 +15,12 @@ public interface GcpRespository extends MongoRepository<Gcp, String> {
     List<String> findDistinctServiceDescriptionBy();
 
     // to get all data between dates and months
-    List<Gcp> findByDateBetween(LocalDate startDate, LocalDate endDate);
+    @Query("{ 'date': { $gte: ?0, $lte: ?1 } }")
+    List<Gcp> findByDateRange(LocalDate startDate, LocalDate endDate);
 
     // to get the data based on the serviceDesp and date range
-    List<Gcp> findByServiceDescriptionAndDateBetween(String serviceDescription, LocalDate startDate, LocalDate endDate);
+    @Query("{'ServiceDescription': ?0, 'date': { $gte: ?1, $lte: ?2 } }")
+    List<Gcp> findByServiceDescriptionAndDateRange(String serviceDescription, LocalDate startDate, LocalDate endDate);
 
 
 }

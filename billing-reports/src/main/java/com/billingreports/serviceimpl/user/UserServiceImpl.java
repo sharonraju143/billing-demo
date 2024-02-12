@@ -1,8 +1,8 @@
 package com.billingreports.serviceimpl.user;
 
 import com.billingreports.entities.user.User;
-import com.billingreports.exceptions.ResourceNotFoundException;
-import com.billingreports.exceptions.UsernameAlreadyExistsException;
+import com.billingreports.exceptions.UserNotFoundException;
+import com.billingreports.exceptions.UsernameOrEmailAlreadyExistsException;
 import com.billingreports.repositories.user.UserRepository;
 import com.billingreports.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     public User createUser(User user) {
         // Check if the username already exists in the database
         if (emailOrUserNameAlreadyExist(user)) {
-            throw new UsernameAlreadyExistsException("Username already exists");
+            throw new UsernameOrEmailAlreadyExistsException();
         }
 
         // Proceed with user creation if the username doesn't exist
@@ -45,20 +45,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(String userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("UserId Not Found in Resource"+userId));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException());
         return user;
     }
 
     @Override
     public User getUserByUsername(String userName) {
-        User user = userRepository.findByUserName(userName).orElseThrow(() -> new ResourceNotFoundException("User not found by " + userName));
+        User user = userRepository.findByUserName(userName).orElseThrow(() -> new UserNotFoundException());
         return user;
     }
 
     @Override
     public User updateUser(User user) {
         User existingUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Employee not exist by id " + user.getId()));
+                .orElseThrow(() -> new UserNotFoundException());
         existingUser.setFirstName(user.getFirstName());
         existingUser.setLastName(user.getLastName());
         existingUser.setEmail(user.getEmail());
@@ -78,17 +78,4 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(user.getEmail()).isPresent() ||
                 userRepository.findByUserName(user.getUserName()).isPresent();
     }
-
-//    @Override
-//    public void changePassword(ChangePassword password, Principal connectedUser) {
-//        User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-//        if (!passwordEncoder.matches(password.getCurrentPassword(),user.getPassword())){
-//            throw new IllegalStateException("Wrong Password");
-//        }
-//        if(!password.getNewPassword().equals(password.getConfirmNewPassword())){
-//            throw new IllegalStateException("Password are not same");
-//        }
-//        user.setPassword(passwordEncoder.encode(password.getNewPassword()));
-//        userRepository.save(user);
-//    }
 }

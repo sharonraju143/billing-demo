@@ -2,6 +2,7 @@ package com.billingreports.controllers.gcp;
 
 import com.billingreports.entities.gcp.Gcp;
 import com.billingreports.entities.gcp.GcpAggregateResult;
+import com.billingreports.exceptions.ValidDateRangeException;
 import com.billingreports.service.gcp.GcpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,39 +38,39 @@ public class GcpController {
         return ResponseEntity.ok(serviceName);
     }
 
-    @GetMapping("/dataBetweenDates")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-    public ResponseEntity<List<Gcp>> getDataBetweenDates(@RequestParam("startDate") String startDate,
-                                                         @RequestParam("endDate") String endDate) {
-        List<Gcp> betweenDates = gcpService.getAllDataBydateRange(startDate, endDate);
-        return ResponseEntity.ok(betweenDates);
-    }
+//    @GetMapping("/dataBetweenDates")
+//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
+//    public ResponseEntity<List<Gcp>> getDataBetweenDates(@RequestParam("startDate") String startDate,
+//                                                         @RequestParam("endDate") String endDate) {
+//        List<Gcp> betweenDates = gcpService.getAllDataBydateRange(startDate, endDate);
+//        return ResponseEntity.ok(betweenDates);
+//    }
 
-    @GetMapping("/dataByMonths")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-    public ResponseEntity<List<Gcp>> getDataByMonths(@RequestParam("months") int months) {
-        List<Gcp> betweenMonths = gcpService.getAllDataByMonths(months);
-        return ResponseEntity.ok(betweenMonths);
-    }
+//    @GetMapping("/dataByMonths")
+//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
+//    public ResponseEntity<List<Gcp>> getDataByMonths(@RequestParam("months") int months) {
+//        List<Gcp> betweenMonths = gcpService.getAllDataByMonths(months);
+//        return ResponseEntity.ok(betweenMonths);
+//    }
 
-    @GetMapping("/serviceDesc/Dates")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-    public ResponseEntity<List<Gcp>> getDataByServiceDespAndDates(
-            @RequestParam("serviceDescription") String serviceDescription, @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate) {
-        List<Gcp> betweenServiceAndDates = gcpService.getDataByServiceDescAndDateRange(serviceDescription, startDate,
-                endDate);
-        return ResponseEntity.ok(betweenServiceAndDates);
-    }
+//    @GetMapping("/serviceDesc/Dates")
+//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
+//    public ResponseEntity<List<Gcp>> getDataByServiceDespAndDates(
+//            @RequestParam("serviceDescription") String serviceDescription, @RequestParam("startDate") String startDate,
+//            @RequestParam("endDate") String endDate) {
+//        List<Gcp> betweenServiceAndDates = gcpService.getDataByServiceDescAndDateRange(serviceDescription, startDate,
+//                endDate);
+//        return ResponseEntity.ok(betweenServiceAndDates);
+//    }
 
-    @GetMapping("/serviceDesc/months")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-    public ResponseEntity<List<Gcp>> getDataByServicedescAndMonths(
-            @RequestParam("serviceDescription") String serviceDescription,
-            @RequestParam("months") int months){
-        List<Gcp> betweenServiceAndMonths =gcpService.getDataByServiceDescAndMonths(serviceDescription,months);
-        return ResponseEntity.ok(betweenServiceAndMonths);
-    }
+//    @GetMapping("/serviceDesc/months")
+//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
+//    public ResponseEntity<List<Gcp>> getDataByServicedescAndMonths(
+//            @RequestParam("serviceDescription") String serviceDescription,
+//            @RequestParam("months") int months) {
+//        List<Gcp> betweenServiceAndMonths = gcpService.getDataByServiceDescAndMonths(serviceDescription, months);
+//        return ResponseEntity.ok(betweenServiceAndMonths);
+//    }
 
     @GetMapping("/details")
     @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
@@ -81,41 +82,25 @@ public class GcpController {
     ) {
         if (serviceDescription == null && startDate == null && endDate == null && months == null) {
             // If any required parameter is missing, return a response indicating the required fields
-            Map<String, String> errorResponse = new LinkedHashMap<>();
-            errorResponse.put("error", "Please select  required fields.");
-            return ResponseEntity.badRequest().body(errorResponse);
+            throw new ValidDateRangeException("Enter valid inputs");
         }
+        // Replace the following placeholders with your actual service calls
+        List<Gcp> billingDetails = gcpService.getBillingDetails(serviceDescription, startDate, endDate, months);
 
-        try {
-            // Replace the following placeholders with your actual service calls
-            List<Gcp> billingDetails = gcpService.getBillingDetails(serviceDescription, startDate, endDate, months);
+        List<Map<String, Double>> monthlyTotalAmounts = gcpService.calculateMonthlyTotalBills(billingDetails);
 
-            List<Map<String, Double>> monthlyTotalAmounts = gcpService.calculateMonthlyTotalBills(billingDetails);
+        Double totalAmount = billingDetails.stream().mapToDouble(Gcp::getCost).sum();
+        List<Map<String, Object>> billingPeriod = gcpService.generateBillingPeriod(startDate, endDate, months);
 
-            Double totalAmount = billingDetails.stream().mapToDouble(Gcp::getCost).sum();
-            List<Map<String, Object>> billingPeriod = gcpService.generateBillingPeriod(startDate, endDate, months);
+        List<GcpAggregateResult> aggregateResults = gcpService.getServiceTopFiveTotalCosts(startDate, endDate, months);
+        // Create a response map
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("billingDetails", billingDetails);
+        response.put("monthlyTotalAmounts", monthlyTotalAmounts);
+        response.put("totalAmount", totalAmount);
+        response.put("billingPeriod", billingPeriod);
+        response.put("top5Services", aggregateResults);
 
-            List<GcpAggregateResult> aggregateResults = gcpService.getServiceTopFiveTotalCosts(startDate, endDate, months);
-            // Create a response map
-            Map<String, Object> response = new LinkedHashMap<>();
-            response.put("billingDetails", billingDetails);
-            response.put("monthlyTotalAmounts", monthlyTotalAmounts);
-            response.put("totalAmount", totalAmount);
-            response.put("billingPeriod", billingPeriod);
-            response.put("top5Services", aggregateResults);
-
-//			if (billingDetails.isEmpty()) {
-//				Map<String, Object> emptyBillingDetailsResponse = new LinkedHashMap<>();
-//				emptyBillingDetailsResponse.put("message", "No billing details available.");
-//				return ResponseEntity.ok(emptyBillingDetailsResponse);
-//			} else {
-            return ResponseEntity.ok(response);
-//			}
-        } catch (IllegalArgumentException e) {
-            // Handle the exception, return an error response or log the error message
-            Map<String, Object> errorResponse = new LinkedHashMap<>();
-            errorResponse.put("error", e.getMessage());
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
+        return ResponseEntity.ok(response);
     }
 }

@@ -2,7 +2,8 @@ package com.billingreports.controllers.user;
 
 import com.billingreports.entities.user.LoginRequest;
 import com.billingreports.entities.user.User;
-import com.billingreports.exceptions.UsernameAlreadyExistsException;
+import com.billingreports.exceptions.UsernameOrEmailAlreadyExistsException;
+import com.billingreports.exceptions.UsernameOrPasswordIncorrectException;
 import com.billingreports.jwtUtil.JwtUtil;
 import com.billingreports.service.user.UserService;
 import lombok.AllArgsConstructor;
@@ -39,7 +40,7 @@ public class UserController {
             // Attempt to create a user
             User savedUser = userService.createUser(user);
             return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
-        } catch (UsernameAlreadyExistsException e) {
+        } catch (UsernameOrEmailAlreadyExistsException e) {
             // Username already exists - handle this exception
             return new ResponseEntity<>("Username already exists", HttpStatus.CONFLICT);
         } catch (Exception e) {
@@ -93,7 +94,7 @@ public class UserController {
             String result = "{\"token\":\"" + res + "\"}";
             return result;
         } else {
-            throw new UsernameNotFoundException("Invalid username or password");
+            throw new UsernameOrPasswordIncorrectException();
         }
 
     }

@@ -2,6 +2,7 @@ package com.billingreports.serviceimpl.aws;
 
 import com.billingreports.entities.aws.Aws;
 import com.billingreports.entities.aws.AwsAggregateResult;
+import com.billingreports.exceptions.ValidDateRangeException;
 import com.billingreports.repositories.aws.AwsRepository;
 import com.billingreports.service.aws.AwsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -68,40 +70,81 @@ public class AwsServiceImpl implements AwsService {
     // Get Data By Months
     @Override
     public List<Aws> getBillingDetailsForDuration(int months) {
-        String strEndDate = LocalDate.now().plusDays(1).toString();
-        String strStartDate = LocalDate.now().minusMonths(months).minusDays(1).toString();
+        LocalDate endDate = LocalDate.now();
+//        LocalDate startDate = endDate.minusMonths(months);
 
-        return awsRepository.findByStartDateBetween(strStartDate,strEndDate);
+        LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
+
+        String strStartDate = startDate.toString();
+        String strEndDate = endDate.toString();
+
+        System.out.println("Start Date: " + strStartDate);
+        System.out.println("End date: " + endDate);
+
+        return awsRepository.findByStartDateGreaterThanEqualAndStartDateLessThanEqual(strStartDate,strEndDate);
     }
 
     // Get Data By Dates
     @Override
     public List<Aws> getAllDataByDateRange(String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
 
-        String strStartDate = start.minusDays(1).toString();
-        String strEndDate = end.plusDays(1).toString();
+        LocalDate startLocalDate = parseLocalDate(startDate);
+        LocalDate endLocalDate = parseLocalDate(endDate);
 
-        return awsRepository.findByStartDateBetween(strStartDate, strEndDate);
+        // Calculate the period between startLocalDate and endLocalDate
+        Period period = Period.between(startLocalDate, endLocalDate);
 
+        // Check if the period is more than one year
+        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+            throw new ValidDateRangeException("Select in range within 12 months");
+        }
+
+        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+
+        return awsRepository.findByStartDateGreaterThanEqualAndStartDateLessThanEqual(
+                formatDate(startLocalDate),
+                formatDate(endLocalDate)
+        );
+//        return awsRepository.findByStartDateGreaterThanEqualAndStartDateLessThanEqual(strStartDate, strEndDate);
     }
+
 
     // Get Billing Details  By Dates and Service
     @Override
     public List<Aws> getDataByServiceAndDateRange(String service, String startDate, String endDate) {
-        String start = LocalDate.parse(startDate).minusDays(1).toString();
-        String end = LocalDate.parse(endDate).plusDays(1).toString();
-        return awsRepository.findByServiceAndStartDateBetween(service,startDate,endDate);
+        LocalDate startLocalDate = parseLocalDate(startDate);
+        LocalDate endLocalDate = parseLocalDate(endDate);
+
+        // Calculate the period between startLocalDate and endLocalDate
+        Period period = Period.between(startLocalDate, endLocalDate);
+
+        // Check if the period is more than one year
+        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+            throw new ValidDateRangeException("Select in range within 12 months");
+        }
+
+        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+        return awsRepository.findByServiceAndStartDateGreaterThanEqualAndStartDateLessThanEqual(service, formatDate(startLocalDate), formatDate(endLocalDate));
     }
 
     // Get Billing Details For Months and Service
     @Override
     public List<Aws> getBillingDetailsForDuration(String service, int months) {
 
-        String strEndDate = LocalDate.now().plusDays(1).toString();
-        String strStartDate = LocalDate.now().minusMonths(months).minusDays(1).toString();
-        return awsRepository.findByServiceAndStartDateBetween(service,strStartDate,strEndDate);
+        LocalDate endDate = LocalDate.now();
+//        LocalDate startDate = endDate.minusMonths(months);
+
+        LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
+
+        String strStartDate = startDate.toString();
+        String strEndDate = endDate.toString();
+
+        System.out.println("Start Date: " + strStartDate);
+        System.out.println("End date: " + endDate);
+
+        return awsRepository.findByServiceAndStartDateGreaterThanEqualAndStartDateLessThanEqual(service,strStartDate,strEndDate);
     }
 
     // Get Billing Details Methods
@@ -129,7 +172,7 @@ public class AwsServiceImpl implements AwsService {
 
         }
         else {
-            throw new IllegalArgumentException("Please give the valid date or duration");
+            throw new ValidDateRangeException("Please give the valid months or dates");
         }
 
         return billingDetails;
@@ -244,7 +287,7 @@ public class AwsServiceImpl implements AwsService {
         }
 
         else {
-            throw new IllegalArgumentException("Please provide valid months or duration for top 5 services");
+            throw new ValidDateRangeException("Please provide valid months or dates for top 5 services");
         }
 
         return billingDetails;
@@ -273,5 +316,14 @@ public class AwsServiceImpl implements AwsService {
         value = value * factor;
         long tmp = Math.round(value);
         return (double) tmp / factor;
+    }
+
+    private LocalDate parseLocalDate(String dateStr) {
+        return LocalDate.parse(dateStr);
+    }
+
+    // Utility method to format LocalDate to String
+    private String formatDate(LocalDate date) {
+        return date.toString();
     }
 }

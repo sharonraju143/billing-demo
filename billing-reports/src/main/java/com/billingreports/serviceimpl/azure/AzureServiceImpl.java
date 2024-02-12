@@ -2,6 +2,7 @@ package com.billingreports.serviceimpl.azure;
 
 import com.billingreports.entities.azure.Azure;
 import com.billingreports.entities.azure.AzureAggregateResult;
+import com.billingreports.exceptions.ValidDateRangeException;
 import com.billingreports.repositories.azure.AzureRepository;
 import com.billingreports.service.azure.AzureService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,84 +42,104 @@ public class AzureServiceImpl implements AzureService {
 
     @Override
     public List<Azure> getAllDataBydateRange(String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
+        LocalDate startLocalDate = parseLocalDate(startDate);
+        LocalDate endLocalDate = parseLocalDate(endDate);
 
-        end = end.plusDays(1);
-        start = start.minusDays(1);
+        // Calculate the period between startLocalDate and endLocalDate
+        Period period = Period.between(startLocalDate, endLocalDate);
 
-        String strStartDate = start.toString();
-        String strEndDate = end.toString();
+        // Check if the period is more than one year
+        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+            throw new ValidDateRangeException("Select in range within 12 months");
+        }
 
-        return azureRepository.findByusageDateBetween(strStartDate, strEndDate);
+        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+
+        return azureRepository.findByUsageDateGreaterThanEqualAndUsageDateLessThanEqual(
+                formatDate(startLocalDate),
+                formatDate(endLocalDate)
+        );
+//        return azureRepository.findByUsageDateGreaterThanEqualAndUsageDateLessThanEqual(startDate, endDate);
     }
 
     @Override
     public List<Azure> getAllDataByMonths(int months) {
         LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
+//        LocalDate startDate = endDate.minusMonths(months);
 
-        endDate = endDate.plusDays(1);
-        startDate = startDate.minusDays(1);
+        LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
 
         String strStartDate = startDate.toString();
         String strEndDate = endDate.toString();
 
-        return azureRepository.findByusageDateBetween(strStartDate, strEndDate);
+        System.out.println("Start Date: " + strStartDate);
+        System.out.println("End date: " + endDate);
+
+        return azureRepository.findByUsageDateGreaterThanEqualAndUsageDateLessThanEqual(strStartDate, strEndDate);
     }
 
     @Override
     public List<Azure> getDataByResourseTypeAndDateRange(String resourseType, String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
+        LocalDate startLocalDate = parseLocalDate(startDate);
+        LocalDate endLocalDate = parseLocalDate(endDate);
 
-        end = end.plusDays(1);
-        start = start.minusDays(1);
+        // Calculate the period between startLocalDate and endLocalDate
+        Period period = Period.between(startLocalDate, endLocalDate);
 
-        String strStartDate = start.toString();
-        String strEndDate = end.toString();
+        // Check if the period is more than one year
+        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+            throw new ValidDateRangeException("Select in range within 12 months");
+        }
 
-        return azureRepository.findByResourceTypeAndUsageDateBetween(resourseType, strStartDate, strEndDate);
+        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+        return azureRepository.findByResourceTypeAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(resourseType, formatDate(startLocalDate), formatDate(endLocalDate));
     }
 
     @Override
     public List<Azure> getDataByResourseTypeAndMonths(String resourseType, int months) {
         LocalDate endDate = LocalDate.now();
-        LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
-
-        endDate = endDate.plusDays(1);
-        startDate = startDate.minusDays(1);
+        LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
 
         String strStartDate = startDate.toString();
         String strEndDate = endDate.toString();
 
-        return azureRepository.findByResourceTypeAndUsageDateBetween(resourseType, strStartDate, strEndDate);
+        System.out.println("Start Date: " + strStartDate);
+        System.out.println("End Date: " + strEndDate);
+
+        return azureRepository.findByResourceTypeAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(resourseType, strStartDate, strEndDate);
     }
+
     @Override
     public List<Azure> getDataByResourseTypeAndSubscriptionNameAndDateRange(String resourseType, String subscriptionName, String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
-//
-        end = end.plusDays(1);
-        start = start.minusDays(1);
+        LocalDate startLocalDate = parseLocalDate(startDate);
+        LocalDate endLocalDate = parseLocalDate(endDate);
 
-        String strStartDate = start.toString();
-        String strEndDate = end.toString();
-        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateBetween(resourseType, subscriptionName, strStartDate, strEndDate);
+        // Calculate the period between startLocalDate and endLocalDate
+        Period period = Period.between(startLocalDate, endLocalDate);
+
+        // Check if the period is more than one year
+        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+            throw new ValidDateRangeException("Select in range within 12 months");
+        }
+
+        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+
+        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(resourseType, subscriptionName, formatDate(startLocalDate), formatDate(endLocalDate));
     }
 
     @Override
     public List<Azure> getDataByResourseTypeAndSubscriptionNameAndDuration(String resourseType, String subscriptionName, Integer months) {
+
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
-
-        endDate = endDate.plusDays(1);
-        startDate = startDate.minusDays(1);
 
         String strStartDate = startDate.toString();
         String strEndDate = endDate.toString();
 
-        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateBetween(resourseType, subscriptionName, strStartDate, strEndDate);
+        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(resourseType, subscriptionName, strStartDate, strEndDate);
     }
 
     @Override
@@ -122,28 +147,31 @@ public class AzureServiceImpl implements AzureService {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
 
-        endDate = endDate.plusDays(1);
-        startDate = startDate.minusDays(1);
-
         String strStartDate = startDate.toString();
         String strEndDate = endDate.toString();
 
-        return azureRepository.findBySubscriptionNameAndUsageDateBetween(subscriptionName, strStartDate, strEndDate);
+        return azureRepository.findBySubscriptionNameAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(subscriptionName, strStartDate, strEndDate);
     }
 
     @Override
     public List<Azure> getDataBySubscriptionNameAndRange(String subscriptionName, String startDate, String endDate) {
-        LocalDate start = LocalDate.parse(startDate);
-        LocalDate end = LocalDate.parse(endDate);
+        LocalDate startLocalDate = parseLocalDate(startDate);
+        LocalDate endLocalDate = parseLocalDate(endDate);
 
-        start = start.minusDays(1);
-        end = end.plusDays(1);
+        // Calculate the period between startLocalDate and endLocalDate
+        Period period = Period.between(startLocalDate, endLocalDate);
 
-        String strStartDate = start.toString();
-        String strEndDate = end.toString();
+        // Check if the period is more than one year
+        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+            throw new ValidDateRangeException("Select in range within 12 months");
+        }
 
-        return azureRepository.findBySubscriptionNameAndUsageDateBetween(subscriptionName, strStartDate, strEndDate);
+        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+
+        return azureRepository.findBySubscriptionNameAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(subscriptionName, formatDate(startLocalDate), formatDate(endLocalDate));
     }
+
 
     @Override
     public List<Azure> getBillingDetails(String resourceType, String subscriptionName, String startDate, String endDate, Integer months) {
@@ -176,7 +204,7 @@ public class AzureServiceImpl implements AzureService {
 
             billingDetails = getDataByResourseTypeAndSubscriptionNameAndDateRange(resourceType, subscriptionName, startDate, endDate);
         } else {
-            throw new IllegalArgumentException("Please give the valid date or duration");
+            throw new ValidDateRangeException("Please select valid months or dates");
         }
         return billingDetails;
     }
@@ -191,7 +219,7 @@ public class AzureServiceImpl implements AzureService {
                 Map.entry(10, "Oct"), Map.entry(11, "Nov"), Map.entry(12, "Dec")
         );
 
-        for (Azure azure: billingDetails) {
+        for (Azure azure : billingDetails) {
             String usageDate = azure.getUsageDate(); // Assuming this gives a date string in format "yyyy-MM-dd"
 
             // Parse the usage date to extract year and month
@@ -238,74 +266,6 @@ public class AzureServiceImpl implements AzureService {
         return monthlyTotalBillsList;
     }
 
-//    @Override
-//    public List<Map<String, String>> calculateMonthlyTotalBills(List<Azure> billingDetails) {
-//        Map<String, Double> monthlyTotalBillsMap = new LinkedHashMap<>();
-//        Map<Integer, String> monthNames = Map.ofEntries(
-//                Map.entry(1, "Jan"), Map.entry(2, "Feb"), Map.entry(3, "Mar"),
-//                Map.entry(4, "Apr"), Map.entry(5, "May"), Map.entry(6, "Jun"),
-//                Map.entry(7, "Jul"), Map.entry(8, "Aug"), Map.entry(9, "Sep"),
-//                Map.entry(10, "Oct"), Map.entry(11, "Nov"), Map.entry(12, "Dec")
-//        );
-//
-//
-//        String currencySymbol = "";
-//
-//        for (Azure azure : billingDetails) {
-//            String usageDate = azure.getUsageDate();
-//
-//            if ("INR".equalsIgnoreCase(azure.getCurrency())) {
-//                currencySymbol = "₹";
-//            } else if ("USD".equalsIgnoreCase(azure.getCurrency())) {
-//                currencySymbol = "$";
-//            }
-//
-//            // Parse the usage date to extract year and month
-//            String[] dateParts = usageDate.split("-");
-//            int year = Integer.parseInt(dateParts[0]);
-//            int monthNumber = Integer.parseInt(dateParts[1]);
-//            String monthName = monthNames.get(monthNumber);
-//
-//            double cost = azure.getCost();
-//            String monthYear = monthName + "-" + year;
-//
-//            // If the month key exists in the map, add the cost; otherwise, put a new entry
-//            monthlyTotalBillsMap.put(monthYear, monthlyTotalBillsMap.getOrDefault(monthYear, 0.0) + cost);
-//        }
-//
-//        // Sort the monthly total bills by year and month
-//        List<Map.Entry<String, Double>> sortedBills = new ArrayList<>(monthlyTotalBillsMap.entrySet());
-//        Collections.sort(sortedBills, (entry1, entry2) -> {
-//            String[] parts1 = entry1.getKey().split("-");
-//            String[] parts2 = entry2.getKey().split("-");
-//            int year1 = Integer.parseInt(parts1[1]);
-//            int year2 = Integer.parseInt(parts2[1]);
-//            int monthOrder1 = monthNames.entrySet().stream()
-//                    .filter(entry -> entry.getValue().equalsIgnoreCase(parts1[0]))
-//                    .map(Map.Entry::getKey)
-//                    .findFirst().orElse(-1);
-//            int monthOrder2 = monthNames.entrySet().stream()
-//                    .filter(entry -> entry.getValue().equalsIgnoreCase(parts2[0]))
-//                    .map(Map.Entry::getKey)
-//                    .findFirst().orElse(-1);
-//            if (year1 != year2) {
-//                return Integer.compare(year1, year2);
-//            }
-//            return Integer.compare(monthOrder1, monthOrder2);
-//        });
-//
-//        List<Map<String, String>> monthlyTotalBillsList = new ArrayList<>();
-//        for (Map.Entry<String, Double> entry : sortedBills) {
-//            Map<String, String> monthEntry = new LinkedHashMap<>();
-//            monthEntry.put("MonthYear", entry.getKey());
-//            monthEntry.put("TotalCost", currencySymbol + entry.getValue()); // Append currency symbol
-//            monthlyTotalBillsList.add(monthEntry);
-//        }
-//
-//        return monthlyTotalBillsList;
-//    }
-
-
     public List<Map<String, Object>> generateBillingPeriod(String startDate, String endDate, Integer months) {
         List<Map<String, Object>> billingPeriod = new ArrayList<>();
         Map<String, Object> periodData = new HashMap<>();
@@ -341,33 +301,6 @@ public class AzureServiceImpl implements AzureService {
         return billingPeriod;
     }
 
-
-
-//    @Override
-//    public List<AzureAggregateResult> getServiceTopFiveTotalCosts(List<Azure> billingDetails) {
-//
-//        Map<String, Double> serviceTotalCostMap = billingDetails.stream()
-//                .collect(Collectors.groupingBy(Azure::getResourceType, Collectors.summingDouble(Azure::getCost)));
-//
-//        List<AzureAggregateResult> top5Services = serviceTotalCostMap.entrySet().stream()
-//                .map(entry -> {
-//                    String resourceType = entry.getKey();
-//                    double totalCost = round(entry.getValue(), 2);
-//                    String currency = billingDetails.stream()
-//                            .filter(azure -> azure.getResourceType().equals(resourceType))
-//                            .findFirst()
-//                            .map(Azure::getCurrency)
-//                            .orElse(null); // Assuming getCurrency returns a String
-//
-//                    return new AzureAggregateResult(resourceType, totalCost, currency);
-//                })
-//                .sorted((b1, b2) -> Double.compare(b2.getTotalCost(), b1.getTotalCost()))
-//                .limit(5)
-//                .collect(Collectors.toList());
-//
-//        return top5Services;
-//    }
-
     @Override
     public List<Azure> getBillingDetailsUsingSubscriptionRangeAndDate(String subscriptionName, String startDate, String endDate, Integer months) {
         List<Azure> billingDetails;
@@ -375,15 +308,12 @@ public class AzureServiceImpl implements AzureService {
         if (subscriptionName != null && startDate != null && endDate != null && months == 0) {
 
             billingDetails = getDataBySubscriptionNameAndRange(subscriptionName, startDate, endDate);
-        }
-        else if (subscriptionName != null && Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
+        } else if (subscriptionName != null && Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
 
             billingDetails = getDataBySubscriptionNameAndMonths(subscriptionName, months);
 
-        }
-
-        else {
-            throw new IllegalArgumentException("Please provide valid months or duration for top 5 services");
+        } else {
+            throw new ValidDateRangeException("Please select valid months or dates for top 5 services");
         }
 
         return billingDetails;
@@ -404,6 +334,7 @@ public class AzureServiceImpl implements AzureService {
 //                .collect(Collectors.toList());
 //
 //        return top5Services;
+
         List<AzureAggregateResult> top5Services = serviceTotalCostMap.entrySet().stream()
                 .map(entry -> {
                     String resourceType = entry.getKey();
@@ -494,5 +425,15 @@ public class AzureServiceImpl implements AzureService {
             return jsonStr.substring(startIndex, endIndex);
         }
         return null; // Return null if extraction fails
+    }
+
+
+    private LocalDate parseLocalDate(String dateStr) {
+        return LocalDate.parse(dateStr);
+    }
+
+    // Utility method to format LocalDate to String
+    private String formatDate(LocalDate date) {
+        return date.toString();
     }
 }
