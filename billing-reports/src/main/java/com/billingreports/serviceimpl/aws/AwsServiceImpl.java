@@ -24,6 +24,9 @@ public class AwsServiceImpl implements AwsService {
     @Autowired
     private AwsRepository awsRepository;
 
+    public AwsServiceImpl() {
+    }
+
 //    @Override
 //    public Aws save(Aws aws) {
 //        return awsRepository.save(aws);

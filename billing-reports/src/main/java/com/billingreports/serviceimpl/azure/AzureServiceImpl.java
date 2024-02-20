@@ -28,6 +28,7 @@ public class AzureServiceImpl implements AzureService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+
     @Override
     public Long getCountOfData() {
 
@@ -39,6 +40,7 @@ public class AzureServiceImpl implements AzureService {
 
         return azureRepository.findAll();
     }
+
 
     @Override
     public List<Azure> getAllDataBydateRange(String startDate, String endDate) {
@@ -327,14 +329,6 @@ public class AzureServiceImpl implements AzureService {
         Map<String, Double> serviceTotalCostMap = billingDetails.stream()
                 .collect(Collectors.groupingBy(Azure::getResourceType, Collectors.summingDouble(Azure::getCost)));
 
-//        List<AzureAggregateResult> top5Services = serviceTotalCostMap.entrySet().stream()
-//                .map(entry -> new AzureAggregateResult(entry.getKey(), round(entry.getValue(), 2)))
-//                .sorted((b1, b2) -> Double.compare(b2.getTotalCost(), b1.getTotalCost())) // Sort in descending order
-//                .limit(5)
-//                .collect(Collectors.toList());
-//
-//        return top5Services;
-
         List<AzureAggregateResult> top5Services = serviceTotalCostMap.entrySet().stream()
                 .map(entry -> {
                     String resourceType = entry.getKey();
@@ -402,7 +396,7 @@ public class AzureServiceImpl implements AzureService {
         return extractUniqueResourceType(serviceDescriptions);
     }
 
-    private List<String> extractUniqueResourceType(List<String> resourceType) {
+    List<String> extractUniqueResourceType(List<String> resourceType) {
         Set<String> uniqueServiceSet = new HashSet<>();
         List<String> uniqueServiceList = new ArrayList<>();
 

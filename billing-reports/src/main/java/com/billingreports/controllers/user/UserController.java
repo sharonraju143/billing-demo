@@ -85,6 +85,11 @@ public class UserController {
         return new ResponseEntity<>("User successfully deleted", HttpStatus.OK);
     }
 
+    @PutMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@RequestParam String oldPassword ,@RequestParam String newPassword) throws Exception {
+        return new ResponseEntity<>(userService.changePassword(oldPassword,newPassword),HttpStatus.ACCEPTED);
+    }
+
     @PostMapping("/token")
     public String authenticateAndGetToken(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(

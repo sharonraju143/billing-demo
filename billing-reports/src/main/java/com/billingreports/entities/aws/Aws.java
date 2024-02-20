@@ -28,4 +28,5 @@ public class Aws {
 
     @Field("EndDate")
     private String endDate;
+
 }

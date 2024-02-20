@@ -29,6 +29,7 @@ public class GcpServiceImpl implements GcpService {
         return gcpRepository.findAll();
     }
 
+
     @Override
     public List<String> getDistinctServiceDescriptions() {
         List<String> serviceDescriptions = gcpRepository.findDistinctServiceDescriptionBy();
@@ -89,14 +90,7 @@ public class GcpServiceImpl implements GcpService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime endDate = LocalDate.now().atTime(LocalTime.MAX);
-//        LocalDate startDate = endDate.minusMonths(months);
-
-//        LocalDateTime startLocalDate = LocalDate.parse(startDate, formatter).atStartOfDay();
-
         LocalDateTime startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1).atStartOfDay();
-
-//        endDate = endDate.plusDays(1);
-
         System.out.println("Start Date: " + startDate);
         System.out.println("End date: " + endDate);
 
@@ -132,14 +126,7 @@ public class GcpServiceImpl implements GcpService {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime endDate = LocalDate.now().atTime(LocalTime.MAX);
-//        LocalDate startDate = endDate.minusMonths(months);
-
-//        LocalDateTime startLocalDate = LocalDate.parse(startDate, formatter).atStartOfDay();
-
         LocalDateTime startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1).atStartOfDay();
-
-//        endDate = endDate.plusDays(1);
-
         System.out.println("Start Date: " + startDate);
         System.out.println("End date: " + endDate);
 

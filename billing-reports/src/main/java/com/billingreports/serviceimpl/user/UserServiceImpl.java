@@ -1,11 +1,14 @@
 package com.billingreports.serviceimpl.user;
 
 import com.billingreports.entities.user.User;
+import com.billingreports.exceptions.InvalidUserException;
 import com.billingreports.exceptions.UserNotFoundException;
 import com.billingreports.exceptions.UsernameOrEmailAlreadyExistsException;
 import com.billingreports.repositories.user.UserRepository;
 import com.billingreports.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -77,5 +80,29 @@ public class UserServiceImpl implements UserService {
     public boolean emailOrUserNameAlreadyExist(User user) {
         return userRepository.findByEmail(user.getEmail()).isPresent() ||
                 userRepository.findByUserName(user.getUserName()).isPresent();
+    }
+
+
+    @Override
+    public String changePassword(String oldPassword, String newPassword) {
+        User user = userRepository.findByUserName(getCurrentUsername()).orElseThrow(()->new UserNotFoundException());
+        if(!passwordEncoder.matches(oldPassword,user.getPassword())){
+            throw new InvalidUserException();
+        }
+        else {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+            return "Password Successfully changed.";
+        }
+
+
+    }
+
+    public String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            return authentication.getName(); // Returns the username of the authenticated user
+        }
+        return null; // No user authenticated or anonymous user
     }
 }

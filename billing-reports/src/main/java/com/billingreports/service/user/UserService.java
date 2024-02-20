@@ -18,4 +18,6 @@ public interface UserService{
     void deleteUser(String userId);
 
     boolean emailOrUserNameAlreadyExist(User user);
+
+    public String changePassword(String oldPassword, String newPassword);
 }

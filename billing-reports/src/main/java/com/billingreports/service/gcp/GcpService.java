@@ -2,6 +2,7 @@ package com.billingreports.service.gcp;
 
 import com.billingreports.entities.gcp.Gcp;
 import com.billingreports.entities.gcp.GcpAggregateResult;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -40,4 +41,5 @@ public interface GcpService {
 
     // Get Top 5 Consumers
     public List<GcpAggregateResult> getServiceTopFiveTotalCosts(String startDate, String endDate, Integer months);
+
 }

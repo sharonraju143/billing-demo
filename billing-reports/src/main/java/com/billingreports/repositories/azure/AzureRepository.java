@@ -30,4 +30,5 @@ public interface AzureRepository extends MongoRepository<Azure,String> {
 
     @Query("{'usageDate': {'$gte': ?0, '$lte': ?1}}")
     List<Azure> findByUsageDateGreaterThanEqualAndUsageDateLessThanEqual(String startDate, String endDate);
+
 }
