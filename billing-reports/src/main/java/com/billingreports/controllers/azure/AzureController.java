@@ -1,5 +1,6 @@
 package com.billingreports.controllers.azure;
 
+import com.billingreports.dto.TenantDto;
 import com.billingreports.entities.azure.Azure;
 import com.billingreports.entities.azure.AzureAggregateResult;
 import com.billingreports.exceptions.ValidDateRangeException;
@@ -8,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -75,16 +73,17 @@ public class AzureController {
     @GetMapping("/details")
     @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
     public ResponseEntity<Map<String, Object>> getBillingDetails(
-            @RequestParam(value = "ResourseType"/* , required = false */) String resourceType,
+            @RequestParam String tenantName,
             @RequestParam String subscriptionName,
+            @RequestParam(value = "ResourseType"/* , required = false */) String resourceType,
             @RequestParam /* (required = false) */ String startDate, @RequestParam String endDate,
             @RequestParam(defaultValue = "0"/* required = false */) Integer months) {
 
-        if (resourceType == null || resourceType.isEmpty() && subscriptionName == null || subscriptionName.isEmpty() && startDate == null || startDate.isEmpty() && endDate == null || endDate.isEmpty() && months <= 0) {
+        if (tenantName == null || resourceType == null || resourceType.isEmpty() && subscriptionName == null || subscriptionName.isEmpty() && startDate == null || startDate.isEmpty() && endDate == null || endDate.isEmpty() && months <= 0) {
             throw new ValidDateRangeException("Enter valid inputs");
         }
         // Replace the following placeholders with your actual service calls
-        List<Azure> billingDetails = azureService.getBillingDetails(resourceType, subscriptionName, startDate, endDate, months);
+        List<Azure> billingDetails = azureService.getBillingDetails(tenantName, subscriptionName, resourceType, startDate, endDate, months);
 
         List<Map<String, Double>> monthlyTotalAmounts = azureService.calculateMonthlyTotalBills(billingDetails);
 
@@ -93,7 +92,7 @@ public class AzureController {
 
         List<Map<String, Object>> billingPeriod = azureService.generateBillingPeriod(startDate, endDate, months);
 
-        List<AzureAggregateResult> aggregateResults = azureService.getServiceTopFiveTotalCosts(subscriptionName, startDate, endDate, months);
+        List<AzureAggregateResult> aggregateResults = azureService.getServiceTopFiveTotalCosts(tenantName, subscriptionName, startDate, endDate, months);
         // Create a response map
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("currency", currency);
@@ -116,6 +115,11 @@ public class AzureController {
         return new ResponseEntity<>(azureService.getDistinctSubscriptionNames(), HttpStatus.OK);
     }
 
+    @GetMapping("/distinct-tenant-names")
+    public ResponseEntity<List<String>> getDistinctTenantNames() {
+        return new ResponseEntity<>(azureService.getDistinctTenantNames(), HttpStatus.OK);
+    }
+
     @GetMapping("/distinctresourceType")
     @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
     public ResponseEntity<List<String>> getDistinctResourceType() {
@@ -126,5 +130,25 @@ public class AzureController {
     @GetMapping("resourcetype/subscription")
     public List<String> getDistinctResourceTypeBySubscriptionName(@RequestParam String subscriptionName) {
         return azureService.getDistinctResourceTypeBySubscriptionName(subscriptionName);
+    }
+
+    @GetMapping("/subscription/tenantName")
+    public List<String> getDistinctSubscriptionNameByTenantName(@RequestParam String tenantName) {
+        return azureService.getDistinctSubscriptionNamesBytenantName(tenantName);
+    }
+
+    @GetMapping("/distinctTenantDetails")
+    public List<TenantDto> getDistinctTenantIDsAndNames() {
+        return azureService.getDistinctTenantIDsAndNames();
+    }
+
+
+    @PutMapping("/updateTenantName")
+    public ResponseEntity<String> updateTenantNameByTenantId(
+            @RequestParam String tenantId,
+            @RequestParam String newTenantName
+    ) {
+        azureService.updateTenantNameByTenantId(tenantId, newTenantName);
+        return new ResponseEntity<>("Tenant Name updated successfully with tenant id " + tenantId, HttpStatus.OK);
     }
 }

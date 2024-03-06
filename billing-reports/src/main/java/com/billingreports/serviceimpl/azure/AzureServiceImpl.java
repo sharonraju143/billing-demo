@@ -1,5 +1,6 @@
 package com.billingreports.serviceimpl.azure;
 
+import com.billingreports.dto.TenantDto;
 import com.billingreports.entities.azure.Azure;
 import com.billingreports.entities.azure.AzureAggregateResult;
 import com.billingreports.exceptions.ValidDateRangeException;
@@ -10,12 +11,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -145,6 +143,66 @@ public class AzureServiceImpl implements AzureService {
     }
 
     @Override
+    public List<Azure> getDataByTenantNameAndSubscriptionNameAndDateRange(String tenantName, String subscriptionName, String startDate, String endDate) {
+        LocalDate startLocalDate = parseLocalDate(startDate);
+        LocalDate endLocalDate = parseLocalDate(endDate);
+
+        // Calculate the period between startLocalDate and endLocalDate
+        Period period = Period.between(startLocalDate, endLocalDate);
+
+        // Check if the period is more than one year
+        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+            throw new ValidDateRangeException("Select in range within 12 months");
+        }
+
+        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+
+        return azureRepository.findByTenantNameAndSubscriptionNameAndUsageDateBetween(tenantName, subscriptionName, formatDate(startLocalDate), formatDate(endLocalDate));
+    }
+
+    @Override
+    public List<Azure> getDataByTenantNameAndSubscriptionNameAndMonths(String tenantName, String subscriptionName, Integer months) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
+
+        String strStartDate = startDate.toString();
+        String strEndDate = endDate.toString();
+
+        return azureRepository.findByTenantNameAndSubscriptionNameAndUsageDateBetween(tenantName, subscriptionName, strStartDate, strEndDate);
+    }
+
+    @Override
+    public List<Azure> getDataByTenantNameAndSubscriptionNameAndResourceTypeAndDateRange(String tenantName, String subscriptionName, String resourceType, String startDate, String endDate) {
+        LocalDate startLocalDate = parseLocalDate(startDate);
+        LocalDate endLocalDate = parseLocalDate(endDate);
+
+        // Calculate the period between startLocalDate and endLocalDate
+        Period period = Period.between(startLocalDate, endLocalDate);
+
+        // Check if the period is more than one year
+        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+            throw new ValidDateRangeException("Select in range within 12 months");
+        }
+
+        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+
+        return azureRepository.findByTenantNameAndSubscriptionNameAndResourceTypeAndUsageDateBetween(tenantName, subscriptionName, resourceType, formatDate(startLocalDate), formatDate(endLocalDate));
+    }
+
+    @Override
+    public List<Azure> getDataByTenantNameAndSubscriptionNameAndResourceTypeAndDateMonths(String tenantName, String subscriptionName, String resourceType, Integer months) {
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
+
+        String strStartDate = startDate.toString();
+        String strEndDate = endDate.toString();
+
+        return azureRepository.findByTenantNameAndSubscriptionNameAndResourceTypeAndUsageDateBetween(tenantName, subscriptionName, resourceType, strStartDate, strEndDate);
+    }
+
+    @Override
     public List<Azure> getDataBySubscriptionNameAndMonths(String subscriptionName, int months) {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
@@ -176,12 +234,12 @@ public class AzureServiceImpl implements AzureService {
 
 
     @Override
-    public List<Azure> getBillingDetails(String resourceType, String subscriptionName, String startDate, String endDate, Integer months) {
+    public List<Azure> getBillingDetails(String tenantName, String subscriptionName, String resourceType, String startDate, String endDate, Integer months) {
         List<Azure> billingDetails;
 
 
         /* months == null || */
-        if (resourceType.isEmpty() && subscriptionName.isEmpty() && startDate != null && endDate != null && months == 0) {
+        /*if (resourceType.isEmpty() && subscriptionName.isEmpty() && startDate != null && endDate != null && months == 0) {
 
             billingDetails = getAllDataBydateRange(startDate, endDate);
         } else if (resourceType.isEmpty() && subscriptionName.isEmpty() && Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
@@ -202,10 +260,30 @@ public class AzureServiceImpl implements AzureService {
         } else if (!resourceType.isEmpty() && !subscriptionName.isEmpty() && Objects.requireNonNull(startDate).isEmpty() && endDate.isEmpty() && months != null && months > 0) {
 
             billingDetails = getDataByResourseTypeAndSubscriptionNameAndDuration(resourceType, subscriptionName, months);
-        } else if (!resourceType.isEmpty() && !subscriptionName.isEmpty() && startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty() && months == 0) {
+        }
+
+
+        else*/ if (tenantName != null && !tenantName.isEmpty() && (resourceType == null || resourceType.isEmpty()) && !subscriptionName.isEmpty() && Objects.requireNonNull(startDate).isEmpty() && endDate.isEmpty() && months != null && months > 0) {
+
+            billingDetails = getDataByTenantNameAndSubscriptionNameAndMonths(tenantName, subscriptionName, months);
+        } else if (tenantName != null && !tenantName.isEmpty() && (resourceType == null || resourceType.isEmpty()) && !subscriptionName.isEmpty() && startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty() && months == 0) {
+
+            billingDetails = getDataByTenantNameAndSubscriptionNameAndDateRange(tenantName, subscriptionName, startDate, endDate);
+        } else if (tenantName != null && !tenantName.isEmpty() && resourceType != null && !resourceType.isEmpty() && !subscriptionName.isEmpty() && Objects.requireNonNull(startDate).isEmpty() && endDate.isEmpty() && months != null && months > 0) {
+
+            billingDetails = getDataByTenantNameAndSubscriptionNameAndResourceTypeAndDateMonths(tenantName, subscriptionName, resourceType, months);
+        } else if (tenantName != null && !tenantName.isEmpty() && resourceType != null && !resourceType.isEmpty() && !subscriptionName.isEmpty() && startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty() && months == 0) {
+
+            billingDetails = getDataByTenantNameAndSubscriptionNameAndResourceTypeAndDateRange(tenantName, subscriptionName, resourceType, startDate, endDate);
+        }
+
+
+
+
+        /*else if (!resourceType.isEmpty() && !subscriptionName.isEmpty() && startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty() && months == 0) {
 
             billingDetails = getDataByResourseTypeAndSubscriptionNameAndDateRange(resourceType, subscriptionName, startDate, endDate);
-        } else {
+        }*/ else {
             throw new ValidDateRangeException("Please select valid months or dates");
         }
         return billingDetails;
@@ -304,15 +382,15 @@ public class AzureServiceImpl implements AzureService {
     }
 
     @Override
-    public List<Azure> getBillingDetailsUsingSubscriptionRangeAndDate(String subscriptionName, String startDate, String endDate, Integer months) {
+    public List<Azure> getBillingDetailsUsingTenantNameAndSubscriptionRangeAndDate(String tenantName, String subscriptionName, String startDate, String endDate, Integer months) {
         List<Azure> billingDetails;
 
-        if (subscriptionName != null && startDate != null && endDate != null && months == 0) {
+        if (tenantName != null && subscriptionName != null && startDate != null && endDate != null && months == 0) {
 
-            billingDetails = getDataBySubscriptionNameAndRange(subscriptionName, startDate, endDate);
-        } else if (subscriptionName != null && Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
+            billingDetails = getDataByTenantNameAndSubscriptionNameAndDateRange(tenantName, subscriptionName, startDate, endDate);
+        } else if (tenantName != null && subscriptionName != null && Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
 
-            billingDetails = getDataBySubscriptionNameAndMonths(subscriptionName, months);
+            billingDetails = getDataByTenantNameAndSubscriptionNameAndMonths(tenantName, subscriptionName, months);
 
         } else {
             throw new ValidDateRangeException("Please select valid months or dates for top 5 services");
@@ -323,8 +401,8 @@ public class AzureServiceImpl implements AzureService {
 
 
     @Override
-    public List<AzureAggregateResult> getServiceTopFiveTotalCosts(String subscriptionName, String startDate, String endDate, Integer months) {
-        List<Azure> billingDetails = getBillingDetailsUsingSubscriptionRangeAndDate(subscriptionName, startDate, endDate, months);
+    public List<AzureAggregateResult> getServiceTopFiveTotalCosts(String tenantName, String subscriptionName, String startDate, String endDate, Integer months) {
+        List<Azure> billingDetails = getBillingDetailsUsingTenantNameAndSubscriptionRangeAndDate(tenantName, subscriptionName, startDate, endDate, months);
 
         Map<String, Double> serviceTotalCostMap = billingDetails.stream()
                 .collect(Collectors.groupingBy(Azure::getResourceType, Collectors.summingDouble(Azure::getCost)));
@@ -360,7 +438,7 @@ public class AzureServiceImpl implements AzureService {
     @Override
     public List<String> getDistinctSubscriptionIds() {
         Query distinctQuery = new Query();
-        List<String> distinctSubscriptionIds = mongoTemplate.getCollection("Azure")
+        List<String> distinctSubscriptionIds = mongoTemplate.getCollection("Powershell")
                 .distinct("SubscriptionID", distinctQuery.getQueryObject(), String.class)
                 .into(new ArrayList<>())
                 .stream()
@@ -373,7 +451,7 @@ public class AzureServiceImpl implements AzureService {
     @Override
     public List<String> getDistinctSubscriptionNames() {
         Query distinctQuery = new Query();
-        List<String> distinctSubscriptionNames = mongoTemplate.getCollection("Azure")
+        List<String> distinctSubscriptionNames = mongoTemplate.getCollection("Powershell")
                 .distinct("SubscriptionName", distinctQuery.getQueryObject(), String.class)
                 .into(new ArrayList<>())
                 .stream()
@@ -384,10 +462,65 @@ public class AzureServiceImpl implements AzureService {
     }
 
     @Override
+    public List<String> getDistinctTenantNames() {
+        Query distinctQuery = new Query();
+        List<String> distinctTenantNames = mongoTemplate.getCollection("Powershell")
+                .distinct("TenantName", distinctQuery.getQueryObject(), String.class)
+                .into(new ArrayList<>())
+                .stream()
+                .map(element -> (String) element)
+                .collect(Collectors.toList());
+
+        return distinctTenantNames;
+    }
+
+    @Override
+    public List<String> getDistinctTenantIds() {
+        Query distinctQuery = new Query();
+        List<String> distinctSubscriptionNames = mongoTemplate.getCollection("Powershell")
+                .distinct("TenantID", distinctQuery.getQueryObject(), String.class)
+                .into(new ArrayList<>())
+                .stream()
+                .map(element -> (String) element)
+                .collect(Collectors.toList());
+
+        return distinctSubscriptionNames;
+    }
+
+    public List<TenantDto> getDistinctTenantIDsAndNames() {
+        List<Azure> azureEntities = azureRepository.findDistinctByTenantIdNotNull();
+
+        List<TenantDto> distinctTenantsList = azureEntities.stream()
+                .map(azure -> new TenantDto(azure.getTenantId(), azure.getTenantName()))
+                .distinct()
+                .collect(Collectors.toList());
+
+        return distinctTenantsList;
+    }
+
+    public String updateTenantNameByTenantId(String tenantId, String newTenantName) {
+        List<Azure> entities = azureRepository.findByTenantId(tenantId);
+
+        for (Azure entity : entities) {
+            entity.setTenantName(newTenantName);
+        }
+
+        azureRepository.saveAll(entities);
+        return "Tenant name updated successfully with tenant id " + tenantId;
+    }
+
+    @Override
     public List<String> getDistinctResourceTypeBySubscriptionName(String subscriptionName) {
         List<String> resourceTypeBySubscriptionName = azureRepository.findDistinctResourceTypeBySubscriptionName(subscriptionName);
         return extractUniqueResourceType(resourceTypeBySubscriptionName);
     }
+
+    @Override
+    public List<String> getDistinctSubscriptionNamesBytenantName(String tenantName) {
+        List<String> subscriptionNameByTenantName = azureRepository.findDistinctSubscriptionNameByTenantName(tenantName);
+        return extractUniqueSubscriptionNames(subscriptionNameByTenantName);
+    }
+
 
     @Override
     public List<String> getDistinctResourceType() {
@@ -414,6 +547,31 @@ public class AzureServiceImpl implements AzureService {
     private String extractResourceType(String jsonStr) {
 
         int startIndex = jsonStr.indexOf("ResourceType\": \"") + "ResourceType\": \"".length();
+        int endIndex = jsonStr.indexOf("\"", startIndex);
+        if (startIndex >= 0 && endIndex >= 0) {
+            return jsonStr.substring(startIndex, endIndex);
+        }
+        return null; // Return null if extraction fails
+    }
+
+    List<String> extractUniqueSubscriptionNames(List<String> subscriptionNames) {
+        Set<String> uniqueSubscriptionSet = new HashSet<>();
+        List<String> uniqueSubscriptionList = new ArrayList<>();
+
+        for (String jsonStr : subscriptionNames) {
+            String resourceType1 = extractSubscriptionName(jsonStr);
+            if (resourceType1 != null) {
+                uniqueSubscriptionSet.add(resourceType1);
+            }
+        }
+
+        uniqueSubscriptionList.addAll(uniqueSubscriptionSet);
+        return uniqueSubscriptionList;
+    }
+
+    private String extractSubscriptionName(String jsonStr) {
+
+        int startIndex = jsonStr.indexOf("SubscriptionName\": \"") + "SubscriptionName\": \"".length();
         int endIndex = jsonStr.indexOf("\"", startIndex);
         if (startIndex >= 0 && endIndex >= 0) {
             return jsonStr.substring(startIndex, endIndex);
