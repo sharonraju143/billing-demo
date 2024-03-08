@@ -27,7 +27,7 @@ export const Home = () => {
       .catch((error) => {
         console.log(error);
       });
-    await azureService('', '', '', 1, 'Microsoft Azure Motivity')
+    await azureService('', '', '', 1, 'Microsoft Azure Motivity', 'Motivity Labs')
       .then((res) => {
         // console.log(res);
         setData((prev) => ({ ...prev, azureData: res }))

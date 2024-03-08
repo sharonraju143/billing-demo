@@ -3,6 +3,8 @@ import Sidenav from "../components/Sidenav";
 import Navbar from "../components/Navbar";
 import { Box } from "@mui/material";
 import { Outlet } from 'react-router-dom';
+import { useAppStore } from "../appStore";
+
 const Index = () => {
     const [sidenavOpen, setSidenavOpen] = useState(false);
 
@@ -22,6 +24,8 @@ const Index = () => {
     const toggleSidenav = () => {
         setSidenavOpen(!sidenavOpen);
     };
+    // console.log(sidenavOpen, 'sidenavOpen')
+    const open = useAppStore((state) => state.dopen);
     return (
         <>
             <div style={bodyStyle}>
@@ -32,7 +36,7 @@ const Index = () => {
 
                     <Box
                         component="main"
-                        sx={{ ...contentStyle }} id='billing-main-container'>
+                        sx={{ ...contentStyle }} id='billing-main-container' className={`${open ? 'billing-mobile-main-container-class' : ""}`}>
                         <Outlet />
 
                     </Box>
