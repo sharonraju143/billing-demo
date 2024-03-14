@@ -62,14 +62,13 @@ const BillingInformationCard = (props) => {
                 if (response?.data && response?.data?.length > 0) {
                     setTenantOptions(response?.data);
                     const getInitialTenantValue = response?.data?.filter((TenantValue) => TenantValue === "Motivity Labs");
-                    // console.log("getInitialSubscription", getInitialTenantValue)
                     if (getInitialTenantValue?.length > 0) {
                         setSelectedTenantValue(getInitialTenantValue[0])
+                    } else {
+                        setSelectedTenantValue(response?.data[0])
                     }
-                    // handleSubscriptionChange(response?.data[0])
                 }
-                // setSubscriptionOptions(response?.data);
-                // setClicked(true);
+
             } else {
                 console.error("Token not found in localStorage or options already fetched");
             }
@@ -93,14 +92,13 @@ const BillingInformationCard = (props) => {
                 if (response?.data && response?.data?.length > 0) {
                     setSubscriptionOptions(response?.data);
                     const getInitialSubscription = response?.data?.filter((subscription) => subscription === "Microsoft Azure Motivity");
-                    // console.log("getInitialSubscription", getInitialSubscription)
                     if (getInitialSubscription?.length > 0) {
                         setAzureSubscriptionValue(getInitialSubscription[0])
+                    } else {
+                        setAzureSubscriptionValue(response?.data[0])
                     }
-                    // handleSubscriptionChange(response?.data[0])
                 }
-                // setSubscriptionOptions(response?.data);
-                // setClicked(true);
+
             } else {
                 console.error("Token not found in localStorage or options already fetched");
             }
