@@ -1,8 +1,6 @@
 package com.billingreports.entities.aws;
 
 import com.billingreports.serializer.CustomDoubleSerializer;
-import com.billingreports.serializer.ScientificBigDecimalDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 import org.springframework.data.annotation.Id;
