@@ -22,53 +22,12 @@ public class AzureController {
     @Autowired
     private AzureService azureService;
 
-//    @GetMapping("/data/count")
-//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-//    public Long getDataCount() {
-//        return azureService.getCountOfData();
-//    }
-
     @GetMapping("/getall")
     @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
     public ResponseEntity<List<Azure>> getAllData() {
         List<Azure> getData = azureService.getAll();
         return ResponseEntity.ok(getData);
     }
-
-
-
-
-//    @GetMapping("/dataBetweenDates")
-//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-//    public ResponseEntity<List<Azure>> getDataBetweenDates(@RequestParam("startDate") String startDate,
-//                                                           @RequestParam("endDate") String endDate) {
-//        List<Azure> betweenDates = azureService.getAllDataBydateRange(startDate, endDate);
-//        return ResponseEntity.ok(betweenDates);
-//    }
-
-//    @GetMapping("/dataByMonths")
-//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-//    public ResponseEntity<List<Azure>> getDataByMonths(@RequestParam("months") int months) {
-//        List<Azure> betweenMonths = azureService.getAllDataByMonths(months);
-//        return ResponseEntity.ok(betweenMonths);
-//    }
-
-//    @GetMapping("/resourcetype/Dates")
-//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-//    public ResponseEntity<List<Azure>> getDataByServiceDespAndDates(@RequestParam("ResourseType") String resourseType,
-//                                                                    @RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) {
-//        List<Azure> betweenServiceAndDates = azureService.getDataByResourseTypeAndDateRange(resourseType, startDate,
-//                endDate);
-//        return ResponseEntity.ok(betweenServiceAndDates);
-//    }
-
-//    @GetMapping("/resourseType/months")
-//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-//    public ResponseEntity<List<Azure>> getDataByServicedescAndMonths(
-//            @RequestParam("ResourseType") String serviceDescription, @RequestParam("months") int months) {
-//        List<Azure> betweenServiceAndMonths = azureService.getDataByResourseTypeAndMonths(serviceDescription, months);
-//        return ResponseEntity.ok(betweenServiceAndMonths);
-//    }
 
     @GetMapping("/details")
     @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")

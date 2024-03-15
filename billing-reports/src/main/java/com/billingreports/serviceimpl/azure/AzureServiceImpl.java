@@ -27,11 +27,11 @@ public class AzureServiceImpl implements AzureService {
     private MongoTemplate mongoTemplate;
 
 
-    @Override
-    public Long getCountOfData() {
-
-        return azureRepository.count();
-    }
+//    @Override
+//    public Long getCountOfData() {
+//
+//        return azureRepository.count();
+//    }
 
     @Override
     public List<Azure> getAll() {
@@ -40,107 +40,107 @@ public class AzureServiceImpl implements AzureService {
     }
 
 
-    @Override
-    public List<Azure> getAllDataBydateRange(String startDate, String endDate) {
-        LocalDate startLocalDate = parseLocalDate(startDate);
-        LocalDate endLocalDate = parseLocalDate(endDate);
+//    @Override
+//    public List<Azure> getAllDataBydateRange(String startDate, String endDate) {
+//        LocalDate startLocalDate = parseLocalDate(startDate);
+//        LocalDate endLocalDate = parseLocalDate(endDate);
+//
+//        // Calculate the period between startLocalDate and endLocalDate
+//        Period period = Period.between(startLocalDate, endLocalDate);
+//
+//        // Check if the period is more than one year
+//        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+//            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+//            throw new ValidDateRangeException("Select in range within 12 months");
+//        }
+//
+//        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+//
+//        return azureRepository.findByUsageDateGreaterThanEqualAndUsageDateLessThanEqual(
+//                formatDate(startLocalDate),
+//                formatDate(endLocalDate)
+//        );
+////        return azureRepository.findByUsageDateGreaterThanEqualAndUsageDateLessThanEqual(startDate, endDate);
+//    }
 
-        // Calculate the period between startLocalDate and endLocalDate
-        Period period = Period.between(startLocalDate, endLocalDate);
+//    @Override
+//    public List<Azure> getAllDataByMonths(int months) {
+//        LocalDate endDate = LocalDate.now();
+////        LocalDate startDate = endDate.minusMonths(months);
+//
+//        LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
+//
+//        String strStartDate = startDate.toString();
+//        String strEndDate = endDate.toString();
+//
+//        System.out.println("Start Date: " + strStartDate);
+//        System.out.println("End date: " + endDate);
+//
+//        return azureRepository.findByUsageDateGreaterThanEqualAndUsageDateLessThanEqual(strStartDate, strEndDate);
+//    }
 
-        // Check if the period is more than one year
-        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
-            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
-            throw new ValidDateRangeException("Select in range within 12 months");
-        }
+//    @Override
+//    public List<Azure> getDataByResourseTypeAndDateRange(String resourseType, String startDate, String endDate) {
+//        LocalDate startLocalDate = parseLocalDate(startDate);
+//        LocalDate endLocalDate = parseLocalDate(endDate);
+//
+//        // Calculate the period between startLocalDate and endLocalDate
+//        Period period = Period.between(startLocalDate, endLocalDate);
+//
+//        // Check if the period is more than one year
+//        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+//            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+//            throw new ValidDateRangeException("Select in range within 12 months");
+//        }
+//
+//        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+//        return azureRepository.findByResourceTypeAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(resourseType, formatDate(startLocalDate), formatDate(endLocalDate));
+//    }
 
-        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+//    @Override
+//    public List<Azure> getDataByResourseTypeAndMonths(String resourseType, int months) {
+//        LocalDate endDate = LocalDate.now();
+//        LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
+//
+//        String strStartDate = startDate.toString();
+//        String strEndDate = endDate.toString();
+//
+//        System.out.println("Start Date: " + strStartDate);
+//        System.out.println("End Date: " + strEndDate);
+//
+//        return azureRepository.findByResourceTypeAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(resourseType, strStartDate, strEndDate);
+//    }
 
-        return azureRepository.findByUsageDateGreaterThanEqualAndUsageDateLessThanEqual(
-                formatDate(startLocalDate),
-                formatDate(endLocalDate)
-        );
-//        return azureRepository.findByUsageDateGreaterThanEqualAndUsageDateLessThanEqual(startDate, endDate);
-    }
+//    @Override
+//    public List<Azure> getDataByResourseTypeAndSubscriptionNameAndDateRange(String resourseType, String subscriptionName, String startDate, String endDate) {
+//        LocalDate startLocalDate = parseLocalDate(startDate);
+//        LocalDate endLocalDate = parseLocalDate(endDate);
+//
+//        // Calculate the period between startLocalDate and endLocalDate
+//        Period period = Period.between(startLocalDate, endLocalDate);
+//
+//        // Check if the period is more than one year
+//        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+//            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+//            throw new ValidDateRangeException("Select in range within 12 months");
+//        }
+//
+//        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+//
+//        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(resourseType, subscriptionName, formatDate(startLocalDate), formatDate(endLocalDate));
+//    }
 
-    @Override
-    public List<Azure> getAllDataByMonths(int months) {
-        LocalDate endDate = LocalDate.now();
-//        LocalDate startDate = endDate.minusMonths(months);
-
-        LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
-
-        String strStartDate = startDate.toString();
-        String strEndDate = endDate.toString();
-
-        System.out.println("Start Date: " + strStartDate);
-        System.out.println("End date: " + endDate);
-
-        return azureRepository.findByUsageDateGreaterThanEqualAndUsageDateLessThanEqual(strStartDate, strEndDate);
-    }
-
-    @Override
-    public List<Azure> getDataByResourseTypeAndDateRange(String resourseType, String startDate, String endDate) {
-        LocalDate startLocalDate = parseLocalDate(startDate);
-        LocalDate endLocalDate = parseLocalDate(endDate);
-
-        // Calculate the period between startLocalDate and endLocalDate
-        Period period = Period.between(startLocalDate, endLocalDate);
-
-        // Check if the period is more than one year
-        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
-            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
-            throw new ValidDateRangeException("Select in range within 12 months");
-        }
-
-        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
-        return azureRepository.findByResourceTypeAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(resourseType, formatDate(startLocalDate), formatDate(endLocalDate));
-    }
-
-    @Override
-    public List<Azure> getDataByResourseTypeAndMonths(String resourseType, int months) {
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
-
-        String strStartDate = startDate.toString();
-        String strEndDate = endDate.toString();
-
-        System.out.println("Start Date: " + strStartDate);
-        System.out.println("End Date: " + strEndDate);
-
-        return azureRepository.findByResourceTypeAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(resourseType, strStartDate, strEndDate);
-    }
-
-    @Override
-    public List<Azure> getDataByResourseTypeAndSubscriptionNameAndDateRange(String resourseType, String subscriptionName, String startDate, String endDate) {
-        LocalDate startLocalDate = parseLocalDate(startDate);
-        LocalDate endLocalDate = parseLocalDate(endDate);
-
-        // Calculate the period between startLocalDate and endLocalDate
-        Period period = Period.between(startLocalDate, endLocalDate);
-
-        // Check if the period is more than one year
-        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
-            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
-            throw new ValidDateRangeException("Select in range within 12 months");
-        }
-
-        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
-
-        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(resourseType, subscriptionName, formatDate(startLocalDate), formatDate(endLocalDate));
-    }
-
-    @Override
-    public List<Azure> getDataByResourseTypeAndSubscriptionNameAndDuration(String resourseType, String subscriptionName, Integer months) {
-
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
-
-        String strStartDate = startDate.toString();
-        String strEndDate = endDate.toString();
-
-        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(resourseType, subscriptionName, strStartDate, strEndDate);
-    }
+//    @Override
+//    public List<Azure> getDataByResourseTypeAndSubscriptionNameAndDuration(String resourseType, String subscriptionName, Integer months) {
+//
+//        LocalDate endDate = LocalDate.now();
+//        LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
+//
+//        String strStartDate = startDate.toString();
+//        String strEndDate = endDate.toString();
+//
+//        return azureRepository.findByResourceTypeAndSubscriptionNameAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(resourseType, subscriptionName, strStartDate, strEndDate);
+//    }
 
     @Override
     public List<Azure> getDataByTenantNameAndSubscriptionNameAndDateRange(String tenantName, String subscriptionName, String startDate, String endDate) {
@@ -202,35 +202,35 @@ public class AzureServiceImpl implements AzureService {
         return azureRepository.findByTenantNameAndSubscriptionNameAndResourceTypeAndUsageDateBetween(tenantName, subscriptionName, resourceType, strStartDate, strEndDate);
     }
 
-    @Override
-    public List<Azure> getDataBySubscriptionNameAndMonths(String subscriptionName, int months) {
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
+//    @Override
+//    public List<Azure> getDataBySubscriptionNameAndMonths(String subscriptionName, int months) {
+//        LocalDate endDate = LocalDate.now();
+//        LocalDate startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1);
+//
+//        String strStartDate = startDate.toString();
+//        String strEndDate = endDate.toString();
+//
+//        return azureRepository.findBySubscriptionNameAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(subscriptionName, strStartDate, strEndDate);
+//    }
 
-        String strStartDate = startDate.toString();
-        String strEndDate = endDate.toString();
-
-        return azureRepository.findBySubscriptionNameAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(subscriptionName, strStartDate, strEndDate);
-    }
-
-    @Override
-    public List<Azure> getDataBySubscriptionNameAndRange(String subscriptionName, String startDate, String endDate) {
-        LocalDate startLocalDate = parseLocalDate(startDate);
-        LocalDate endLocalDate = parseLocalDate(endDate);
-
-        // Calculate the period between startLocalDate and endLocalDate
-        Period period = Period.between(startLocalDate, endLocalDate);
-
-        // Check if the period is more than one year
-        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
-            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
-            throw new ValidDateRangeException("Select in range within 12 months");
-        }
-
-        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
-
-        return azureRepository.findBySubscriptionNameAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(subscriptionName, formatDate(startLocalDate), formatDate(endLocalDate));
-    }
+//    @Override
+//    public List<Azure> getDataBySubscriptionNameAndRange(String subscriptionName, String startDate, String endDate) {
+//        LocalDate startLocalDate = parseLocalDate(startDate);
+//        LocalDate endLocalDate = parseLocalDate(endDate);
+//
+//        // Calculate the period between startLocalDate and endLocalDate
+//        Period period = Period.between(startLocalDate, endLocalDate);
+//
+//        // Check if the period is more than one year
+//        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+//            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+//            throw new ValidDateRangeException("Select in range within 12 months");
+//        }
+//
+//        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+//
+//        return azureRepository.findBySubscriptionNameAndUsageDateGreaterThanEqualAndUsageDateLessThanEqual(subscriptionName, formatDate(startLocalDate), formatDate(endLocalDate));
+//    }
 
 
     @Override

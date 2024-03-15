@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,10 +93,8 @@ public class UserServiceImpl implements UserService {
         else {
             user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.save(user);
-            return "Password Successfully changed.";
+            return "Password changed successfully";
         }
-
-
     }
 
     public String getCurrentUsername() {
@@ -104,5 +103,28 @@ public class UserServiceImpl implements UserService {
             return authentication.getName(); // Returns the username of the authenticated user
         }
         return null; // No user authenticated or anonymous user
+    }
+
+    public String forgotPassword(String email) {
+        User user = (User) userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException());
+        String randomPassword = generateRandomPassword();
+        System.out.println(randomPassword);
+        user.setPassword(passwordEncoder.encode(randomPassword));
+        userRepository.save(user);
+        return "You have received a mail.";
+    }
+
+    private String generateRandomPassword() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+";
+        StringBuilder password = new StringBuilder();
+        SecureRandom random = new SecureRandom();
+        int passwordLength = 6 + random.nextInt(7); // Generates a random length between 6 and 12
+
+        for (int i = 0; i < passwordLength; i++) {
+            int randomIndex = random.nextInt(characters.length());
+            password.append(characters.charAt(randomIndex));
+        }
+
+        return password.toString();
     }
 }
