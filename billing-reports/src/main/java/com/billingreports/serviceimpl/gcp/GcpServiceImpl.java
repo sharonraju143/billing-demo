@@ -53,7 +53,7 @@ public class GcpServiceImpl implements GcpService {
 
     private String extractServiceDescription(String jsonStr) {
 
-        int startIndex = jsonStr.indexOf("Service description\": \"") + "Service description\": \"".length();
+        int startIndex = jsonStr.indexOf("Service_description\": \"") + "Service_description\": \"".length();
         int endIndex = jsonStr.indexOf("\"", startIndex);
         if (startIndex >= 0 && endIndex >= 0) {
             return jsonStr.substring(startIndex, endIndex);

@@ -22,16 +22,16 @@ public class Gcp {
     @Field("_id")
     private String id;
 
-    @Field("Service ID")
+    @Field("Service_ID")
     private String serviceId;
 
     @Field("Date")
     private Date date;
 
-    @Field("Service description")
+    @Field("Service_description")
     private String serviceDescription;
 
-    @Field("Cost ($)")
+    @Field("Cost")
     @JsonSerialize(using = CustomDoubleSerializer.class)
     private double cost;
 

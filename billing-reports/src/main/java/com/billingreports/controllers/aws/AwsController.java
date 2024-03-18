@@ -64,10 +64,10 @@ public class AwsController {
 //        }
 //    }
 
-    @GetMapping("/distinct-services")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-    public ResponseEntity<String[]> getDistinctServices() {
-        String[] distinctServices = awsService.getUniqueServicesAsArray();
+    @GetMapping("/distinct-services/accountName")
+//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
+    public ResponseEntity<String[]> getDistinctServicesByAccountName(@RequestParam String accountName) {
+        String[] distinctServices = awsService.getUniqueServicesAsArray(accountName);
         if (distinctServices.length == 0) {
             return ResponseEntity.noContent().build();
         } else {

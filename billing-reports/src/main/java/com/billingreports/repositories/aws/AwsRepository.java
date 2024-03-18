@@ -34,4 +34,5 @@ public interface AwsRepository extends MongoRepository<Aws, String> {
     @Query(value = "{'accountName' : {$exists : true}}", fields = "{'accountName' : 1, '_id':0}")
     List<String> findDistinctAccountName();
 
+    List<String> findDistinctServiceByAccountName(String accounttName);
 }

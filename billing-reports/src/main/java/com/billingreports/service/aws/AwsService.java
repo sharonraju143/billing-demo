@@ -31,7 +31,7 @@ public interface AwsService {
     public List<Aws> getBillingDetails(String accountName, String serviceName, String startDate, String endDate, Integer months);
 
     // Get Unique Services Method
-    public String[] getUniqueServicesAsArray();
+    public String[] getUniqueServicesAsArray(String accountName);
 
     public String[] getUniqueAccountsAsArray();
 

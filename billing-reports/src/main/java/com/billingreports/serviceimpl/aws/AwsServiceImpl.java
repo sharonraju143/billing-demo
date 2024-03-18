@@ -35,8 +35,8 @@ public class AwsServiceImpl implements AwsService {
 
     // Get Unique Services
     @Override
-    public String[] getUniqueServicesAsArray() {
-        List<String> uniqueServiceList = awsRepository.findDistinctByService();
+    public String[] getUniqueServicesAsArray(String accountName) {
+        List<String> uniqueServiceList = awsRepository.findDistinctServiceByAccountName(accountName);
         Set<String> uniqueServiceNames = new HashSet<>();
         List<String> formattedServiceNames = new ArrayList<>();
 
