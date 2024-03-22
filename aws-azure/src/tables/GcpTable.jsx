@@ -13,7 +13,8 @@ export default function GcpTable({ data, months, serviceDescription, fromDate, t
     toDate !== 0
   ) {
     rows = data.map((detail) => ({
-      id: detail.id,
+      id: detail.projectId,
+      projectName: detail.projectName,
       date: detail.date,
       serviceId: detail.serviceId,
       serviceDescription: detail.serviceDescription,
@@ -25,7 +26,15 @@ export default function GcpTable({ data, months, serviceDescription, fromDate, t
   const columns = [
     {
       field: "id",
-      headerName: "Id",
+      headerName: "project Id",
+      // width: 300,
+      minWidth: 250,
+      flex: 1
+
+    },
+    {
+      field: "projectName",
+      headerName: "project Name",
       // width: 300,
       minWidth: 250,
       flex: 1
