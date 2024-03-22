@@ -170,6 +170,7 @@ export const GcpPage = () => {
         setDateRange={setDateRange}
         setCalling={setCalling}
         calling={calling}
+        gcpProjectNames={true}
       >
         <div style={{ width: '100%' }}>
           <p className="p-0 m-0">Service</p>

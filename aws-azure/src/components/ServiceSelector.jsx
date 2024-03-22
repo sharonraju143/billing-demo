@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FormControl, Select, MenuItem } from "@mui/material";
 import axios from "axios";
 
-const ServiceSelector = ({ service, handleServiceChange }) => {
+const ServiceSelector = ({ service, handleServiceChange, selectedAccountValue }) => {
   const [serviceOptions, setServiceOptions] = useState([]);
   const [clicked, setClicked] = useState(false);
 
@@ -17,7 +17,7 @@ const ServiceSelector = ({ service, handleServiceChange }) => {
             },
           };
 
-          const response = await axios.get("http://localhost:8080/aws/distinct-services", config);
+          const response = await axios.get(`http://localhost:8080/aws/distinct-services/accountName?accountName=${selectedAccountValue}`, config);
           setServiceOptions(response.data);
           setClicked(true);
         } else {
@@ -29,7 +29,7 @@ const ServiceSelector = ({ service, handleServiceChange }) => {
     };
 
     fetchServiceOptions();
-  }, [clicked]);
+  }, [clicked, selectedAccountValue]);
 
   const handleFocus = () => {
     if (!clicked) {
