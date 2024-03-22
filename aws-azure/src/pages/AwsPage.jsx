@@ -24,10 +24,14 @@ export const AwsPage = () => {
   const [data, setData] = useState([]);
   const [calling, setCalling] = useState(true);
   // console.log("dateRange", dateRange);
+  const [selectedAccountValue, setSelectedAccountValue] = useState('');
+
 
   useEffect(() => {
-    forAwsGet();
-  }, [calling]);
+    if (selectedAccountValue !== '') {
+      forAwsGet();
+    }
+  }, [calling, selectedAccountValue]);
 
 
   const handleMonthChange = (selectedMonth) => {
@@ -38,7 +42,7 @@ export const AwsPage = () => {
   };
 
   const handleServiceChange = (event) => {
-    console.log("service", event.target.value);
+    // console.log("service", event.target.value);
     setService(event.target.value);
     setCalling(!calling);
   };
@@ -48,7 +52,7 @@ export const AwsPage = () => {
   // };
 
   const forAwsGet = async () => {
-    awsService(service, dateRange?.startDate, dateRange?.endDate, months)
+    awsService(service, dateRange?.startDate, dateRange?.endDate, months, selectedAccountValue)
       .then((res) => {
         console.log(res);
         setData(res);
@@ -98,6 +102,12 @@ export const AwsPage = () => {
 
     };
   });
+
+  const handleAccountsChange = (event) => {
+    setSelectedAccountValue(event.target.value);
+    setService('');
+    setCalling(!calling);
+  }
 
   return (
     <>
@@ -167,11 +177,16 @@ export const AwsPage = () => {
         setDateRange={setDateRange}
         setCalling={setCalling}
         calling={calling}
+        awsAccountNames={true}
+        setSelectedAccountValue={setSelectedAccountValue}
+        selectedAccountValue={selectedAccountValue}
+        handleAccountsChange={handleAccountsChange}
       >
         <div style={{ width: '100%' }}>
           <p className="p-0 m-0">Service</p>
           <ServiceSelector
             service={service}
+            selectedAccountValue={selectedAccountValue}
             handleServiceChange={handleServiceChange}
           />
         </div>

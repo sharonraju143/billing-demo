@@ -18,7 +18,7 @@ export const Home = () => {
     forAwsGet();
   }, []);
   const forAwsGet = async () => {
-    await awsService('', '', '', 1)
+    await awsService('', '', '', 1, 'Motivity Labs')
       .then((res) => {
         // console.log(res);
         setData((prev) => ({ ...prev, awsData: res }))

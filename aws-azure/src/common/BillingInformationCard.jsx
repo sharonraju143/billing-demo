@@ -28,25 +28,28 @@ import axios from "axios";
 // ]
 
 const BillingInformationCard = (props) => {
-    const { handleMonthChange, months, setDateRange, setCalling, calling, selectedTenantValue, setSelectedTenantValue, setAzureSubscriptionValue, azureSubscriptions = false, handleSubscriptionChange, handleTenantChange, azureSubscriptionValue = '', azureTenants = false } = props;
+    const { handleMonthChange, months, setDateRange, setCalling, gcpProjectNames, selectedAccountValue, setSelectedAccountValue, handleAccountsChange, calling, selectedTenantValue, setSelectedTenantValue, setAzureSubscriptionValue, azureSubscriptions = false, awsAccountNames = false, handleSubscriptionChange, handleTenantChange, azureSubscriptionValue = '', azureTenants = false } = props;
     // console.log("props", props)
     const [subscriptionOptions, setSubscriptionOptions] = useState([]);
     const [tenantOptions, setTenantOptions] = useState([]);
+    const [AccountOptions, setAccountOptions] = useState([]);
+
     // const [selectedTenantValue, setSelectedTenantValue] = useState('');
 
 
     useEffect(() => {
-
-
-        // fetchServiceOptions();
-        fetchTenantOptions()
-
+        if (awsAccountNames) {
+            fetchOptions('http://localhost:8080/aws/distinct-account-names', setAccountOptions, setSelectedAccountValue)
+        }
+        if (azureTenants) {
+            fetchOptions('http://localhost:8080/azure/distinct-tenant-names', setTenantOptions, setSelectedTenantValue)
+        }
     }, []);
     useEffect(() => {
         fetchServiceOptions();
     }, [selectedTenantValue])
 
-    const fetchTenantOptions = async () => {
+    const fetchOptions = async (url, optionsUpadtionFunc, selectedValueUpdationFunc) => {
         try {
             const token = localStorage.getItem("token");
 
@@ -57,15 +60,15 @@ const BillingInformationCard = (props) => {
                     },
                 };
 
-                const response = await axios.get(`http://localhost:8080/azure/distinct-tenant-names`, config);
+                const response = await axios.get(`${url}`, config);
                 // console.log("subscriptions response", response)
                 if (response?.data && response?.data?.length > 0) {
-                    setTenantOptions(response?.data);
+                    optionsUpadtionFunc(response?.data);
                     const getInitialTenantValue = response?.data?.filter((TenantValue) => TenantValue === "Motivity Labs");
                     if (getInitialTenantValue?.length > 0) {
-                        setSelectedTenantValue(getInitialTenantValue[0])
+                        selectedValueUpdationFunc(getInitialTenantValue[0])
                     } else {
-                        setSelectedTenantValue(response?.data[0])
+                        selectedValueUpdationFunc(response?.data[0])
                     }
                 }
 
@@ -139,7 +142,7 @@ const BillingInformationCard = (props) => {
                         // justifyContent="center"
                         alignItems="center"
                     >
-                        <Grid item xs={12} lg={azureSubscriptions ? 12 : 4} xl={azureSubscriptions ? 12 : 4}>
+                        <Grid item xs={12}>
                             <div className={`h4 fw-bold ${azureSubscriptions ? '' : ''}`}>Billing Information</div>
                         </Grid>
                         {azureTenants ? <Grid item xs={12} sm={6} md={6} lg={3} xl={3} className='d-flex justify-content-center'>
@@ -173,7 +176,7 @@ const BillingInformationCard = (props) => {
                             </div>
                         </Grid> : null}
 
-                        {azureSubscriptions ? <Grid item xs={12} sm={azureTenants ? 6 : 12} md={azureTenants ? 6 : 4} lg={azureTenants ? 3 : 4} xl={azureTenants ? 3 : 4} className='d-flex justify-content-center'>
+                        {azureSubscriptions ? <Grid item xs={12} sm={6} md={6} lg={3} xl={3} className='d-flex justify-content-center'>
                             <div style={{ width: '100%' }}>
                                 <p className="p-0 m-0">Subscriptions</p>
                                 <FormControl sx={{ ...newPropsCss }} fullWidth>
@@ -203,13 +206,73 @@ const BillingInformationCard = (props) => {
 
                             </div>
                         </Grid> : null}
+                        {awsAccountNames ? <Grid item xs={12} sm={6} md={6} lg={4} xl={4} className='d-flex justify-content-center'>
+                            <div style={{ width: '100%' }}>
+                                <p className="p-0 m-0">Accounts</p>
+                                <FormControl sx={{ ...newPropsCss }} fullWidth>
+                                    <Select
+                                        fullWidth
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        className='demo-simple-select'
+                                        sx={{ ...newPropsCss, height: "2.4em" }}
+                                        value={selectedAccountValue}
+                                        onChange={handleAccountsChange}
+                                        //   onFocus={handleFocus}
+                                        displayEmpty
+                                        inputProps={{ 'aria-label': 'Without label' }}
+                                        MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
+                                    >
+                                        <MenuItem value="" disabled>
+                                            Select Account
+                                        </MenuItem>
+                                        {AccountOptions?.map((option, index) => (
+                                            <MenuItem key={index} value={option} sx={{ ...newPropsCss }}>
+                                                {option}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
 
-                        <Grid item xs={12} sm={azureSubscriptions ? azureTenants ? 6 : 12 : 12} md={azureSubscriptions ? azureTenants ? 6 : 4 : 6} lg={azureTenants ? 3 : 4} xl={azureTenants ? 3 : 4} className='d-flex justify-content-center'>
+                            </div>
+                        </Grid> : null}
+                        {gcpProjectNames ? <Grid item xs={12} sm={6} md={6} lg={4} xl={4} className='d-flex justify-content-center'>
+                            <div style={{ width: '100%' }}>
+                                <p className="p-0 m-0">Projects</p>
+                                <FormControl sx={{ ...newPropsCss }} fullWidth>
+                                    <Select
+                                        fullWidth
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        className='demo-simple-select'
+                                        sx={{ ...newPropsCss, height: "2.4em" }}
+                                        value={selectedAccountValue}
+                                        onChange={handleAccountsChange}
+                                        //   onFocus={handleFocus}
+                                        displayEmpty
+                                        inputProps={{ 'aria-label': 'Without label' }}
+                                        MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
+                                    >
+                                        <MenuItem value="" disabled>
+                                            Select Account
+                                        </MenuItem>
+                                        {AccountOptions?.map((option, index) => (
+                                            <MenuItem key={index} value={option} sx={{ ...newPropsCss }}>
+                                                {option}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+
+                            </div>
+                        </Grid> : null}
+
+                        <Grid item xs={12} sm={6} md={6} lg={azureTenants ? 3 : 4} xl={azureTenants ? 3 : 4} className='d-flex justify-content-center'>
 
                             {props.children}
                         </Grid>
 
-                        <Grid item xs={12} sm={azureSubscriptions ? azureTenants ? 6 : 12 : 12} md={azureSubscriptions ? azureTenants ? 6 : 4 : 6} lg={azureTenants ? 3 : 4} xl={azureTenants ? 3 : 4} className='d-flex justify-content-center'>
+                        <Grid item xs={12} sm={6} md={6} lg={azureTenants ? 3 : 4} xl={azureTenants ? 3 : 4} className='d-flex justify-content-center'>
                             <div style={{ width: '100%' }}>
                                 <p className="p-0 m-0">Duration</p>
                                 <DurationSelector
