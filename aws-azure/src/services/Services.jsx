@@ -46,10 +46,11 @@ export const UserLoginService = async (data) => {
 };
 
 
-export const awsService = async (service, startDate, endDate, months) => {
+export const awsService = async (service, startDate, endDate, months, selectedAccountValue = '') => {
   try {
     let endpoint = '/aws/billing-details';
     const queryParams = new URLSearchParams();
+    queryParams.append('accountName', selectedAccountValue || '');
     queryParams.append('service', service || '');
     queryParams.append('startDate', startDate || '');
     queryParams.append('endDate', endDate || '');
