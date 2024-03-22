@@ -22,19 +22,23 @@ export const GcpPage = () => {
     endDate: "",
   });
   const [months, setMonths] = useState(3);
-  const [display, setDisplay] = useState(false);
+  // const [display, setDisplay] = useState(false);
   const [data, setData] = useState([]);
   const [calling, setCalling] = useState(true);
+  const [selectedGcpProjectValue, setSelectedGcpProjectValue] = useState('');
+
   // console.log("data", data);
 
   useEffect(() => {
-    forGcpGet();
-  }, [calling]);
+    if (selectedGcpProjectValue !== '') {
+      forGcpGet();
+    }
+  }, [calling, selectedGcpProjectValue, serviceDescription]);
 
   const handleMonthChange = (selectedMonth) => {
     // console.log("selectedMonthsss", selectedMonth);
     setMonths(selectedMonth);
-    setDisplay(true);
+    // setDisplay(true);
     //setIsDateDisabled(event.target.value !== "0");
     setCalling(!calling);
   };
@@ -43,6 +47,11 @@ export const GcpPage = () => {
     setServiceDescription(event.target.value);
     setCalling(!calling);
   };
+  const handleGcpProjectChange = (event) => {
+    setSelectedGcpProjectValue(event.target.value)
+    setServiceDescription('');
+    setCalling(!calling);
+  }
 
   // const toggleSidenav = () => {
   //   setSidenavOpen(!sidenavOpen);
@@ -53,7 +62,8 @@ export const GcpPage = () => {
       serviceDescription,
       dateRange.startDate,
       dateRange.endDate,
-      months
+      months,
+      selectedGcpProjectValue
     )
       .then((res) => {
         console.log(res, "prudhvi");
@@ -80,15 +90,15 @@ export const GcpPage = () => {
 
   // };
 
-  useEffect(() => {
-    setDisplay(true);
-  }, [display]);
+  // useEffect(() => {
+  //   setDisplay(true);
+  // }, [display]);
 
-  useEffect(() => {
-    const savedService = localStorage.getItem("service");
+  // useEffect(() => {
+  //   const savedService = localStorage.getItem("service");
 
-    if (savedService) setServiceDescription(savedService);
-  }, []);
+  //   if (savedService) setServiceDescription(savedService);
+  // }, []);
 
   const monthdata = Array.isArray(data?.monthlyTotalAmounts)
     ? data.monthlyTotalAmounts.map((item) => ({
@@ -171,11 +181,15 @@ export const GcpPage = () => {
         setCalling={setCalling}
         calling={calling}
         gcpProjectNames={true}
+        handleGcpProjectChange={handleGcpProjectChange}
+        selectedGcpProjectValue={selectedGcpProjectValue}
+        setSelectedGcpProjectValue={setSelectedGcpProjectValue}
       >
         <div style={{ width: '100%' }}>
           <p className="p-0 m-0">Service</p>
           <GcpSelector
             serviceDescription={serviceDescription}
+            selectedGcpProjectValue={selectedGcpProjectValue}
             handleServiceChange={handleServiceChange}
           />
         </div>

@@ -2,16 +2,16 @@ import React, { useState, useEffect } from "react";
 import { FormControl, Select, MenuItem } from "@mui/material";
 import axios from "axios";
 
-const GcpSelector = ({ serviceDescription, handleServiceChange }) => {
+const GcpSelector = ({ serviceDescription, handleServiceChange, selectedGcpProjectValue }) => {
   const [serviceOptions, setServiceOptions] = useState([]);
-  const [clicked, setClicked] = useState(false);
+  // const [clicked, setClicked] = useState(false);
 
   useEffect(() => {
     const fetchServiceOptions = async () => {
       try {
         const token = localStorage.getItem("token");
 
-        if (token && !clicked) {
+        if (token) {
           const config = {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -19,11 +19,11 @@ const GcpSelector = ({ serviceDescription, handleServiceChange }) => {
           };
 
           const response = await axios.get(
-            "http://localhost:8080/gcp/distinctServiceDescriptions",
+            `http://localhost:8080/gcp/distinct-services/projectName?projectName=${selectedGcpProjectValue}`,
             config
           );
           setServiceOptions(response.data);
-          setClicked(true);
+          // setClicked(true);
         } else {
           console.error(
             "Token not found in localStorage or options already fetched"
@@ -33,15 +33,16 @@ const GcpSelector = ({ serviceDescription, handleServiceChange }) => {
         console.error("Error fetching service options:", error);
       }
     };
-
-    fetchServiceOptions();
-  }, [clicked]);
-
-  const handleFocus = () => {
-    if (!clicked) {
-      setClicked(true);
+    if (selectedGcpProjectValue) {
+      fetchServiceOptions();
     }
-  };
+  }, [selectedGcpProjectValue]);
+
+  // const handleFocus = () => {
+  //   if (!clicked) {
+  //     setClicked(true);
+  //   }
+  // };
   const newPropsCss = {
     backgroundColor: "#FFFF",
     // width: "340px",
@@ -70,7 +71,7 @@ const GcpSelector = ({ serviceDescription, handleServiceChange }) => {
           labelId="serviceDescription-label"
           value={serviceDescription || ""}
           onChange={handleServiceChange}
-          onFocus={handleFocus}
+          // onFocus={handleFocus}
           displayEmpty
           inputProps={{ 'aria-label': 'Without label' }}
           MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}

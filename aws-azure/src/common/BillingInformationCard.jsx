@@ -28,28 +28,32 @@ import axios from "axios";
 // ]
 
 const BillingInformationCard = (props) => {
-    const { handleMonthChange, months, setDateRange, setCalling, gcpProjectNames, selectedAccountValue, setSelectedAccountValue, handleAccountsChange, calling, selectedTenantValue, setSelectedTenantValue, setAzureSubscriptionValue, azureSubscriptions = false, awsAccountNames = false, handleSubscriptionChange, handleTenantChange, azureSubscriptionValue = '', azureTenants = false } = props;
+    const { handleMonthChange, months, setDateRange, setCalling, selectedGcpProjectValue, gcpProjectNames, handleGcpProjectChange, setSelectedGcpProjectValue, selectedAccountValue, setSelectedAccountValue, handleAccountsChange, calling, selectedTenantValue, setSelectedTenantValue, setAzureSubscriptionValue, azureSubscriptions = false, awsAccountNames = false, handleSubscriptionChange, handleTenantChange, azureSubscriptionValue = '', azureTenants = false } = props;
     // console.log("props", props)
     const [subscriptionOptions, setSubscriptionOptions] = useState([]);
     const [tenantOptions, setTenantOptions] = useState([]);
     const [AccountOptions, setAccountOptions] = useState([]);
+    const [gcpProjectOptions, setGcpProjectOptions] = useState([]);
 
     // const [selectedTenantValue, setSelectedTenantValue] = useState('');
 
 
     useEffect(() => {
         if (awsAccountNames) {
-            fetchOptions('http://localhost:8080/aws/distinct-account-names', setAccountOptions, setSelectedAccountValue)
+            fetchOptions('http://localhost:8080/aws/distinct-account-names', setAccountOptions, setSelectedAccountValue, "Motivity Labs")
         }
         if (azureTenants) {
-            fetchOptions('http://localhost:8080/azure/distinct-tenant-names', setTenantOptions, setSelectedTenantValue)
+            fetchOptions('http://localhost:8080/azure/distinct-tenant-names', setTenantOptions, setSelectedTenantValue, "Motivity Labs")
+        }
+        if (gcpProjectNames) {
+            fetchOptions('http://localhost:8080/gcp/distinct-project-names', setGcpProjectOptions, setSelectedGcpProjectValue, "My Maps Project")
         }
     }, []);
     useEffect(() => {
         fetchServiceOptions();
     }, [selectedTenantValue])
 
-    const fetchOptions = async (url, optionsUpadtionFunc, selectedValueUpdationFunc) => {
+    const fetchOptions = async (url, optionsUpadtionFunc, selectedValueUpdationFunc, defaultValue) => {
         try {
             const token = localStorage.getItem("token");
 
@@ -64,7 +68,7 @@ const BillingInformationCard = (props) => {
                 // console.log("subscriptions response", response)
                 if (response?.data && response?.data?.length > 0) {
                     optionsUpadtionFunc(response?.data);
-                    const getInitialTenantValue = response?.data?.filter((TenantValue) => TenantValue === "Motivity Labs");
+                    const getInitialTenantValue = response?.data?.filter((TenantValue) => TenantValue === defaultValue);
                     if (getInitialTenantValue?.length > 0) {
                         selectedValueUpdationFunc(getInitialTenantValue[0])
                     } else {
@@ -246,17 +250,17 @@ const BillingInformationCard = (props) => {
                                         id="demo-simple-select"
                                         className='demo-simple-select'
                                         sx={{ ...newPropsCss, height: "2.4em" }}
-                                        value={selectedAccountValue}
-                                        onChange={handleAccountsChange}
+                                        value={selectedGcpProjectValue}
+                                        onChange={handleGcpProjectChange}
                                         //   onFocus={handleFocus}
                                         displayEmpty
                                         inputProps={{ 'aria-label': 'Without label' }}
                                         MenuProps={{ PaperProps: { sx: { maxHeight: 200 } } }}
                                     >
                                         <MenuItem value="" disabled>
-                                            Select Account
+                                            Select Project
                                         </MenuItem>
-                                        {AccountOptions?.map((option, index) => (
+                                        {gcpProjectOptions?.map((option, index) => (
                                             <MenuItem key={index} value={option} sx={{ ...newPropsCss }}>
                                                 {option}
                                             </MenuItem>

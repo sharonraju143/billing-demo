@@ -76,11 +76,11 @@ export const awsService = async (service, startDate, endDate, months, selectedAc
 
 
 
-export const gcpService = async (serviceDescription, startDate, endDate, months) => {
+export const gcpService = async (serviceDescription, startDate, endDate, months, projectName) => {
   try {
     const endpoint = '/gcp/details';
     const queryParams = new URLSearchParams();
-
+    queryParams.append('projectName', projectName || '');
     queryParams.append('serviceDescription', serviceDescription || '');
     queryParams.append('startDate', startDate || '');
     queryParams.append('endDate', endDate || '');
