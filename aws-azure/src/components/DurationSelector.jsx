@@ -76,6 +76,7 @@ const DurationSelector = ({ months, handleMonthChange, setDateRange, setCalling,
   const handleFromDateChange = (date) => {
     // const newDate = date?.format('YYYY-MM-DD');
     setFromDate(date);
+    setToDate('')
     setDateErrors({ ...dateErrors, fromDateError: '', })
   };
 
@@ -131,6 +132,17 @@ const DurationSelector = ({ months, handleMonthChange, setDateRange, setCalling,
     },
   };
  const date = dayjs().startOf('day').format('YYYY-MM-DD')
+// console.log(date,'date')
+
+const oneYearLater = dayjs(fromDate).add(1, 'year')
+
+// const oneYearAndOneDayEarlier = oneYearLater.subtract(1, 'day');
+
+const today = dayjs();
+
+const updatedDate = oneYearLater.isAfter(today) ? today : oneYearLater;
+
+const requestedMaxDate=updatedDate
 
   return (
     <React.Fragment>
@@ -256,7 +268,7 @@ const DurationSelector = ({ months, handleMonthChange, setDateRange, setCalling,
                     minDate={fromDate !== null ? dayjs(fromDate) : ""}
                     // maxDate={dayjs().isBefore(dayjs(fromDate).add(1, 'year')) ? dayjs().add(1, 'year') : dayjs(fromDate).add(1, 'year')}
 
-                    maxDate={dayjs(fromDate).add(1, 'year')}
+                    maxDate={requestedMaxDate}
                     // maxDate={dayjs().isSameOrBefore(dayjs(fromDate).add(1, 'year')) ? dayjs().add(1, 'year') : dayjs(fromDate).add(1, 'year')}
                     // minDate={ dayjs(fromDate)}
                     disabled={fromDate === null}

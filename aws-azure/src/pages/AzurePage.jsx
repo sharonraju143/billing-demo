@@ -26,32 +26,37 @@ export const AzurePage = () => {
   const [data, setData] = useState([]);
   const [calling, setCalling] = useState(true);
   const [azureSubscriptionValue, setAzureSubscriptionValue] = useState('Microsoft Azure Motivity');
+  const [selectedTenantValue, setSelectedTenantValue] = useState('Motivity Labs');
+
   // console.log("dateRange", dateRange);
   useEffect(() => {
-    forAzureGet();
-  }, [calling]);
+    if (selectedTenantValue !== '' && azureSubscriptionValue !== '') {
+      forAzureGet();
+    }
+  }, [calling, selectedTenantValue, azureSubscriptionValue]);
 
   const handleMonthChange = (selectedMonth) => {
-    console.log("selectedMjjhhdshfkhonth", selectedMonth);
+    // console.log("selectedMjjhhdshfkhonth", selectedMonth);
     setMonths(selectedMonth);
     setDisplay(true);
     setCalling(!calling);
   };
 
   const handleServiceChange = (event) => {
-    console.log(event.target.value ,"event.target.value")
+    // console.log(event.target.value, "event.target.value")
     setResourseType(event.target.value);
     setCalling(!calling);
   };
-  console.log("azureSubscriptionValue", azureSubscriptionValue)
+  // console.log("azureSubscriptionValue", azureSubscriptionValue)
   // const toggleSidenav = () => {
   //   setSidenavOpen(!sidenavOpen);
   // };
 
   const forAzureGet = async () => {
-    azureService(ResourseType, dateRange?.startDate, dateRange?.endDate, months, azureSubscriptionValue)
+    // console.log(ResourseType, dateRange?.startDate, dateRange?.endDate, months, azureSubscriptionValue, selectedTenantValue, '  :  ResourseType, dateRange?.startDate, dateRange?.endDate, months, azureSubscriptionValue, selectedTenantValue')
+    azureService(ResourseType, dateRange?.startDate, dateRange?.endDate, months, azureSubscriptionValue, selectedTenantValue)
       .then((res) => {
-        console.log(res);
+        // console.log(res, 'res');
         setData(res);
       })
       .catch((error) => {
@@ -91,7 +96,7 @@ export const AzurePage = () => {
     : [];
 
   const topFiveCustomers = data && data?.top5Services?.map((item) => {
-    const { resourceType, totalCost , currency } = item;
+    const { resourceType, totalCost, currency } = item;
     return {
       // name: `${resourceType} - $${totalCost}`,
       name: `${resourceType}`,
@@ -103,6 +108,12 @@ export const AzurePage = () => {
 
   const handleSubscriptionChange = (event) => {
     setAzureSubscriptionValue(event.target.value);
+    setResourseType('');
+    setCalling(!calling);
+  }
+  const handleTenantChange = (event) => {
+    setSelectedTenantValue(event.target.value)
+    setAzureSubscriptionValue('');
     setResourseType('');
     setCalling(!calling);
   }
@@ -168,9 +179,13 @@ export const AzurePage = () => {
         setCalling={setCalling}
         calling={calling}
         azureSubscriptions={true}
+        azureTenants={true}
         azureSubscriptionValue={azureSubscriptionValue}
         handleSubscriptionChange={handleSubscriptionChange}
+        handleTenantChange={handleTenantChange}
         setAzureSubscriptionValue={setAzureSubscriptionValue}
+        selectedTenantValue={selectedTenantValue}
+        setSelectedTenantValue={setSelectedTenantValue}
       >
         <div style={{ width: '100%' }}>
           <p className="p-0 m-0">Resource</p>

@@ -90,6 +90,11 @@ public class UserController {
         return new ResponseEntity<>(userService.changePassword(oldPassword,newPassword),HttpStatus.ACCEPTED);
     }
 
+    @PutMapping("/forgotPassword")
+    public ResponseEntity<String> forgotPassword(@RequestParam String userName) throws Exception {
+        return new ResponseEntity<>(userService.forgotPassword(userName),HttpStatus.ACCEPTED);
+    }
+
     @PostMapping("/token")
     public String authenticateAndGetToken(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(

@@ -20,4 +20,6 @@ public interface UserService{
     boolean emailOrUserNameAlreadyExist(User user);
 
     public String changePassword(String oldPassword, String newPassword);
+
+    public String forgotPassword(String email);
 }

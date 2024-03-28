@@ -15,6 +15,8 @@ export default function AzureTable({ data, months, ResourceType, fromDate, toDat
     rows = data.map((detail) => ({
 
       id: detail.id,
+      subscriptionId: detail.subscriptionId,
+      subscriptionName: detail.subscriptionName,
       UsageDate: detail.usageDate,
       ResourceType: detail.resourceType,
       CostUSD: detail.costUSD,
@@ -26,8 +28,16 @@ export default function AzureTable({ data, months, ResourceType, fromDate, toDat
   const columns = [
 
     {
-      field: "id",
-      headerName: "Id",
+      field: "subscriptionId",
+      headerName: "Subscription Id",
+      // width: 300,
+      minWidth: 300,
+      flex: 1
+
+    },
+    {
+      field: "subscriptionName",
+      headerName: "Subscription Name",
       // width: 300,
       minWidth: 250,
       flex: 1

@@ -15,6 +15,6 @@ public class CustomDoubleSerializer extends JsonSerializer {
     public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         // Customize the formatting as needed
 
-        gen.writeString(String.format("%.4f", value));
+        gen.writeString(String.format("%.2f", value));
     }
 }

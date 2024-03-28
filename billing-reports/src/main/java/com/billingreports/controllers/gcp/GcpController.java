@@ -31,11 +31,31 @@ public class GcpController {
         return new ResponseEntity<List<Gcp>>(getall, HttpStatus.OK);
     }
 
-    @GetMapping("/distinctServiceDescriptions")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-    public ResponseEntity<List<String>> getDistinctServiceDescriptions() {
-        List<String> serviceName = gcpService.getDistinctServiceDescriptions();
-        return ResponseEntity.ok(serviceName);
+//    @GetMapping("/distinctServiceDescriptions")
+//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
+//    public ResponseEntity<List<String>> getDistinctServiceDescriptions() {
+//        List<String> serviceName = gcpService.getDistinctServiceDescriptions();
+//        return ResponseEntity.ok(serviceName);
+//    }
+
+
+    @GetMapping("/distinct-project-names")
+    public ResponseEntity<String[]> getDistinctProjectNames() {
+        String[] distinctProjecyNames = gcpService.getDistinctProjectNames();
+        if (distinctProjecyNames.length == 0) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(distinctProjecyNames);
+        }
+    }
+    @GetMapping("/distinct-services/projectName")
+    public ResponseEntity<String[]> getDistinctServiceDescriptionsByProjectName(@RequestParam String projectName) {
+        String[] distinctServices = gcpService.getDistinctServiceDescriptionsByProjecyName(projectName);
+        if (distinctServices.length == 0) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(distinctServices);
+        }
     }
 
 //    @GetMapping("/dataBetweenDates")
@@ -75,6 +95,7 @@ public class GcpController {
     @GetMapping("/details")
     @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
     public ResponseEntity<?> getBillingDetails(
+            @RequestParam String projectName,
             @RequestParam String serviceDescription,
             @RequestParam String startDate,
             @RequestParam String endDate,
@@ -85,14 +106,14 @@ public class GcpController {
             throw new ValidDateRangeException("Enter valid inputs");
         }
         // Replace the following placeholders with your actual service calls
-        List<Gcp> billingDetails = gcpService.getBillingDetails(serviceDescription, startDate, endDate, months);
+        List<Gcp> billingDetails = gcpService.getBillingDetails(projectName, serviceDescription, startDate, endDate, months);
 
         List<Map<String, Double>> monthlyTotalAmounts = gcpService.calculateMonthlyTotalBills(billingDetails);
 
         Double totalAmount = billingDetails.stream().mapToDouble(Gcp::getCost).sum();
         List<Map<String, Object>> billingPeriod = gcpService.generateBillingPeriod(startDate, endDate, months);
 
-        List<GcpAggregateResult> aggregateResults = gcpService.getServiceTopFiveTotalCosts(startDate, endDate, months);
+        List<GcpAggregateResult> aggregateResults = gcpService.getServiceTopFiveTotalCosts(projectName, startDate, endDate, months);
         // Create a response map
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("billingDetails", billingDetails);

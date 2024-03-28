@@ -18,7 +18,7 @@ export const Home = () => {
     forAwsGet();
   }, []);
   const forAwsGet = async () => {
-    await awsService('', '', '', 1)
+    await awsService('', '', '', 1, 'Motivity Labs')
       .then((res) => {
         // console.log(res);
         setData((prev) => ({ ...prev, awsData: res }))
@@ -27,7 +27,7 @@ export const Home = () => {
       .catch((error) => {
         console.log(error);
       });
-    await azureService('', '', '', 1, 'Microsoft Azure Motivity')
+    await azureService('', '', '', 1, 'Microsoft Azure Motivity', 'Motivity Labs')
       .then((res) => {
         // console.log(res);
         setData((prev) => ({ ...prev, azureData: res }))
@@ -36,7 +36,7 @@ export const Home = () => {
       .catch((error) => {
         console.log(error);
       });
-    await gcpService('', '', '', 1)
+    await gcpService('', '', '', 1, 'My Maps Project')
       .then((res) => {
         // console.log(res);
         setData((prev) => ({ ...prev, gcpData: res }))
@@ -112,7 +112,7 @@ export const Home = () => {
         >
           <div className="card p-3">
             <div className="">
-              <div className="h5 fw-bold" style={{ fontSize: '17px' }}>Top 5 AWS Consumers</div>
+              <div className="h5 fw-bold" style={{ fontSize: '17px' }}>Top 5 AWS Consumers (Motivity Labs)</div>
               {data?.awsData?.top5Services && data?.awsData?.top5Services?.length > 0 ? <CustomPieChart
                 data={data?.awsData?.top5Services && topAWSFiveCustomers}
                 height={403}
@@ -148,7 +148,7 @@ export const Home = () => {
         >
           <div className="card p-3">
             <div className="">
-              <div className="h5 fw-bold" style={{ fontSize: '17px' }}>Top 5 GCP Consumers</div>
+              <div className="h5 fw-bold" style={{ fontSize: '17px' }}>Top 5 GCP Consumers (My Maps Project)</div>
               {data?.gcpData?.top5Services && data?.gcpData?.top5Services?.length > 0 ? <CustomPieChart
                 data={data?.gcpData?.top5Services && topGCPFiveCustomers}
                 height={320}

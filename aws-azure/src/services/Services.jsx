@@ -46,10 +46,11 @@ export const UserLoginService = async (data) => {
 };
 
 
-export const awsService = async (service, startDate, endDate, months) => {
+export const awsService = async (service, startDate, endDate, months, selectedAccountValue = '') => {
   try {
     let endpoint = '/aws/billing-details';
     const queryParams = new URLSearchParams();
+    queryParams.append('accountName', selectedAccountValue || '');
     queryParams.append('service', service || '');
     queryParams.append('startDate', startDate || '');
     queryParams.append('endDate', endDate || '');
@@ -75,11 +76,11 @@ export const awsService = async (service, startDate, endDate, months) => {
 
 
 
-export const gcpService = async (serviceDescription, startDate, endDate, months) => {
+export const gcpService = async (serviceDescription, startDate, endDate, months, projectName) => {
   try {
     const endpoint = '/gcp/details';
     const queryParams = new URLSearchParams();
-
+    queryParams.append('projectName', projectName || '');
     queryParams.append('serviceDescription', serviceDescription || '');
     queryParams.append('startDate', startDate || '');
     queryParams.append('endDate', endDate || '');
@@ -99,20 +100,20 @@ export const gcpService = async (serviceDescription, startDate, endDate, months)
 };
 
 
-export const azureService = async (ResourseType, startDate, endDate, months, azureSubscriptionValue = '') => {
+export const azureService = async (ResourseType, startDate, endDate, months, azureSubscriptionValue = '', tenantName = '') => {
   try {
     const endpoint = `/azure/details`;
     const queryParams = new URLSearchParams();
-
-    queryParams.append('ResourseType', ResourseType || '');
+    queryParams.append('tenantName', tenantName || '');
     queryParams.append('subscriptionName', azureSubscriptionValue || "");
+    queryParams.append('ResourseType', ResourseType || '');
     queryParams.append('startDate', startDate || '');
     queryParams.append('endDate', endDate || '');
     queryParams.append('months', months || '');
 
     const queryString = queryParams.toString();
-    console.log("azureSubscriptiojkvjnjffjfjjfjfjnValue",azureSubscriptionValue)
-    console.log(queryString , "queryString")
+    // console.log("azureSubscriptiojkvjnjffjfjjfjfjnValue", azureSubscriptionValue)
+    console.log(queryString, "queryString")
 
     const response = await axios.get(`${BASE_URL}${endpoint}${queryString ? `?${queryString}` : ''}`, {
       headers: getAuthHeaders(),

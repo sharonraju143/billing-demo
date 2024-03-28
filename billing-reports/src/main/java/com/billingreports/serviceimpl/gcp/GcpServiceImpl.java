@@ -1,10 +1,14 @@
 package com.billingreports.serviceimpl.gcp;
 
+import com.billingreports.entities.aws.Aws;
 import com.billingreports.entities.gcp.Gcp;
 import com.billingreports.entities.gcp.GcpAggregateResult;
 import com.billingreports.exceptions.ValidDateRangeException;
 import com.billingreports.repositories.gcp.GcpRespository;
 import com.billingreports.service.gcp.GcpService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
@@ -29,37 +33,86 @@ public class GcpServiceImpl implements GcpService {
         return gcpRepository.findAll();
     }
 
-
     @Override
-    public List<String> getDistinctServiceDescriptions() {
-        List<String> serviceDescriptions = gcpRepository.findDistinctServiceDescriptionBy();
-        return extractUniqueServiceDescriptions(serviceDescriptions);
-    }
+    public String[] getDistinctProjectNames() {
+        List<String> uniqueProjectNamesList = gcpRepository.findDistinctProjectName();
+        Set<String> uniqueProjectNames = new HashSet<>();
+        List<String> formattedProjectNames = new ArrayList<>();
 
-    private List<String> extractUniqueServiceDescriptions(List<String> serviceDescriptions) {
-        Set<String> uniqueServiceSet = new HashSet<>();
-        List<String> uniqueServiceList = new ArrayList<>();
-
-        for (String jsonStr : serviceDescriptions) {
-            String serviceDescription = extractServiceDescription(jsonStr);
-            if (serviceDescription != null) {
-                uniqueServiceSet.add(serviceDescription);
+        for (String jsonStr : uniqueProjectNamesList) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode node = mapper.readTree(jsonStr);
+                JsonNode serviceNode = node.get("Project_name");
+                if (serviceNode != null) {
+                    String serviceName = serviceNode.textValue();
+                    if (uniqueProjectNames.add(serviceName)) {
+                        formattedProjectNames.add(serviceName);
+                    }
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
             }
         }
 
-        uniqueServiceList.addAll(uniqueServiceSet);
-        return uniqueServiceList;
+        return formattedProjectNames.toArray(new String[0]);
     }
 
-    private String extractServiceDescription(String jsonStr) {
+    @Override
+    public String[] getDistinctServiceDescriptionsByProjecyName(String projectName) {
+        List<String> uniqueServiceList = gcpRepository.findDistinctServiceDescriptionByProjectName(projectName);
+        Set<String> uniqueServiceNames = new HashSet<>();
+        List<String> formattedServiceNames = new ArrayList<>();
 
-        int startIndex = jsonStr.indexOf("Service description\": \"") + "Service description\": \"".length();
-        int endIndex = jsonStr.indexOf("\"", startIndex);
-        if (startIndex >= 0 && endIndex >= 0) {
-            return jsonStr.substring(startIndex, endIndex);
+        for (String jsonStr : uniqueServiceList) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode node = mapper.readTree(jsonStr);
+                JsonNode serviceNode = node.get("Service_description");
+                if (serviceNode != null) {
+                    String serviceName = serviceNode.textValue();
+                    if (uniqueServiceNames.add(serviceName)) {
+                        formattedServiceNames.add(serviceName);
+                    }
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         }
-        return null; // Return null if extraction fails
+
+        return formattedServiceNames.toArray(new String[0]);
     }
+
+//    @Override
+//    public List<String> getDistinctServiceDescriptions() {
+//        List<String> serviceDescriptions = gcpRepository.findDistinctServiceDescriptionBy();
+//        return extractUniqueServiceDescriptions(serviceDescriptions);
+//    }
+//
+//    private List<String> extractUniqueServiceDescriptions(List<String> serviceDescriptions) {
+//        Set<String> uniqueServiceSet = new HashSet<>();
+//        List<String> uniqueServiceList = new ArrayList<>();
+//
+//        for (String jsonStr : serviceDescriptions) {
+//            String serviceDescription = extractServiceDescription(jsonStr);
+//            if (serviceDescription != null) {
+//                uniqueServiceSet.add(serviceDescription);
+//            }
+//        }
+//
+//        uniqueServiceList.addAll(uniqueServiceSet);
+//        return uniqueServiceList;
+//    }
+//
+//    private String extractServiceDescription(String jsonStr) {
+//
+//        int startIndex = jsonStr.indexOf("Service_description\": \"") + "Service_description\": \"".length();
+//        int endIndex = jsonStr.indexOf("\"", startIndex);
+//        if (startIndex >= 0 && endIndex >= 0) {
+//            return jsonStr.substring(startIndex, endIndex);
+//        }
+//        return null; // Return null if extraction fails
+//    }
 
     @Override
     public List<Gcp> getAllDataBydateRange(String startDate, String endDate) {
@@ -133,28 +186,120 @@ public class GcpServiceImpl implements GcpService {
         return gcpRepository.findByServiceDescriptionAndDateRange(serviceDesc, startDate, endDate);
     }
 
+    @Override
+    public List<Gcp> findByProjectNameAndDateRange(String projectName, String startDate, String endDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startLocalDate = LocalDate.parse(startDate, formatter).atStartOfDay();
+        LocalDateTime endLocalDate = LocalDate.parse(endDate, formatter).atTime(LocalTime.MAX);
+
+        // Calculate the period between startLocalDate and endLocalDate
+        Period period = Period.between(startLocalDate.toLocalDate(), endLocalDate.toLocalDate());
+
+        // Check if the period is more than one year
+        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+            throw new ValidDateRangeException("Select in range within 12 months");
+        }
+
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End date: " + endDate);
+
+        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+
+        return gcpRepository.findByProjectNameAndDateRange(projectName, startLocalDate, endLocalDate);
+    }
 
     @Override
-    public List<Gcp> getBillingDetails(String serviceDescription, String startDate, String endDate, Integer months) {
+    public List<Gcp> findByProjectNameAndMonths(String projectName, Integer months) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime endDate = LocalDate.now().atTime(LocalTime.MAX);
+        LocalDateTime startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1).atStartOfDay();
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End date: " + endDate);
+
+        return gcpRepository.findByProjectNameAndDateRange(projectName, startDate, endDate);
+    }
+
+    @Override
+    public List<Gcp> findByProjecttNameAndServiceDescriptionAndDate(String projectName, String serviceDescription, String startDate, String endDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime startLocalDate = LocalDate.parse(startDate, formatter).atStartOfDay();
+        LocalDateTime endLocalDate = LocalDate.parse(endDate, formatter).atTime(LocalTime.MAX);
+
+        // Calculate the period between startLocalDate and endLocalDate
+        Period period = Period.between(startLocalDate.toLocalDate(), endLocalDate.toLocalDate());
+
+        // Check if the period is more than one year
+        if ((period.getYears() > 1) || (period.getYears() == 1 && period.getMonths() > 0) || (period.getYears() == 1 && period.getDays() > 0)) {
+            System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+            throw new ValidDateRangeException("Select in range within 12 months");
+        }
+
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End date: " + endDate);
+
+        System.out.println("Years: " + period.getYears() + ", Months: " + period.getMonths() + ", Days: " + period.getDays());
+
+        return gcpRepository.findByProjecttNameAndServiceDescriptionAndDate(projectName, serviceDescription, startLocalDate, endLocalDate);
+    }
+
+    @Override
+    public List<Gcp> findByProjecttNameAndServiceDescriptionAndMonths(String projectName, String serviceDescription, Integer months) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime endDate = LocalDate.now().atTime(LocalTime.MAX);
+        LocalDateTime startDate = LocalDate.now().minusMonths(months - 1).withDayOfMonth(1).atStartOfDay();
+        System.out.println("Start Date: " + startDate);
+        System.out.println("End date: " + endDate);
+
+        return gcpRepository.findByProjecttNameAndServiceDescriptionAndDate(projectName, serviceDescription, startDate, endDate);
+    }
+
+
+    @Override
+    public List<Gcp> getBillingDetails(String projectName, String serviceDescription, String startDate, String endDate, Integer months) {
         List<Gcp> billingDetails;
 
         /* months == null || */
-        if (serviceDescription.isEmpty() && startDate != null && endDate != null && months == 0) {
+        if ((projectName == null || projectName.isEmpty()) && serviceDescription.isEmpty() && startDate != null && endDate != null && months == 0) {
 
             billingDetails = getAllDataBydateRange(startDate, endDate);
-        } else /* months == null || */ if (serviceDescription.isEmpty() && Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
+        } else if (!projectName.isEmpty() && projectName != null && (serviceDescription.isEmpty() || serviceDescription == null) && startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty() && months == 0) {
+
+            billingDetails = findByProjectNameAndDateRange(projectName, startDate, endDate);
+        } else if ((projectName == null || projectName.isEmpty()) && serviceDescription.isEmpty() && Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
 
             billingDetails = getAllDataByMonths(months);
 
-        } else if (!serviceDescription.isEmpty() && startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty() && months == 0) {
+        } else if (projectName != null && !projectName.isEmpty() && (serviceDescription.isEmpty() || serviceDescription == null) && Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
+
+            billingDetails = findByProjectNameAndMonths(projectName, months);
+
+        } else if ((projectName == null || projectName.isEmpty()) && !serviceDescription.isEmpty() && startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty() && months == 0) {
 
             billingDetails = getDataByServiceDescAndDateRange(serviceDescription, startDate, endDate);
-        } else if (!serviceDescription.isEmpty() && Objects.requireNonNull(startDate).isEmpty() && endDate.isEmpty() && months != null && months > 0) {
+        } else if (projectName != null && !projectName.isEmpty() && !serviceDescription.isEmpty() && startDate != null && !startDate.isEmpty() && endDate != null && !endDate.isEmpty() && months == 0) {
+
+            billingDetails = findByProjecttNameAndServiceDescriptionAndDate(projectName, serviceDescription, startDate, endDate);
+        } else if ((projectName == null || projectName.isEmpty()) && !serviceDescription.isEmpty() && Objects.requireNonNull(startDate).isEmpty() && endDate.isEmpty() && months != null && months > 0) {
 
             billingDetails = getDataByServiceDescAndMonths(serviceDescription, months);
 
+        } else if (projectName != null && !projectName.isEmpty() && !serviceDescription.isEmpty() && Objects.requireNonNull(startDate).isEmpty() && endDate.isEmpty() && months != null && months > 0) {
+
+            billingDetails = findByProjecttNameAndServiceDescriptionAndMonths(projectName, serviceDescription, months);
+
         } else {
             throw new ValidDateRangeException("Please give the valid date or duration");
+        }
+
+        // Iterate over the billingDetails list and replace null or empty projectNames and projectIds
+        for (Gcp gcp : billingDetails) {
+            if (gcp.getProjectName() == null || gcp.getProjectName().isEmpty()) {
+                gcp.setProjectName("Not Available");
+            }
+            if (gcp.getProjectId() == null || gcp.getProjectId().isEmpty()) {
+                gcp.setProjectId("Not Available");
+            }
         }
 
         // Return the response map or adjust the return value as needed
@@ -217,7 +362,6 @@ public class GcpServiceImpl implements GcpService {
         return monthlyTotalBillsList;
     }
 
-
     public List<Map<String, Object>> generateBillingPeriod(String startDate, String endDate, Integer months) {
         List<Map<String, Object>> billingPeriod = new ArrayList<>();
         Map<String, Object> periodData = new HashMap<>();
@@ -254,15 +398,15 @@ public class GcpServiceImpl implements GcpService {
     }
 
     @Override
-    public List<Gcp> getBillingDetailsUsingRangeAndDate(String startDate, String endDate, Integer months) {
+    public List<Gcp> getBillingDetailsUsingRangeAndDate(String projectName, String startDate, String endDate, Integer months) {
         List<Gcp> billingDetails;
 
-        if (startDate != null && endDate != null && months == 0) {
+        if (projectName != null && startDate != null && endDate != null && months == 0) {
 
-            billingDetails = getAllDataBydateRange(startDate, endDate);
-        } else if (Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
+            billingDetails = findByProjectNameAndDateRange(projectName, startDate, endDate);
+        } else if (projectName != null && Objects.requireNonNull(startDate).isEmpty() && Objects.requireNonNull(endDate).isEmpty() && months > 0) {
 
-            billingDetails = getAllDataByMonths(months);
+            billingDetails = findByProjectNameAndMonths(projectName, months);
         } else {
             throw new ValidDateRangeException("Please select valid months or dates for top 5 services");
         }
@@ -271,8 +415,8 @@ public class GcpServiceImpl implements GcpService {
     }
 
     @Override
-    public List<GcpAggregateResult> getServiceTopFiveTotalCosts(String startDate, String endDate, Integer months) {
-        List<Gcp> billingDetails = getBillingDetailsUsingRangeAndDate(startDate, endDate, months);
+    public List<GcpAggregateResult> getServiceTopFiveTotalCosts(String projectName, String startDate, String endDate, Integer months) {
+        List<Gcp> billingDetails = getBillingDetailsUsingRangeAndDate(projectName, startDate, endDate, months);
 
         Map<String, Double> serviceTotalCostMap = billingDetails.stream()
                 .collect(Collectors.groupingBy(Gcp::getServiceDescription, Collectors.summingDouble(Gcp::getCost)));

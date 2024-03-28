@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,10 +64,10 @@ public class AwsController {
 //        }
 //    }
 
-    @GetMapping("/distinct-services")
-    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
-    public ResponseEntity<String[]> getDistinctServices() {
-        String[] distinctServices = awsService.getUniqueServicesAsArray();
+    @GetMapping("/distinct-services/accountName")
+//    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
+    public ResponseEntity<String[]> getDistinctServicesByAccountName(@RequestParam String accountName) {
+        String[] distinctServices = awsService.getUniqueServicesAsArray(accountName);
         if (distinctServices.length == 0) {
             return ResponseEntity.noContent().build();
         } else {
@@ -74,27 +75,42 @@ public class AwsController {
         }
     }
 
+    @GetMapping("/distinct-account-names")
+    public ResponseEntity<String[]> getDistinctAccountNames() {
+        String[] distinctAccounts = awsService.getUniqueAccountsAsArray();
+        if (distinctAccounts.length == 0) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(distinctAccounts);
+        }
+    }
+
     @GetMapping("/billing-details")
     @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
     public ResponseEntity<Map<String, Object>> getBillingDetails(
+            @RequestParam String accountName,
             @RequestParam(value = "service"/* , required = false */) String service,
             @RequestParam /* (required = false) */ String startDate, @RequestParam String endDate,
             @RequestParam(defaultValue = "0"/* required = false */) Integer months) {
 
-        if ((service == null || service.isEmpty()) && (startDate == null || startDate.isEmpty()) && (endDate == null || endDate.isEmpty()) && months <= 0) {
+        if ((accountName.isEmpty() || accountName == null) && (service == null || service.isEmpty()) && (startDate == null || startDate.isEmpty()) && (endDate == null || endDate.isEmpty()) && months <= 0) {
             throw new ValidDateRangeException("Enter Valid Inputs");
         }
 
         // Replace the following placeholders with your actual service calls
-        List<Aws> billingDetails = awsService.getBillingDetails(service, startDate, endDate, months);
+        List<Aws> billingDetails = awsService.getBillingDetails(accountName, service, startDate, endDate, months);
 
-        List<Map<String, Double>> monthlyTotalAmounts = awsService.calculateMonthlyTotalBills(billingDetails);
+        List<Map<String, BigDecimal>> monthlyTotalAmounts = awsService.calculateMonthlyTotalBills(billingDetails);
 
-        Double totalAmount = billingDetails.stream().mapToDouble(Aws::getAmount).sum();
+//        BigDecimal totalAmount = billingDetails.stream().mapToDouble(Aws::getAmount).sum();
+
+        BigDecimal totalAmount = billingDetails.stream()
+                .map(Aws::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         List<Map<String, Object>> billingPeriod = awsService.generateBillingPeriod(startDate, endDate, months);
 
-        List<AwsAggregateResult> aggregateResults = awsService.getServiceTopFiveTotalCosts(startDate, endDate, months);
+        List<AwsAggregateResult> aggregateResults = awsService.getServiceTopFiveTotalCosts(accountName, startDate, endDate, months);
         // Create a response map
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("billingDetails", billingDetails);
