@@ -41,4 +41,7 @@ public class Gcp {
 
     @Field("Project_name")
     private String projectName;
+
+    @Field("Currency")
+    private String currency;
 }
