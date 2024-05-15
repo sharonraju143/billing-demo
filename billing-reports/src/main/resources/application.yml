@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      host: 172.20.100.7
+      host: localhost
       port: 27017      # Specify the port MongoDB is running on
       database: billing_reports
 
